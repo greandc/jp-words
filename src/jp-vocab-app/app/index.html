@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  
+  <meta name="viewport"content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+
+  <title>JP Vocab App</title>
+  <link rel="stylesheet" href="./style.css" />
+  <!-- Khmer / Lao / Devanagari 用（とりあえず Khmer が本命） -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600&family=Noto+Sans+Lao:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- app/index.html の <head> 内 -->
+<link rel="manifest" href="./public/manifest.webmanifest" />
+<meta name="theme-color" content="#ffffff" />
+
+<script>
+  // Service Worker は app/ 直下の sw.js を登録（後で置く）
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(console.error);
+    });
+  }
+</script>
+
+
+</head>
+<body>
+  <div id="app">
+    <h1>Loading...</h1>
+    <p>If you can see this, the base setup works.</p>
+  </div>
+  <script type="module" src="./main.js"></script>
+
+  <script>
+  // Service Worker 登録
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => {
+          // 新しいSWが来たら即時更新するフロー（任意）
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                // ここでトースト出して「更新」促してもOK
+                nw.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+        })
+        .catch(console.error);
+    });
+
+    // 更新を即座に反映
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // 必要なら自動リロード
+      // location.reload();
+    });
+  }
+</script>
+
+
+
+
+<!-- Service Worker（PWA） -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    });
+  }
+</script>
+
+
+
+
+</body>
+
+</html>

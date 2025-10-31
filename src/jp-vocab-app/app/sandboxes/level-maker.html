@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Level Maker</title>
+<style>
+  body{font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin:16px;}
+  h1{margin:0 0 12px;}
+  .row{display:grid;grid-template-columns:60px 1fr 1fr 120px 1fr;gap:8px;align-items:center;margin-bottom:6px}
+  .head{font-weight:600;color:#444}
+  input,select{padding:6px 8px;border:1px solid #e5e7eb;border-radius:8px;width:100%}
+  .bar{display:flex;gap:12px;align-items:center;margin:12px 0}
+  button{padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;cursor:pointer}
+  .warn{color:#b45309;margin-left:8px}
+  .ok{color:#059669;margin-left:8px}
+</style>
+</head>
+<body>
+  <h1>Level Maker</h1>
+  <div class="bar">
+    <label>Level:
+      <select id="level"></select>
+    </label>
+    <button id="fill">テンプレ10件を入れる</button>
+    <button id="download">Download JSON</button>
+    <span id="msg"></span>
+  </div>
+
+  <div class="row head">
+    <div>#</div><div>英語(en)</div><div>表記(orth)</div><div>読み(reading)</div><div>pos / class(カンマ)</div>
+  </div>
+  <div id="rows"></div>
+
+<script type="module">
+  const $ = s => document.querySelector(s);
+  const rowsEl = $("#rows");
+  const msg = $("#msg");
+
+  // Level セレクト
+  const sel = $("#level");
+  for (let i=1;i<=100;i++){
+    const o = document.createElement("option");
+    o.value = i; o.textContent = i;
+    sel.appendChild(o);
+  }
+  sel.value = "3";
+
+  // 10行フォーム生成
+  function makeRow(i){
+    const wrap = document.createElement("div");
+    wrap.className = "row";
+    wrap.innerHTML = `
+      <div>${String(i).padStart(2,"0")}</div>
+      <input placeholder="dog / to eat / small" data-k="en">
+      <input placeholder="犬 / 食べる / 小さい" data-k="orth">
+      <input placeholder="いぬ / たべる / ちいさい" data-k="reading">
+      <select data-k="pos">
+        <option value="noun">noun</option>
+        <option value="verb">verb</option>
+        <option value="adj">adj</option>
+        <option value="misc">misc</option>
+      </select>
+      <input placeholder="animal,place,food (任意)" data-k="class">
+    `;
+    return wrap;
+  }
+  function renderForm(){
+    rowsEl.innerHTML = "";
+    for (let i=1;i<=10;i++) rowsEl.appendChild(makeRow(i));
+  }
+  renderForm();
+
+  // テンプレ投入（例：Lv1相当）
+  $("#fill").addEventListener("click", ()=>{
+    const templ = [
+      ["dog","犬","いぬ","noun","animal"],
+      ["cat","猫","ねこ","noun","animal"],
+      ["book","本","ほん","noun","object"],
+      ["water","水","みず","noun","drinkable,liquid"],
+      ["school","学校","がっこう","noun","place"],
+      ["teacher","先生","せんせい","noun","person"],
+      ["to go","行く","いく","verb",""],          // 動詞は class 空でOK
+      ["to eat","食べる","たべる","verb",""],
+      ["big","大きい","おおきい","adj","animal,object,place"],
+      ["small","小さい","ちいさい","adj","animal,object,place"]
+    ];
+    [...rowsEl.children].forEach((row,i)=>{
+      const [en,orth,reading,pos,klass] = templ[i];
+      row.querySelector('[data-k="en"]').value = en;
+      row.querySelector('[data-k="orth"]').value = orth;
+      row.querySelector('[data-k="reading"]').value = reading;
+      row.querySelector('[data-k="pos"]').value = pos;
+      row.querySelector('[data-k="class"]').value = klass;
+    });
+    msg.textContent = "テンプレを入れました（必要に応じて編集してください）";
+    msg.className = "ok";
+  });
+
+  function ensureTags(it){
+    if (!Array.isArray(it.class)) it.class = it.class ? [it.class] : [];
+    if (!Array.isArray(it.applies)) it.applies = it.applies ? [it.applies] : [];
+    if (!Array.isArray(it.frames)) it.frames = [];
+    it.frames = it.frames.map(fr=>{
+      const f={...fr};
+      if (f.obj && !Array.isArray(f.obj)) f.obj=[f.obj];
+      if (f.dest && !Array.isArray(f.dest)) f.dest=[f.dest];
+      return f;
+    });
+    return it;
+  }
+  function ensurePos(it){
+    if (it.pos) return it;
+    const en = (it.defs?.en||"").toLowerCase().trim();
+    const orth = (it.jp?.orth||"");
+    if (en.startsWith("to ")) it.pos="verb";
+    else if (/い$/.test(orth)) it.pos="adj";
+    else it.pos="noun";
+    return it;
+  }
+
+  $("#download").addEventListener("click", ()=>{
+    const n = Number(sel.value);
+    const pad = String(n).padStart(2,"0");
+    const data = [];
+
+    // 収集
+    let ok = true;
+    [...rowsEl.children].forEach((row,i)=>{
+      const en = row.querySelector('[data-k="en"]').value.trim();
+      const orth = row.querySelector('[data-k="orth"]').value.trim();
+      const reading = row.querySelector('[data-k="reading"]').value.trim();
+      const pos = row.querySelector('[data-k="pos"]').value;
+      const klass = row.querySelector('[data-k="class"]').value.trim();
+
+      if (!en || !orth || !reading){
+        ok = false;
+      }
+      const item = {
+        id: `lv${pad}-${String(i+1).padStart(2,"0")}`,
+        defs: { en },
+        jp: { orth, reading },
+        pos,
+      };
+      if (klass) item.class = klass.split(",").map(s=>s.trim()).filter(Boolean);
+      data.push(ensureTags(ensurePos(item)));
+    });
+
+    if (!ok){
+      msg.textContent = "未入力があります（英語・表記・読みは必須）";
+      msg.className = "warn";
+      return;
+    }
+
+    // JSON ダウンロード
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `lv${pad}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+
+    msg.textContent = `lv${pad}.json をダウンロードしました。app/data/levels/ に置いてください。`;
+    msg.className = "ok";
+  });
+</script>
+</body>
+</html>

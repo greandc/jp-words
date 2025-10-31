@@ -1,0 +1,30 @@
+name: Deploy TANGO Loop to Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ← ここが「公開したい静的ファイルの場所」
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: src/jp-vocab-app/docs
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

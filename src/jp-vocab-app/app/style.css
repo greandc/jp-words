@@ -1,0 +1,378 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #ffffff;
+  color: #111111;
+  height: 100%;
+}
+
+:root{
+  --fg:#111111;
+  --bg:#ffffff;
+  --muted:#666666;
+  --accent:#2563eb;   /* 青系アクセント */
+  --border:#e5e7eb;
+  --card:#ffffff;
+}
+
+#app{
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+
+.screen{
+  width:100%;
+  max-width:420px;     /* スマホの箱の太さを揃える */
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:16px;            /* セクション間に少し余白 */
+}
+
+h1 {
+  font-size:1.6rem;
+  margin:0 0 8px;
+}
+
+p {
+  color: var(--muted);
+  font-size:1rem;
+  margin:0;
+ }
+
+/* 入力（Quiz用） */
+input{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  font-size:1rem;
+  outline:none;
+}
+input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+
+/* カード（Practice用） */
+#card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+  max-width:420px;            /* 画面の箱幅と合わせる */
+}
+
+/* ===== Title screen ===== */
+.title-screen{
+  min-height: calc(100dvh - 32px);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:26px; /* ロゴとテキストの間を少し広めに */
+  text-align:center;
+}
+.title-logo{
+  /* 端末幅に応じて“デカめ”に。大きい画面では最大440pxまで */
+  /* さらに大きく。広い画面では最大520pxまで出す */
+  width: min(560px, 90vw);
+  height: auto;
+}
+.tap{
+  /* ロゴを勝たせるため控えめに */
+  font-weight:500;
+  font-size:.90rem;
+  letter-spacing:.16em;
+  color: var(--accent);
+  user-select:none; cursor:pointer;
+}
+.title-logo{
+  width:220px; max-width:70vw; height:auto;
+}
+.tap{
+  font-weight:700; letter-spacing:.12em;
+  color: var(--accent); user-select:none; cursor:pointer;
+}
+.blink{ animation: tapBlink 1.2s ease-in-out infinite; }
+@keyframes tapBlink{
+  /* 点滅を少し控えめに（ロゴが主役） */
+  0%,100%{ opacity:.35; transform:translateY(0); }
+  50%    { opacity:.85; transform:translateY(-1px); }
+}
+
+body {
+  padding:
+    env(safe-area-inset-top) var(--pad)
+    env(safe-area-inset-bottom);
+}
+/* ===== Mobile typography bump ===== */
+html { font-size: 16px; }
+@media (max-width: 480px) {
+  html { font-size: 17.5px; }          /* 全体を少し大きく */
+}
+
+.screen { padding: 16px; }
+h1 { font-size: 1.6rem; margin: 0 0 10px; }
+h2 { font-size: 1.25rem; }
+
+/* Practice カード内の主要テキストを少し太く */
+#orth { font-weight: 700; }
+#en   { font-weight: 600; }
+
+/* ===== Script-specific font fallback ===== */
+/* Khmer が細く潰れるのを防ぐ：Noto Sans Khmer を優先し、太めのウェイトを使う */
+:lang(km) {
+  font-family: "Noto Sans Khmer", system-ui, -apple-system, "Noto Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+}
+
+/* Lao も念のため */
+:lang(lo) {
+  font-family: "Noto Sans Lao", system-ui, -apple-system, "Noto Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+}
+
+/* Devanagari（ヒンディー）も太さを少し上げる */
+:lang(hi) {
+  font-family: "Noto Sans Devanagari", system-ui, -apple-system, "Noto Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+}
+
+/* 英語などのラテン系は読みやすさ優先の標準スタック */
+:lang(en), :lang(es), :lang(fr), :lang(de), :lang(it), :lang(pt), :lang(id), :lang(tl), :lang(vi) {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.native { font-weight:600; margin-right:.4rem; }
+.native:lang(km) { font-family:"Noto Sans Khmer",sans-serif; font-weight:600; }
+
+/* ---- ここからスクリプト別フォント ---- */
+/* クメール語（Khmer） */
+.native:lang(km) {
+  font-family: "Noto Sans Khmer", system-ui, -apple-system, "Noto Sans",
+               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+}
+
+/* ラオス語（Lao） */
+.native:lang(lo) {
+  font-family: "Noto Sans Lao", system-ui, -apple-system, "Noto Sans",
+               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+}
+
+/* デーヴァナーガリー（ヒンディー） */
+.native:lang(hi) {
+  font-family: "Noto Sans Devanagari", system-ui, -apple-system, "Noto Sans",
+               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+}
+
+/* デフォルトはそのまま */
+:root { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; }
+
+/* 文字が細くなる言語だけ “言語別フォント” を上書き */
+:lang(km) { font-family: "Noto Sans Khmer", "Noto Sans", system-ui, sans-serif; font-weight: 600; }
+:lang(lo) { font-family: "Noto Sans Lao", "Noto Sans", system-ui, sans-serif; font-weight: 600; }
+:lang(hi) { font-family: "Noto Sans Devanagari", "Noto Sans", system-ui, sans-serif; font-weight: 600; }
+
+/* （必要なら）アラビア語系や他もここに追加してOK
+:lang(ar) { font-family: "Noto Naskh Arabic", "Noto Sans", system-ui, sans-serif; }
+:lang(th) { font-family: "Noto Sans Thai", "Noto Sans", system-ui, sans-serif; }
+… */
+/* ===== Opening / Title ===== */
+.title-screen{
+  min-height: 100svh;           /* スマホでも全高中央 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;                 /* ロゴとテキストの間 */
+  text-align: center;
+  padding: 24px;
+}
+
+.title-logo{
+  width: clamp(180px, 40vw, 360px);  /* 画面に応じて自動拡縮 */
+  height: auto;
+  display: block;
+}
+
+.tap{
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #60a5fa;               /* 明るめブルー */
+  font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+  user-select: none;
+}
+
+.blink{
+  animation: blink 1.6s ease-in-out infinite;
+}
+@keyframes blink{
+  0%,100%{ opacity: .35; }
+  50%{ opacity: 1; }
+}
+
+/* さらに小さい端末向けの微調整 */
+@media (max-width: 360px){
+  .title-logo{ width: clamp(160px, 48vw, 300px); }
+  .tap{ font-size: 1rem; }
+}
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* === Mobile-safe layout ================ */
+html, body { overflow-x: hidden; }               /* 横スクロール封じ */
+*, *::before, *::after { box-sizing: border-box; }/* はみ出しの元を抑える */
+
+/* タイトル行の上部バー（クイズ画面） */
+.topbar {
+  display: grid;
+  grid-template-columns: 1fr auto;   /* 左にライフ、右にカウンタ+切替 */
+  align-items: center;
+  gap: 8px;
+}
+.topbar .stats { justify-self: end; text-align: right; }
+.topbar .furi {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .95rem;
+  white-space: nowrap;              /* “Furigana”が途中で折れず、はみ出さない */
+}
+
+/* iOSで一部書体が細すぎる対策（Khmerなど） */
+.lang-strong { font-weight: 700; }   /* ボタン内ネイティブ名に付けて太字に */
+/* === iPhone での □Furigana の食い違い対策 === */
+.furi-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;            /* 文字が分割されないように */
+  font-size: clamp(.82rem, .9rem, 1rem);
+  max-width: 100%;
+}
+.furi-label input[type="checkbox"] {
+  margin: 0;                      /* iOS のデフォルト余白を打ち消し */
+}
+
+/* 画面の左右安全域（iOSのノッチ端でも切れないように） */
+.screen { padding-left: max(16px, env(safe-area-inset-left));
+          padding-right:max(16px, env(safe-area-inset-right)); box-sizing: border-box; }
+/* === Furigana チェックボックスを完全統一 === */
+.furi-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 4px;                /* 安定した間隔 */
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+/* デフォルトのチェックを消す（ブラウザ差をゼロに） */
+.furi-label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #666;
+  border-radius: 3px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* チェックマークを描画 */
+.furi-label input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 4px;
+  height: 8px;
+  border-right: 2px solid #333;
+  border-bottom: 2px solid #333;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.furi-label input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  white-space:nowrap;             /* 「□ furigana」を折り返さない */
+  flex:0 0 auto;
+}
+/* ===== Menu系の共通レイアウト ===== */
+.screen{
+  max-width: min(720px, 92vw);
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+.screen #list{ margin-top: 12px; }
+
+/* ===== ここが“太めで押しやすい”ボタン ===== */
+.screen .btn{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #66a3ff;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: #111827;
+  padding: 14px 18px;
+  font-size: clamp(16px, 2.4vw, 18px);
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, transform .02s ease;
+}
+@media (min-width: 480px){
+  .screen .btn{ padding: 16px 20px; font-size: 19px; }
+}
+
+.screen .btn:hover{ background: #f1f7ff; }
+.screen .btn:active{ transform: translateY(1px); }
+.screen .btn:focus{ outline: none; }
+.screen .btn:focus-visible{
+  box-shadow: 0 0 0 3px rgba(102,163,255,.35);
+}
+/* 無効状態（今は使ってないけど一応） */
+.screen .btn:disabled{
+  opacity: .55;
+  cursor: not-allowed;
+}
+/* 見出しとサブ情報も少し整える（任意） */
+.screen h1{ margin: 0 0 6px; font-size: clamp(24px, 4.8vw, 32px); }
+.screen .note{ color:#64748b; font-size:.9rem; }
+/* Menu1/2 共通のロック表現 */
+.btn.btn--locked {
+  opacity: .45;
+  filter: grayscale(.15);
+  cursor: not-allowed;
+  /* 触っても押せない雰囲気に */
+}
+.btn.btn--locked:active {
+  transform: none;
+}
+/* style.css に追加（任意） */
+.btn { box-sizing: border-box; width: 100%; }
+
+
+
+
+
+
+
+
+
+
