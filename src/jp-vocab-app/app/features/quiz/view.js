@@ -112,7 +112,7 @@ function QuizOverlay({ type, goto, onClear }) {
       h("div", { className: "ttl"  }, title),
       h("div", { className: "desc" }, desc),
       h("button", { className: "btn", onClick: onPrimary },
-        type === "clear" ? "Next level" : "メニューに戻る"
+        type === "clear" ? t("result.nextLevel") : t("result.returnMenu")
       ),
     )
   );
