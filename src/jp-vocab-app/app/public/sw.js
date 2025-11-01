@@ -2,69 +2,72 @@
 // ざっくり：インストール時に静的資産をキャッシュ、
 // 取得時は cache-first（見つからなければネット）
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v4.0.1';
 const CACHE_NAME = `tango-loop-${CACHE_VERSION}`;
 
+
+// 今回“アプリ殻(シェル)”としてオフラインで必要なファイル
 const ASSETS = [
-  // ← ここは “public からの相対パス”
-  './',                     // index.html
   './index.html',
   './boot.js',
+  './main.js',
   './base.css',
-  './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
-
-  // React UMD（CDN落ち対策として任意。頻繁に変わらないのでOK）
-  'https://unpkg.com/react@18/umd/react.production.min.js',
-  'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
+  // 必要に応じて画像・音声など
 ];
 
-// Install：静的ファイルをキャッシュ
+// Install: キャッシュを作る
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
-  self.skipWaiting();
+  self.skipWaiting();                             // 新SWをすぐ使う（後述）
+  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
 });
 
-// Activate：古いキャッシュを掃除
+// Activate: 古いキャッシュを掃除＋即制御
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k))))
-    )
-  );
-  self.clients.claim();
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys
+      .filter(k => k.startsWith('twl-cache-') && k !== CACHE_NAME)
+      .map(k => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
-// Fetch：まずキャッシュ、なければネット。ネット成功したらキャッシュへ
+// Fetch: 取り方の方針
 self.addEventListener('fetch', (e) => {
   const req = e.request;
 
-  // 3rd-party でもとりあえず cache-first でOK
-  e.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
+  // 1) 画面遷移（HTML）は「ネット優先 → ダメならキャッシュ」
+  if (req.mode === 'navigate') {
+    e.respondWith((async () => {
+      try {
+        const fresh = await fetch(req);
+        // 新しい index.html を得たら静かにキャッシュ更新（任意）
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(req, fresh.clone());
+        return fresh;
+      } catch {
+        const cache = await caches.open(CACHE_NAME);
+        return (await cache.match('./index.html')) || Response.error();
+      }
+    })());
+    return;
+  }
 
-      return fetch(req)
-        .then((res) => {
-          // GETのみ保存、OKレスポンスのみ保存
-          if (req.method === 'GET' && res && res.status === 200) {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          }
-          return res;
-        })
-        .catch(() => {
-          // 完全オフラインでキャッシュも無い場合は index.html を返して
-          // アプリ側のルータに任せる（簡易フォールバック）
-          if (req.mode === 'navigate') return caches.match('./index.html');
-          return new Response('Offline', { status: 503, statusText: 'Offline' });
-        });
-    })
-  );
+  // 2) ASSETS は「キャッシュ優先（即表示）→ 裏で更新」（＝速い）
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const cached = await cache.match(req);
+    if (cached) return cached;
+    try {
+      const fresh = await fetch(req);
+      cache.put(req, fresh.clone());
+      return fresh;
+    } catch {
+      return cached || Response.error();
+    }
+  })());
 });
-
 
 

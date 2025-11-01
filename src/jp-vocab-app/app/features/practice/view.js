@@ -4,6 +4,7 @@ import { t, getLang, setLang } from "../../i18n.js";
 
 import { MAX_Q, SECS_PER_Q } from "../../config.js";
 import { loadLevel } from "../../data/loader.js";
+import { ttsSetup, ttsAvailable, speak } from "../../tts.js";
 
 
 
@@ -15,6 +16,7 @@ export async function render(el, deps = {}) {
   }
   
   if (!levelNum) { alert("Select a set first."); return deps.goto?.("menu2"); }
+  await ttsSetup();   // ← Androidで重要。voices準備を待つ
 
   const div = document.createElement("div");
   div.className = "screen";

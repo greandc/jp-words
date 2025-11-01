@@ -9,7 +9,8 @@ const h  = R.createElement;   // ← ここに移動
 // ===== 依存 =====
 import { MAX_Q }   from "../../config.js";       // 50想定
 import { loadLevel } from "../../data/loader.js";
-import { t, getLang } from "../../i18n.js";
+import { t } from "../../i18n.js";
+import { ttsSetup, ttsAvailable, speak } from "../../tts.js";
 
 // ===== 定数（レイアウト固定）=====
 const ROWS       = 5;      // 5行固定
@@ -87,14 +88,14 @@ function QuizOverlay({ type, goto, onClear }) {
   if (!type) return null;
 
   const title =
-    type === "clear"   ? "Completed" :
-    type === "fail"    ? "Game Over" :
-    type === "timeout" ? "Time up"   : "";
+  type === "clear"   ? t("result.clearTitle") :
+     type === "fail"    ? t("result.failTitle") :
+     type === "timeout" ? t("result.timeoutTitle") : "";
 
   const desc =
-    type === "clear"   ? "全問クリア！" :
-    type === "fail"    ? "ライフが 0 になりました" :
-    type === "timeout" ? "時間切れです" : "";
+    type === "clear"   ? t("result.clearDesc") :
+     type === "fail"    ? t("result.failDesc") :
+     type === "timeout" ? t("result.timeoutDesc") : "";
 
   const onPrimary = () => {
     if (type === "clear") {

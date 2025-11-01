@@ -10,6 +10,7 @@ export const MESSAGES = {
     "menu2.subtitle": "Choose one of the levels below.",
     "menu3.practice": "Practice",
     "menu3.test": "Test",
+    "common.start": "Start",
     "common.back": "Back",
     "quiz.start": "Start",
     "quiz.english": "English",
@@ -30,6 +31,15 @@ export const MESSAGES = {
     "stats.total": "{n} days",
     "stats.streak": "{n} streak",
     "stats.note": "Calculated in Japan time",
+    "result.clearTitle": "Completed",     // ja: "クリア"
+    "result.failTitle": "Game Over",      // ja: "ゲームオーバー"
+    "result.timeoutTitle": "Time up",     // ja: "時間切れ"
+    "result.clearDesc": "All questions cleared!", // ja: "全問クリア！"
+    "result.failDesc": "Lives reached 0.",        // ja: "ライフが0になりました"
+    "result.timeoutDesc": "Time is up.",          // ja: "時間切れです"
+    "result.nextLevel": "Next level",      // ja: "次のレベルへ"
+    "result.backToMenu": "Back to menu",   // ja: "メニューに戻る"
+    "result.retry": "Try again",            // ja: "もう一度"
     "locked": "Locked"
   },
 
@@ -90,7 +100,18 @@ export const MESSAGES = {
   "stats.total": "{n} 天",
   "stats.streak": "{n} 连续",
   "stats.note": "按日本时间计算",
-  "locked": "已锁定"
+  "locked": "已锁定",
+  "common.start": "开始",
+  "level.label": "等级 {n}",
+  "result.clearTitle": "完成",
+  "result.failTitle": "游戏结束",
+  "result.timeoutTitle": "时间到",
+  "result.clearDesc": "全题完成！",
+  "result.failDesc": "生命值用尽。",
+  "result.timeoutDesc": "时间已到。",
+  "result.nextLevel": "下一等级",
+  "result.backToMenu": "返回菜单",
+  "result.retry": "再试一次"
 },
 
 ko: {
@@ -566,4 +587,10 @@ export function t(key, vars = {}) {
   s = s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ""));
   return s;
 }
+const descKey =
+  type === "clear"   ? "result.clearDesc" :
+  type === "fail"    ? "result.failDesc"  :
+  type === "timeout" ? "result.timeoutDesc" : "";
+
+const desc = descKey ? t(descKey) : "";
 

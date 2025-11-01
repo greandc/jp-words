@@ -60,16 +60,17 @@ export async function render(el, deps = {}) {
   wrap.className = "screen screen-testtitle";   // ← ここを変更
   wrap.innerHTML = `
     <h1 id="title"></h1>
-    <div id="meta"></div>
-    <div style="display:grid;gap:12px;">
-      <button class="btn" id="start">${t("Start") || "Start Test"}</button>
-      <button class="btn" id="back">${t("common.back") || "Back"}</button>
-    </div>
+     <div id="meta"></div>
+     <div style="display:grid;gap:12px;">
+       <button class="btn" id="start">${t("common.start")}</button>
+       <button class="btn" id="back">${t("common.back")}</button>
+     </div>
   `;
   el.appendChild(wrap);
 
   const lv = readCurrentLevel();
-  wrap.querySelector("#title").textContent = `${t("level") || "Level"} ${lv}`;
+  // “レベル {n}” のフォーマットを使う
+   wrap.querySelector("#title").textContent = t("level.label", { n: lv });
 
   // プレビュー（問題数×時間）
   const startLv = Math.max(1, lv - 4);
@@ -80,9 +81,8 @@ export async function render(el, deps = {}) {
   }
   const q = Math.min(MAX_Q, count);
   const secs = q * 5;
-  wrap.querySelector("#meta").textContent =
-    `${q} ${t("quiz.questions") || "questions"} · ${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")}`;
-
+   wrap.querySelector("#meta").textContent =
+     `${q} ${t("quiz.questions")} · ${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")}`;
   // Start → quiz
   wrap.querySelector("#start").addEventListener("click", () => {
     // 念のためもう一度保存（戻ってきた時の保険）
