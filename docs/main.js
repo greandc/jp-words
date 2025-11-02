@@ -1,15 +1,15 @@
 // app/main.js
-import * as Quiz     from "../../quiz/view.js";
-import * as Title    from "../../title/view.js";
-import * as Menu     from "../../menu1/view.js";
-import * as Results  from "../../results/view.js";
-import * as Menu2    from "../../menu2/view.js";
-import * as Menu3    from "../../menu3/view.js";
-import * as Lang     from "../../lang/view.js";
-import * as Practice from "../../practice/view.js";
-import { getLang } from "../../i18n.js";
-import { createState, setRange, setSet, setMode, computeAbsoluteLevel } from "../../state.js";
-import * as TestTitle from "../../testTitle/view.js";
+import * as Quiz     from "./quiz/view.js";
+import * as Title    from "./title/view.js";
+import * as Menu     from "./menu1/view.js";
+import * as Results  from "./results/view.js";
+import * as Menu2    from "./menu2/view.js";
+import * as Menu3    from "./menu3/view.js";
+import * as Lang     from "./lang/view.js";
+import * as Practice from "./practice/view.js";
+import { getLang } from "./i18n.js";
+import { createState, setRange, setSet, setMode, computeAbsoluteLevel } from "./state.js";
+import * as TestTitle from "./testTitle/view.js";
 
 
 
