@@ -1,3 +1,4 @@
+// deploy-bump 2025-11-02
 /* app/features/quiz/view.js */
 /* global React, ReactDOM */
 const R  = window.React;
@@ -7,10 +8,11 @@ const h  = R.createElement;   // ← ここに移動
 
 
 // ===== 依存 =====
-import { MAX_Q }   from "../../config.js";       // 50想定
+import { MAX_Q }   from "../../config.js";
 import { loadLevel } from "../../data/loader.js";
 import { t } from "../../i18n.js";
 import { ttsSetup, ttsAvailable, speak } from "../../tts.js";
+
 
 // ===== 定数（レイアウト固定）=====
 const ROWS       = 5;      // 5行固定
