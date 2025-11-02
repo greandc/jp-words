@@ -1,15 +1,16 @@
 // app/main.js
-import * as Quiz from "./features/quiz/view.js";
-import * as Title from "./features/title/view.js";
-import * as Menu from "./features/menu1/view.js";
-import * as Results from "./features/results/view.js";
-import * as Menu2 from "./features/menu2/view.js";
-import * as Menu3 from "./features/menu3/view.js";
-import * as Lang from "./features/lang/view.js";
-import * as Practice from "./features/practice/view.js";
+import * as Quiz     from "./quiz/view.js";
+import * as Title    from "./title/view.js";
+import * as Menu     from "./menu1/view.js";
+import * as Results  from "./results/view.js";
+import * as Menu2    from "./menu2/view.js";
+import * as Menu3    from "./menu3/view.js";
+import * as Lang     from "./lang/view.js";
+import * as Practice from "./practice/view.js";
 import { getLang } from "./i18n.js";
 import { createState, setRange, setSet, setMode, computeAbsoluteLevel } from "./state.js";
-import * as TestTitle from "./testTitle/view.js";   // ← 追加
+import * as TestTitle from "./testTitle/view.js";
+
 
 
 
