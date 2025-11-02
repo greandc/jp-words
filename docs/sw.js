@@ -8,12 +8,12 @@ const CACHE_NAME = `tango-loop-${CACHE_VERSION}`;
 
 // 今回“アプリ殻(シェル)”としてオフラインで必要なファイル
 const ASSETS = [
-  './index.html',
-  './boot.js',
-  './main.js',
-  './base.css',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
+  '../../index.html',
+  '../../boot.js',
+  '../../main.js',
+  '../../base.css',
+  '../../icons/icon-192.png',
+  '../../icons/icon-512.png',
   // 必要に応じて画像・音声など
 ];
 
@@ -49,7 +49,7 @@ self.addEventListener('fetch', (e) => {
         return fresh;
       } catch {
         const cache = await caches.open(CACHE_NAME);
-        return (await cache.match('./index.html')) || Response.error();
+        return (await cache.match('../../index.html')) || Response.error();
       }
     })());
     return;
