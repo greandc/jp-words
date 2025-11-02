@@ -2,7 +2,7 @@
 // ざっくり：インストール時に静的資産をキャッシュ、
 // 取得時は cache-first（見つからなければネット）
 
-const CACHE_VERSION = 'v4.0.1';
+const CACHE_VERSION = 'v4.0.5';
 const CACHE_NAME = `tango-loop-${CACHE_VERSION}`;
 
 
