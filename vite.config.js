@@ -1,12 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// vite.config.js
-export default {
-  base: '/jp-words/',
+export default defineConfig({
+  plugins: [react()],
+  base: '/jp-words/',        // ← GitHub Pages のサブパス
   build: {
-    outDir: 'docs',
+    outDir: 'docs',          // ← Pages 直出し
+    emptyOutDir: true        // ← 既定のままでOK（毎回クリーン）
   },
-};
+  publicDir: 'public'        // ← 既定。ここに置いた物はそのまま docs へコピー
+})
 
 

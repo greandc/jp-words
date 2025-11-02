@@ -5,42 +5,37 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TANGO Loop</title>
 
-  <!-- PWA/アイコン/スタイルは app/public 配下を参照 -->
-  <link rel="manifest" href="./app/public/manifest.webmanifest">
+  <!-- ← ここを app/public ではなく docs 直下基準に -->
+  <link rel="manifest" href="./manifest.webmanifest">
   <meta name="theme-color" content="#ffffff">
-  <link rel="icon" href="./app/public/icons/icon-192.png">
-  <link rel="stylesheet" href="./app/public/base.css">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./base.css">
 
   <!-- アプリ起動 -->
-  <script type="module" src="./app/public/boot.js"></script>
+  <script type="module" src="./boot.js"></script>
 
   <!-- Service Worker -->
   <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    const REG_VER = 'v4.0.0'; // ← sw.js と同じに
-    const reg = await navigator.serviceWorker.register(`./sw.js?v=${REG_VER}`);
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+      const REG_VER = 'v4.0.0';                 // sw.js と揃える
+      const reg = await navigator.serviceWorker.register(`./sw.js?v=${REG_VER}`);
 
-    // 新SW有効化時は1回だけ自動リロード
-    let reloaded = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!reloaded) { reloaded = true; location.reload(); }
+      // 新SWが有効化されたら1回だけリロード
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!reloaded) { reloaded = true; location.reload(); }
+      });
+
+      // タブ復帰時に更新チェック
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') reg.update();
+      });
     });
-
-    // タブ復帰時に更新チェック
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') reg.update();
-    });
-  });
-}
-</script>
-
+  }
+  </script>
 </head>
 <body>
   <div id="app">Loading...</div>
 </body>
 </html>
-
-
-
-
