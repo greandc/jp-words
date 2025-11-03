@@ -39,7 +39,8 @@ export const MESSAGES = {
     "result.timeoutDesc": "Time is up.",          // ja: "時間切れです"
     "result.nextLevel": "Next level",      // ja: "次のレベルへ"
     "result.backToMenu": "Back to menu",   // ja: "メニューに戻る"
-    "result.retry": "Try again",            // ja: "もう一度"
+    "result.retry": "Try again", // ja: "もう一度"
+    "result.returnMenu":"Return menu",
     "locked": "Locked"
   },
 
