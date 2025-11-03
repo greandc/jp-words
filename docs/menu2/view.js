@@ -1,5 +1,5 @@
 // app/features/menu2/view.js
-import { t, getLang, setLang } from "../../i18n.js";
+import { t, getLang, setLang } from "../i18n.js";
 
 
 export async function render(el, deps = {}) {

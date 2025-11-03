@@ -1,10 +1,10 @@
 // app/features/practice/view.js
 
-import { t, getLang, setLang } from "../../i18n.js";
+import { t, getLang, setLang } from "../i18n.js";
 
-import { MAX_Q, SECS_PER_Q } from "../../config.js";
-import { loadLevel } from "../../data/loader.js";
-import { ttsSetup, ttsAvailable, speak } from "../../tts.js";
+import { MAX_Q, SECS_PER_Q } from "../config.js";
+import { loadLevel } from "../data/loader.js";
+import { ttsSetup, ttsAvailable, speak } from "../tts.js";
 
 
 

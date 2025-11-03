@@ -1,5 +1,5 @@
 // app/features/lang/view.js
-import { t, setLang } from "../../i18n.js";
+import { t, setLang } from "../i18n.js";
 
 export async function render(el, deps = {}) {
   const div = document.createElement("div");

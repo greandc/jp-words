@@ -1,5 +1,5 @@
 // app/features/menu3/view.js
-import { t, getLang, setLang } from "../../i18n.js";
+import { t, getLang, setLang } from "../i18n.js";
 
 /**
  * Mode 選択画面（Practice / Test）

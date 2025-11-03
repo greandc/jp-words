@@ -1,5 +1,5 @@
 // app/features/title/view.js
-import { t } from "../../i18n.js";
+import { t } from "../i18n.js";
 
 export async function render(el, deps = {}) {
   const div = document.createElement("div");

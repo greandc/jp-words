@@ -1,5 +1,5 @@
 // app/features/menu/view.js
-import { t, getLang, setLang } from "../../i18n.js";
+import { t, getLang, setLang } from "../i18n.js";
 
 
 // === Stats (日本時間で日付カウント) ===
