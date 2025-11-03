@@ -1,5 +1,5 @@
 // app/main.js
-import * as Quiz     from "./quiz/view.js";
+import * as Quiz from "./quiz/view.js?v=20251102";
 import * as Title    from "./title/view.js";
 import * as Menu     from "./menu1/view.js";
 import * as Results  from "./results/view.js";
