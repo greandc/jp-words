@@ -10,7 +10,7 @@ const h  = R.createElement;   // ← ここに移動
 // ===== 依存 =====
 import { MAX_Q }   from "../config.js";
 import { loadLevel } from "../data/loader.js";
-import { t } from "../i18n.js";
+import { t, getLang } from "../i18n.js";
 import { ttsSetup, ttsAvailable, speak } from "../tts.js";
 
 
