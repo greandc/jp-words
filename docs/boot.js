@@ -1,5 +1,5 @@
 // app/public/boot.js
-import './main.js?v=${window.APP_VER}';   // ← public から 1つ上(app/) の main.js を読む
+import './main.js?v=20251102';
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
