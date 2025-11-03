@@ -587,10 +587,5 @@ export function t(key, vars = {}) {
   s = s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ""));
   return s;
 }
-const descKey =
-  type === "clear"   ? "result.clearDesc" :
-  type === "fail"    ? "result.failDesc"  :
-  type === "timeout" ? "result.timeoutDesc" : "";
 
-const desc = descKey ? t(descKey) : "";
 
