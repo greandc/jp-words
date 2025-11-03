@@ -624,7 +624,7 @@ function unlockNextLevel() {
       ),
       h("label", null,
         h("input", { type:"checkbox", checked:tts, onChange:e=>setTTS(e.target.checked) }),
-        h("span", null, "TTS")
+        h("span", null, t("practice.autoTTS"))
       ),
     ),
   )
