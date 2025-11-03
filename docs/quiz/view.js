@@ -8,10 +8,12 @@ const h  = R.createElement;   // ← ここに移動
 
 
 // ===== 依存 =====
-import { MAX_Q }   from "../config.js";
-import { loadLevel } from "../data/loader.js";
-import { t, getLang } from "../i18n.js";
-import { ttsSetup, ttsAvailable, speak } from "../tts.js";
+import { MAX_Q }           from "../../config.js";
+import { loadLevel }       from "../../data/loader.js";
+import { t, getLang }      from "../../i18n.js";      // ← getLang を追加
+import { ttsSetup, ttsAvailable, speak } from "../../tts.js";
+
+
 
 
 // ===== 定数（レイアウト固定）=====
