@@ -1,10 +1,7 @@
-// app/features/practice/view.js
-
-import { t, getLang, setLang } from "../i18n.js";
-
+import { t, getLang, setLang as setUILang } from "../i18n.js";
 import { MAX_Q, SECS_PER_Q } from "../config.js";
 import { loadLevel } from "../data/loader.js";
-import { ttsSetup, ttsAvailable, speak } from "../tts.js";
+import { speak, stop, ttsAvailable, setLang as ttsSetLang, setRate as ttsSetRate, setPitch as ttsSetPitch } from "../tts.js";
 
 
 
@@ -14,9 +11,27 @@ export async function render(el, deps = {}) {
   if (!levelNum) {
     try { const s = localStorage.getItem("jpVocab.level"); if (s) levelNum = Number(s); } catch {}
   }
-  
+  // --- TTS 初期化（言語・速度）＆ 画面遷移/回転時の停止 ---
+ttsSetLang('ja-JP');
+ttsSetRate(1.0);
+ttsSetPitch(1.0);
+
+const handleHide = () => stop();
+window.addEventListener('visibilitychange', handleHide);
+window.addEventListener('pagehide', handleHide);
+window.addEventListener('freeze', handleHide);
+window.addEventListener('resize', handleHide);
+
+// この画面を離れる時に呼ぶクリーンアップ
+function cleanup() {
+  window.removeEventListener('visibilitychange', handleHide);
+  window.removeEventListener('pagehide', handleHide);
+  window.removeEventListener('freeze', handleHide);
+  window.removeEventListener('resize', handleHide);
+  stop();
+}
+
   if (!levelNum) { alert("Select a set first."); return deps.goto?.("menu2"); }
-  await ttsSetup();   // ← Androidで重要。voices準備を待つ
 
   const div = document.createElement("div");
   div.className = "screen";
@@ -77,8 +92,6 @@ export async function render(el, deps = {}) {
     <span>${t("practice.autoTTS")}</span>
   </label>
 </div>
-
-
 
 
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -172,20 +185,12 @@ if (!items || items.length === 0) {
 }
 
 
-  // ===== TTS =====
-  const canTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  // ===== TTS（統一ラッパ使用）=====
+  const canTTS = ttsAvailable();
   const speakBtn = div.querySelector("#speakBtn");
   const autoTtsChk = div.querySelector("#autoTts");
   const LS_AUTO = "jpVocab.practice.autoTTS";
   try { autoTtsChk.checked = localStorage.getItem(LS_AUTO) === "1"; } catch {}
-
-  function speakJa(text){
-    if(!canTTS || !text) return;
-    try { window.speechSynthesis.cancel(); } catch {}
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "ja-JP"; u.rate = 1.0; u.pitch = 1.0;
-    window.speechSynthesis.speak(u);
-  }
 
   if (!canTTS) {
     speakBtn.disabled = true;
@@ -194,9 +199,11 @@ if (!items || items.length === 0) {
     m.textContent = t("tts.unsupported");
     m.style.display = "";
   }
+
   autoTtsChk.addEventListener("change", () => {
     try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
   });
+
 
   // ===== レンダリング =====
   let idx = 1; // 1..10
@@ -226,7 +233,8 @@ if (!items || items.length === 0) {
     // 関連（同義語など）— いまは非表示のまま（将来使う）
     elAltWrap.style.display = "none";
 
-    if (autoTtsChk.checked) speakJa(reading);
+   if (autoTtsChk.checked) speak(reading);
+
   }
 
   renderCard();
@@ -241,18 +249,25 @@ if (btnBack) btnBack.textContent = t("practice.back");
 if (btnNext) btnNext.textContent = t("practice.next");
 
 btnPrev.addEventListener("click", () => { 
+  stop();                               // 先に止める
   idx = idx > 1 ? idx - 1 : items.length; 
   renderCard(); 
 });
+
 btnNext.addEventListener("click", () => { 
+  stop();                               // 先に止める
   idx = idx < items.length ? idx + 1 : 1; 
   renderCard(); 
 });
-btnBack.addEventListener("click", () => deps.goto?.("menu3"));
+
+btnBack.addEventListener("click", () => {
+  cleanup();                            // 画面離脱時の後片付け
+  deps.goto?.("menu3");
+});
 
 speakBtn.addEventListener("click", () => {
   const it = items[idx - 1];
-  speakJa(it?.jp?.reading || it?.jp?.orth || "");
+  speak(it?.jp?.reading || it?.jp?.orth || "");
 });
 
 }
