@@ -1,6 +1,8 @@
 // mobile/www/tts.v2.js
 const __VER = 'v2-20251109d';
 
+// 画面表示はしない最小ロガー（空実装）
+function ttsUILog(){ /* noop */ }
 
 // ===== ここで “読まれた印” を即出す
 (function bootLog(){
