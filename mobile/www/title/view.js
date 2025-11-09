@@ -1,121 +1,121 @@
 // mobile/www/title/view.js
 import { t } from "../i18n.js";
 
+// ===== ここから丸ごと置き換え =====
 export async function render(el, deps = {}) {
-  // ===== 既存CSSを必ず置き換える（古い定義が残って無効になるのを防ぐ）=====
-  (function ensureStyle() {
-    const id = "title-anim-css";
-    let node = document.getElementById(id);
-    if (node) node.remove(); // ← 古いのを必ず消す
-    node = document.createElement("style");
-    node.id = id;
-    node.textContent = `
-      @keyframes titleFadeIn{
-        0%{opacity:0;transform:scale(.96);filter:blur(2px)}
-        60%{opacity:1;transform:scale(1.005);filter:blur(.4px)}
-        100%{opacity:1;transform:scale(1);filter:blur(0)}
-      }
-      @keyframes cFlash{
-        0%  {opacity:0; transform:scale(.9);   filter:brightness(1)}
-        25% {opacity:1; transform:scale(1.20); filter:brightness(2) drop-shadow(0 0 8px rgba(255,255,160,.95))}
-        55% {opacity:1; transform:scale(1.00); filter:brightness(1.15) drop-shadow(0 0 5px rgba(255,255,140,.7))}
-        100%{opacity:1; transform:scale(1.00); filter:brightness(1)}
-      }
-      @keyframes tapFade{
-        from{opacity:0;transform:translateY(4px)}
-        to  {opacity:1;transform:translateY(0)}
-      }
-      .c-on{ animation:cFlash .9s ease-in-out forwards; }
-      @media (prefers-reduced-motion:reduce){
-        *{animation:none!important;transition:none!important}
-      }
-    `;
-    document.head.appendChild(node);
-  })();
-
-  // ===== 画面 =====
+  // 覆い（下の画面にタップが貫通しない）
   const wrap = document.createElement("div");
   wrap.className = "screen";
   wrap.style.cssText = `
     position:fixed; inset:0; z-index:9999; background:#fff;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
     pointer-events:auto;
   `;
 
+  // ロゴ箱（相対配置）
   const box = document.createElement("div");
   box.style.cssText = `
-    position:relative; display:flex; flex-direction:column; align-items:center;
+    position:relative;
     transform: translateY(-6vh);
+    display:flex; flex-direction:column; align-items:center;
   `;
 
-  // ロゴ（じわー）
+  // メインロゴ（じわー は既存CSS側でやってOK）
   const img = document.createElement("img");
   img.src = "./img/title.png";
   img.alt = "GreandC";
   img.style.cssText = `
-    width:min(68vw,360px); height:auto; display:block;
-    opacity:0; transform:scale(.96); filter:blur(2px);
-    will-change:opacity,transform,filter; z-index:1;
-    animation:titleFadeIn .9s ease-out .1s forwards;
+    width:min(68vw, 360px);
+    height:auto; display:block;
+    filter: drop-shadow(0 1px 0 rgba(0,0,0,.08));
+    opacity:0; animation: logoIn .9s ease-out forwards;
   `;
 
-  // C（キラーン） ← 最前面に固定、アニメは後でクラス付与で開始
+  // C 画像（重ねる専用）
   const imgC = document.createElement("img");
   imgC.src = "./img/title-c.png";
   imgC.alt = "";
   imgC.style.cssText = `
-    position:absolute; right:6.5%; top:7%;
-    width:min(10vw,56px); height:auto;
-    opacity:0; transform:scale(.9) rotate(0.001deg);
-    will-change:opacity,transform,filter; z-index:2;
-    pointer-events:none;
+    position:absolute; opacity:0; pointer-events:none; transform-origin:center;
   `;
 
-  // TAP（ふわっ）
+  // 「TAP TO START」
   const tap = document.createElement("div");
   tap.textContent = "—  TAP TO START  —";
   tap.style.cssText = `
-    margin-top:12px; color:#94a3b8; letter-spacing:.12em; font-weight:600;
-    font-size:clamp(14px,2.9vw,16px);
-    opacity:0; transform:translateY(4px);
-    will-change:opacity,transform;
-    animation:tapFade .5s ease-out 1.7s forwards;
+    margin-top: 12px; color:#94a3b8; letter-spacing:.12em; font-weight:600;
+    font-size: clamp(14px, 2.9vw, 16px);
+    opacity:0; animation: tapIn .6s ease-out .9s forwards;
   `;
 
   // クリック抜け防止して menu1 へ
+  let navigated = false;
   const go = (ev) => {
+    if (navigated) return;
+    navigated = true;
     ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation?.();
     const shield = document.createElement("div");
-    shield.style.cssText = `position:fixed; inset:0; z-index:10000; pointer-events:auto;`;
+    shield.style.cssText = `position:fixed; inset:0; z-index:10000; background:transparent; pointer-events:auto;`;
     document.body.appendChild(shield);
-    setTimeout(() => { deps.goto?.("menu1"); setTimeout(() => shield.remove(), 300); }, 0);
+    setTimeout(() => { deps.goto?.("menu1"); setTimeout(()=>shield.remove(), 300); }, 0);
   };
   wrap.addEventListener("pointerdown", go, { once:true });
 
+  // ---- ここがポイント：C の位置/サイズ算出＆アニメ発火 ----
+  function placeC() {
+    const w = img.clientWidth;
+    const h = img.clientHeight;
+    // 調整係数（必要なら微調整：sizeK 0.20→0.22 など）
+    const sizeK = 0.20;   // C 幅 = ロゴ幅の 20%
+    const leftK = 0.62;   // 左位置 = ロゴ幅の 62%
+    const topK  = 0.15;   // 上位置 = ロゴ高の 15%
+    imgC.style.width = (w * sizeK) + "px";
+    imgC.style.left  = (w * leftK) + "px";
+    imgC.style.top   = (h * topK)  + "px";
+  }
+
+  function setupC() {
+    placeC();
+    // “確実に”発火：一度止めて reflow → 再度 animation を付ける
+    imgC.style.opacity = "1";
+    imgC.style.animation = "none";
+    // reflow
+    // eslint-disable-next-line no-unused-expressions
+    imgC.offsetWidth;
+    imgC.style.animation = "cFlash .9s ease-in-out forwards";
+  }
+
+  const startAfterLogo = () => setTimeout(setupC, 1100);
+  if (img.complete) startAfterLogo();
+  else img.addEventListener("load", startAfterLogo);
+  window.addEventListener("resize", placeC, { passive:true });
+
+  // 追加：キーフレーム（未注入なら注入）
+  const styleId = "title-anim-css";
+  if (!document.getElementById(styleId)) {
+    const st = document.createElement("style");
+    st.id = styleId;
+    st.textContent = `
+      @keyframes logoIn { from{opacity:0; transform:translateY(6px) scale(.98);} to{opacity:1; transform:none;} }
+      @keyframes tapIn  { from{opacity:0; transform:translateY(4px);}       to{opacity:1; transform:none;} }
+      @keyframes cFlash{
+        0%   { opacity:0; transform:scale(.92); filter:brightness(1); }
+        30%  { opacity:1; transform:scale(1.10); filter:brightness(1.9); }
+        100% { opacity:1; transform:scale(1);    filter:brightness(1); }
+      }
+    `;
+    document.head.appendChild(st);
+  }
+
+  // DOMに載せる
   box.appendChild(img);
   box.appendChild(imgC);
   wrap.appendChild(box);
   wrap.appendChild(tap);
   el.appendChild(wrap);
-
-  // ===== Cのアニメを「確実に」発火させる（CSSに負けない強制版）=====
-const startC = () => {
-  // まず確実に最前面＆見える
-  imgC.style.opacity = "1";
-  imgC.style.transform = "scale(1)";
-
-  // 直前のアニメをクリア → 強制リフロー → 新規アニメ適用
-  imgC.style.animation = "none";
-  // 強制リフロー（これが超重要）
-  // eslint-disable-next-line no-unused-expressions
-  imgC.offsetWidth;
-  // アニメ名は cFlash を使用（CSSに定義済み）
-  imgC.style.animation = "cFlash .9s ease-in-out forwards";
-};
-
-// キャッシュ済みでも確実に1.1秒後に走る
-setTimeout(startC, 1100);
 }
+
+
 
 
 
