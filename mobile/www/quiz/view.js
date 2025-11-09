@@ -463,6 +463,27 @@ function ensureStyle(){
 .screen-quiz .status .hearts{ display:flex; gap:8px; }
 .screen-quiz .status .meta{ white-space:nowrap; }
 
+.screen-quiz .status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 8px;          /* ← 左右に少し余白を追加 */
+  gap: 6px;               /* ← ハートと時間の間隔を確保 */
+}
+
+.screen-quiz .status .hearts {
+  display: flex;
+  gap: 4px;               /* ← ハートの間隔を詰める */
+  flex-shrink: 0;         /* ← 右が潰れないように固定 */
+}
+
+.screen-quiz .status .meta {
+  white-space: nowrap;
+  font-size: 0.9rem;      /* ← 少しだけ小さく */
+  flex-shrink: 0;         /* ← 時間が途中で切れないように */
+}
+
+
 
 
   `;
