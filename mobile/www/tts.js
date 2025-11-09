@@ -1,4 +1,5 @@
-// ======== mobile/www/tts.js すべて置き換え ========
+console.log('[TTS] probe', typeof window.Capacitor, !!(window.Capacitor?.Plugins?.TextToSpeech));
+
 // 重要：importは一切しない
 
 let currentLang  = 'ja-JP';
