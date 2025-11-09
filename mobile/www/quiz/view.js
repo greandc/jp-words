@@ -934,9 +934,8 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
   h("button",
   { className:"backbtn",
     onClick: () => { cleanupTTS(); props.goto?.("testTitle"); }
-  },
-  "Back"
-),
+  },t("common.back")),
+ 
 
 
   // ★ クリア時に現在レベルを開放してから menu2 へ
