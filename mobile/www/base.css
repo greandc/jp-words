@@ -89,27 +89,6 @@ body, button { font-size: 18px; line-height: 1.4; }
 /* 言語名(上段)を強めに */
 .lang-strong { font-size: 20px; font-weight: 600; }
 
-/* タイトル画面のセンター寄せ */
-.title-wrap {
-  min-height: 70vh;
-  display: grid;
-  place-items: center;
-  gap: 16px;
-  text-align: center;
-}
-
-/* ロゴのサイズは好みで調整 */
-.title-logo {
-  display: block;
-  width: clamp(140px, 40vw, 240px);
-  height: auto;
-  margin: 24px auto 8px;
-}
-
-.title-caption {
-  font-size: clamp(20px, 4vw, 28px);
-  margin: 0 0 8px;
-}
 /* Menu画面のセンター寄せ */
 .menu-center {
   min-height: 80vh;
