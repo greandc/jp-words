@@ -116,7 +116,7 @@ unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
   });
   list.appendChild(mk("ひらがな", () => deps.goto?.("hiragana")));
   list.appendChild(mk("カタカナ", () => deps.goto?.("katakana")));
-  list.appendChild(mk("Numbers", () => deps.goto?.("numbers")));
+  list.appendChild(mk(t("numbers.title"), () => deps.goto?.("numbers")));
 
   // Back
   list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));

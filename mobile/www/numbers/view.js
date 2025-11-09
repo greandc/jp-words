@@ -1,5 +1,6 @@
 // mobile/www/numbers/view.js
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
+import { t } from "../i18n.js";
 
 const KANA = ["ゼロ","いち","に","さん","よん","ご","ろく","なな","はち","きゅう"];
 
@@ -57,16 +58,16 @@ export async function render(el, deps = {}){
   const root = document.createElement("div");
   root.className = "screen";
   root.innerHTML = `
-    <h1 style="margin:0 0 12px;">Numbers</h1>
+    <h1 style="margin:0 0 12px;">${t("numbers.title")}</h1>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;">
       <div style="font-size:.9rem;color:#64748b">
         <label style="display:inline-flex;align-items:center;gap:6px;">
           <input id="auto" type="checkbox" checked />
-          <span>Read Aloud</span>
+          <span>${t("practice.autoTTS")}</span>
         </label>
       </div>
-      <button id="back" class="btn" style="padding:.35rem .8rem;">Back</button>
+      <button id="back" class="btn" style="padding:.35rem .8rem;">${t("common.back")}</button>
     </div>
 
     <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin:0 0 12px;background:#fafafa">

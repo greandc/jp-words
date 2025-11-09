@@ -41,6 +41,7 @@ export const MESSAGES = {
   "result.backToMenu": "Back to menu",
   "result.retry": "Try again",
   "result.returnMenu": "Return menu",
+  "numbers.title": "Numbers", 
   "locked": "Locked"
 },
 
@@ -73,6 +74,7 @@ export const MESSAGES = {
     "stats.total": "{n} 日",
     "stats.streak": "{n} 連続",
     "stats.note": "日本時間で集計しています",
+    "numbers.title": "数字",
     "locked": "ロック中"
   },
  
@@ -114,6 +116,7 @@ export const MESSAGES = {
     "result.backToMenu": "返回菜单",
     "result.retry": "再试一次",
     "result.returnMenu": "返回菜单",
+    "numbers.title": "数字",
     "locked": "已锁定"
   },
 
@@ -155,6 +158,7 @@ export const MESSAGES = {
     "result.backToMenu": "메뉴로 돌아가기",
     "result.retry": "다시 시도",
     "result.returnMenu": "메뉴로 돌아가기",
+    "numbers.title": "숫자",
     "locked": "잠김"
   },
 
@@ -196,6 +200,7 @@ export const MESSAGES = {
     "result.backToMenu": "Trở lại menu",
     "result.retry": "Thử lại",
     "result.returnMenu": "Trở lại menu",
+    "numbers.title": "Số",
     "locked": "Đã khóa"
   },
 
@@ -238,6 +243,7 @@ export const MESSAGES = {
     "result.backToMenu": "Volver al menú",
     "result.retry": "Intentar de nuevo",
     "result.returnMenu": "Volver al menú",
+    "numbers.title": "Números",
     "locked": "Bloqueado"
   },
 
@@ -279,6 +285,7 @@ export const MESSAGES = {
     "result.backToMenu": "Retour au menu",
     "result.retry": "Réessayer",
     "result.returnMenu": "Retour au menu",
+    "numbers.title": "Nombres",
     "locked": "Verrouillé"
   },
 
@@ -320,6 +327,7 @@ export const MESSAGES = {
     "result.backToMenu": "Zurück zum Menü",
     "result.retry": "Erneut versuchen",
     "result.returnMenu": "Zurück zum Menü",
+    "numbers.title": "Zahlen",
     "locked": "Gesperrt"
   },
 
@@ -361,6 +369,7 @@ export const MESSAGES = {
     "result.backToMenu": "Torna al menu",
     "result.retry": "Riprova",
     "result.returnMenu": "Torna al menu",
+    "numbers.title": "Numeri",
     "locked": "Bloccato"
   },
 
@@ -402,6 +411,7 @@ export const MESSAGES = {
     "result.backToMenu": "Voltar ao menu",
     "result.retry": "Tentar novamente",
     "result.returnMenu": "Voltar ao menu",
+    "numbers.title": "Números",
     "locked": "Bloqueado"
   },
 
@@ -444,6 +454,7 @@ export const MESSAGES = {
     "result.backToMenu": "Kembali ke menu",
     "result.retry": "Coba lagi",
     "result.returnMenu": "Kembali ke menu",
+    "numbers.title": "Angka",
     "locked": "Terkunci"
   },
 
@@ -485,6 +496,7 @@ export const MESSAGES = {
     "result.backToMenu": "Bumalik sa menu",
     "result.retry": "Subukan muli",
     "result.returnMenu": "Bumalik sa menu",
+    "numbers.title": "Mga Numero",
     "locked": "Naka-lock"
   },
 
@@ -526,6 +538,7 @@ export const MESSAGES = {
     "result.backToMenu": "กลับไปที่เมนู",
     "result.retry": "ลองอีกครั้ง",
     "result.returnMenu": "กลับไปที่เมนู",
+    "numbers.title": "ตัวเลข",
     "locked": "ถูกล็อก"
   },
 
@@ -567,6 +580,7 @@ export const MESSAGES = {
     "result.backToMenu": "Вернуться в меню",
     "result.retry": "Попробовать снова",
     "result.returnMenu": "Вернуться в меню",
+    "numbers.title": "Числа",
     "locked": "Заблокировано"
   },
 
@@ -608,6 +622,7 @@ export const MESSAGES = {
     "result.backToMenu": "मेनू पर वापस जाएँ",
     "result.retry": "फिर से प्रयास करें",
     "result.returnMenu": "मेनू पर वापस जाएँ",
+    "numbers.title": "संख्याएँ",
     "locked": "लॉक किया गया"
   },
 
@@ -649,6 +664,7 @@ export const MESSAGES = {
     "result.backToMenu": "ត្រឡប់ទៅម៉ឺនុយ",
     "result.retry": "សាកល្បងម្ដងទៀត",
     "result.returnMenu": "ត្រឡប់ទៅម៉ឺនុយ",
+    "numbers.title": "លេខ",
     "locked": "បានចាក់សោ"
   },
 
@@ -690,6 +706,7 @@ export const MESSAGES = {
     "result.backToMenu": "ກັບໄປໜ້າເມນູ",
     "result.retry": "ລອງອີກຄັ້ງ",
     "result.returnMenu": "ກັບໄປໜ້າເມນູ",
+    "numbers.title": "ຕົວເລກ",
     "locked": "ຖືກລັອກ"
   },
 
@@ -731,6 +748,7 @@ export const MESSAGES = {
     "result.backToMenu": "मेनुमा फर्कनुहोस्",
     "result.retry": "फेरि प्रयास गर्नुहोस्",
     "result.returnMenu": "मेनुमा फर्कनुहोस्",
+    "numbers.title": "सङ्ख्याहरू",
     "locked": "लक गरिएको"
   }
 };
