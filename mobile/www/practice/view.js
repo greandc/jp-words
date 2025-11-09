@@ -188,35 +188,33 @@ console.log('[chk]', !!window.Capacitor, window.Capacitor?.getPlatform?.(), 'nat
 
 
   // ===== TTS（統一ラッパ使用）=====
-   const canTTS = ttsAvailable();
-   const speakBtn   = div.querySelector("#speakBtn");
-   const autoTtsChk = div.querySelector("#autoTts");
-   const msgEl      = div.querySelector("#msg");
-   const LS_AUTO    = "jpVocab.practice.autoTTS";
-   try { autoTtsChk.checked = localStorage.getItem(LS_AUTO) === "1"; } catch {}
- 
-   // まずデバッグを出す（上書きされないように innerHTML で追記）
-   const dbg = [
-     'Cap=' + (!!window.Capacitor),
-     'plat=' + (window.Capacitor?.getPlatform?.() ?? 'n/a'),
-     'native=' + (!!(window.Capacitor?.isNativePlatform?.() && window.Capacitor.isNativePlatform())),
-     'plugin=' + (!!(window.Capacitor?.Plugins?.TextToSpeech))
-   ].join(' / ');
-   if (msgEl) {
-     msgEl.style.display = "";
-     msgEl.innerHTML = 'DBG: ' + dbg;   // ← 常に見える
-   }
-   console.log('[TTS-CHK]', dbg);
- 
-   // 使えない場合はボタンを無効化（デバッグ表示は消さない）
-   if (!canTTS) {
-     if (speakBtn)   speakBtn.disabled = true;
-     if (autoTtsChk) autoTtsChk.disabled = true;
-   }
- 
-   autoTtsChk.addEventListener("change", () => {
-     try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
-   });
+const canTTS   = ttsAvailable();
+const speakBtn = div.querySelector("#speakBtn");
+const autoTtsChk = div.querySelector("#autoTts");
+const msgEl    = div.querySelector("#msg");
+const LS_AUTO  = "jpVocab.practice.autoTTS";
+try { autoTtsChk.checked = localStorage.getItem(LS_AUTO) === "1"; } catch {}
+
+// まずデバッグを画面とログに出す（上書きされないように innerHTML で追記）
+const dbg = [
+  'Cap=' + (!!window.Capacitor),
+  'plat=' + (window.Capacitor?.getPlatform?.() ?? 'n/a'),
+  'native=' + (!!(window.Capacitor?.isNativePlatform?.() && window.Capacitor.isNativePlatform())),
+  'plugin=' + (!!(window.Capacitor?.Plugins?.TextToSpeech))
+].join(' / ');
+if (msgEl) { msgEl.style.display = ""; msgEl.innerHTML = 'DBG: ' + dbg; }
+console.log('[TTS-CHK]', dbg);
+
+// 使えない場合はボタン無効化（デバッグ表示は消さない）
+if (!canTTS) {
+  if (speakBtn) speakBtn.disabled = true;
+  if (autoTtsChk) autoTtsChk.disabled = true;
+}
+
+autoTtsChk.addEventListener("change", () => {
+  try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
+});
+
 
 
   // ===== レンダリング =====
