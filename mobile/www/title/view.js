@@ -98,18 +98,24 @@ export async function render(el, deps = {}) {
   wrap.appendChild(tap);
   el.appendChild(wrap);
 
-  // ===== Cのアニメを「確実に」発火させる =====
-  // 1) 画像が既にキャッシュ済みでも動くように complete をチェック
-  // 2) 次フレーム（requestAnimationFrame）で .c-on を付けて確実にReflow
-  const startC = () => {
-    requestAnimationFrame(() => {
-      imgC.classList.remove("c-on"); // 念のため初期化
-      // ロゴの“じわー”が見えたあとに開始（1.1s 遅延）
-      setTimeout(() => { imgC.classList.add("c-on"); }, 1100);
-    });
-  };
-  if (imgC.complete) startC();
-  else imgC.addEventListener("load", startC);
+  // ===== Cのアニメを「確実に」発火させる（CSSに負けない強制版）=====
+const startC = () => {
+  // まず確実に最前面＆見える
+  imgC.style.opacity = "1";
+  imgC.style.transform = "scale(1)";
+
+  // 直前のアニメをクリア → 強制リフロー → 新規アニメ適用
+  imgC.style.animation = "none";
+  // 強制リフロー（これが超重要）
+  // eslint-disable-next-line no-unused-expressions
+  imgC.offsetWidth;
+  // アニメ名は cFlash を使用（CSSに定義済み）
+  imgC.style.animation = "cFlash .9s ease-in-out forwards";
+};
+
+// キャッシュ済みでも確実に1.1秒後に走る
+setTimeout(startC, 1100);
 }
+
 
 
