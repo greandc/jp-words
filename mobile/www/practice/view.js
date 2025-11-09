@@ -212,6 +212,10 @@ autoTtsChk.addEventListener("change", () => {
   try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
 });
 
+// UIは常に有効化。unsupportedは強制で非表示
+if (div.querySelector("#speakBtn")) div.querySelector("#speakBtn").disabled = false;
+if (div.querySelector("#autoTts"))  div.querySelector("#autoTts").disabled  = false;
+const _m = div.querySelector("#msg"); if (_m) { _m.textContent = ""; _m.style.display = "none"; }
 
 
 
@@ -249,6 +253,9 @@ autoTtsChk.addEventListener("change", () => {
   }
 
   renderCard();
+
+  setTimeout(() => { try { speak("テスト", { lang: "ja-JP" }); } catch(e) {} }, 400);
+
 
   // ===== ボタン =====
 const btnPrev = div.querySelector("#prev");
