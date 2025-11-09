@@ -1,4 +1,4 @@
-// app/features/menu/view.js
+// mobile/www/menu1/view.js
 import { t, getLang, setLang } from "../i18n.js";
 
 
@@ -114,6 +114,9 @@ unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
       }, locked)
     );
   });
+  list.appendChild(mk("ひらがな", () => deps.goto?.("hiragana")));
+  list.appendChild(mk("カタカナ", () => deps.goto?.("katakana")));
+  list.appendChild(mk("数字（読み上げ）", () => deps.goto?.("numbers")));
 
   // Back
   list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));

@@ -1,4 +1,4 @@
-// app/main.js
+// mobile/www/main.js
 import * as Quiz     from "./quiz/view.js?v=20251102";
 import * as Title    from "./title/view.js";
 import * as Menu     from "./menu1/view.js";
@@ -10,8 +10,9 @@ import * as Practice from "./practice/view.js";
 import { getLang } from "./i18n.js";
 import { createState, setRange, setSet, setMode, computeAbsoluteLevel } from "./state.js";
 import * as TestTitle from "./testTitle/view.js";
-
-
+import * as ViewNumbers from "./numbers/view.js";
+import * as ViewHira    from "./hiragana/view.js";
+import * as ViewKata    from "./katakana/view.js";
 
 
  // ====== グローバル状態（範囲・レベル） ======
@@ -21,14 +22,17 @@ let currentRange = [1, 20]; // ← デフォルト値（初回はLv1〜20）
 
  const routes = {
    title: Title,
- menu1: Menu,   // （タイトルはMenuに変更済み）
- menu2: Menu2,
- menu3: Menu3,
- lang: Lang,
- practice: Practice,
- quiz: Quiz,
+   menu1: Menu,   // （タイトルはMenuに変更済み）
+   menu2: Menu2,
+   menu3: Menu3,
+   lang: Lang,
+   practice: Practice,
+   quiz: Quiz,
    results: Results,
    testTitle: TestTitle,
+   numbers:  ViewNumbers,
+   hiragana: ViewHira,
+   katakana: ViewKata,
  };
 
  // 追加：グローバル状態の作成
