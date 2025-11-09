@@ -1,0 +1,9 @@
+{
+  "appId": "com.greandc.tangoloop",
+  "appName": "TANGO Loop",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
+
