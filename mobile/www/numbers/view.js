@@ -1,69 +1,146 @@
-import { speak, stop } from "../tts.v2.js";
+// mobile/www/numbers/view.js
+import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 
-export async function render(el, deps = {}) {
-  const div = document.createElement("div");
-  div.className = "screen";
-  div.innerHTML = `
-    <h1>数字</h1>
-    <div id="disp" style="font:700 28px/1.2 system-ui;margin:8px 0 12px;">0</div>
-    <div id="pad" style="display:grid;grid-template-columns:repeat(3,80px);gap:10px"></div>
-    <div style="margin-top:12px">
-      <button class="btn" id="speakBtn">読み上げ</button>
-      <button class="btn" id="clearBtn">クリア</button>
-      <button class="btn" id="backBtn">Back</button>
-    </div>
-  `;
-  el.appendChild(div);
+const KANA = ["ゼロ","いち","に","さん","よん","ご","ろく","なな","はち","きゅう"];
 
-  const disp = div.querySelector("#disp");
-  const pad  = div.querySelector("#pad");
+function readUnder10000(n){
+  if (n === 0) return "";
+  let s = "";
+  const th = Math.floor(n/1000); n%=1000;
+  const h  = Math.floor(n/100);  n%=100;
+  const t  = Math.floor(n/10);   const u = n%10;
 
-  // 0-9 ＋ 00
-  const keys = ["7","8","9","4","5","6","1","2","3","0","00"];
-  keys.forEach(k=>{
-    const b=document.createElement("button");
-    b.className="btn"; b.textContent=k;
-    b.onclick=()=>{
-      const cur = disp.textContent.replace(/^0+$/,'');
-      const next = (cur + k).replace(/^0+(?=\d)/,'');
-      disp.textContent = next || "0";
-    };
-    pad.appendChild(b);
-  });
-
-  div.querySelector("#clearBtn").onclick = ()=>{ disp.textContent="0"; stop(); };
-  div.querySelector("#backBtn").onclick  = ()=>{ stop(); deps.goto?.("menu1"); };
-  div.querySelector("#speakBtn").onclick = ()=>{
-    const n = Number(disp.textContent || "0");
-    speak(toJPNumber(n), { lang:"ja-JP" });
-  };
-}
-
-// 0〜9999 の日本語読み
-function toJPNumber(n){
-  n = Math.max(0, Math.min(9999, Math.floor(n)));
-  if (n===0) return "ゼロ";
-  const ichi = ["","いち","に","さん","よん","ご","ろく","なな","はち","きゅう"];
-  const hyakuSp = {3:"さんびゃく",6:"ろっぴゃく",8:"はっぴゃく"};
-  const senSp   = {3:"さんぜん",8:"はっせん"};
-  const parts = [];
-
-  const s = Math.floor(n/1000)%10;
-  const h = Math.floor(n/100)%10;
-  const t = Math.floor(n/10)%10;
-  const o = n%10;
-
-  if (s){
-    parts.push(senSp[s] || (s===1 ? "せん" : ichi[s] + "せん"));
+  if (th){
+    if (th===1) s+="せん";
+    else if (th===3) s+="さんぜん";
+    else if (th===8) s+="はっせん";
+    else s+=KANA[th]+"せん";
   }
   if (h){
-    parts.push(hyakuSp[h] || (h===1 ? "ひゃく" : ichi[h] + "ひゃく"));
+    if (h===1) s+="ひゃく";
+    else if (h===3) s+="さんびゃく";
+    else if (h===6) s+="ろっぴゃく";
+    else if (h===8) s+="はっぴゃく";
+    else s+=KANA[h]+"ひゃく";
   }
   if (t){
-    parts.push(t===1 ? "じゅう" : (ichi[t] + "じゅう"));
+    if (t===1) s+="じゅう";
+    else s+=KANA[t]+"じゅう";
   }
-  if (o){
-    parts.push(ichi[o]);
+  if (u) s+=KANA[u];
+  return s;
+}
+
+// 0～9,999,999,999 くらいまで対応（～兆）
+function numberToJa(n){
+  if (!Number.isFinite(n)) return "";
+  if (n===0) return "ゼロ";
+  const units = ["","まん","おく","ちょう"];
+  let s = "", i = 0;
+  while(n>0 && i<units.length){
+    const part = n % 10000;
+    if (part){
+      const head = readUnder10000(part);
+      s = head + (units[i]??"") + s;
+    }
+    n = Math.floor(n/10000); i++;
   }
-  return parts.join("");
+  return s || "ゼロ";
+}
+
+export async function render(el, deps = {}){
+  ttsSetLang("ja-JP");
+
+  let digits = "";        // 入力中の数字（文字列）
+  let auto = true;        // 自動読み上げ
+
+  const root = document.createElement("div");
+  root.className = "screen";
+  root.innerHTML = `
+    <h1 style="margin:0 0 12px;">Numbers</h1>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;">
+      <div style="font-size:.9rem;color:#64748b">
+        <label style="display:inline-flex;align-items:center;gap:6px;">
+          <input id="auto" type="checkbox" checked />
+          <span>Read Aloud</span>
+        </label>
+      </div>
+      <button id="back" class="btn" style="padding:.35rem .8rem;">Back</button>
+    </div>
+
+    <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin:0 0 12px;background:#fafafa">
+      <div id="disp" style="font-size:1.6rem;font-weight:700;letter-spacing:.04em;word-break:break-all;min-height:2.2em">0</div>
+      <div id="reading" style="margin-top:6px;color:#374151;font-size:1.1rem">ゼロ</div>
+    </div>
+
+    <div id="pad" style="
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      ${[1,2,3,4,5,6,7,8,9,"⌫",0,"C"].map(v => `
+        <button class="btn" data-k="${v}" style="height:56px;font-size:1.2rem;">${v}</button>
+      `).join("")}
+    </div>
+  `;
+  el.appendChild(root);
+
+  const $disp = root.querySelector("#disp");
+  const $reading = root.querySelector("#reading");
+  const $pad = root.querySelector("#pad");
+  const $auto = root.querySelector("#auto");
+
+  function updateView(){
+    const n = digits.length ? Number(digits) : 0;
+    $disp.textContent = digits.length ? digits : "0";
+    $reading.textContent = numberToJa(n);
+  }
+
+  async function speakStep(lastDigit){
+    const n = digits.length ? Number(digits) : 0;
+    // 1) 押した桁
+    if (lastDigit !== undefined){
+      await speak(KANA[lastDigit]);
+    }
+    // 2) 全体
+    await speak(numberToJa(n));
+  }
+
+  function pushDigit(d){
+    // 先頭ゼロ連打は抑制
+    if (digits === "" && d === 0) { updateView(); return; }
+    // 桁数ガード（お好みで拡張OK）
+    if (digits.length >= 12) return;
+    digits += String(d);
+    updateView();
+    if (auto) speakStep(d);
+  }
+
+  function backspace(){
+    if (!digits) return;
+    digits = digits.slice(0, -1);
+    updateView();
+    if (auto){
+      const n = digits.length ? Number(digits) : 0;
+      speak(numberToJa(n));
+    }
+  }
+
+  function clearAll(){
+    digits = "";
+    updateView();
+    if (auto) speak("クリア");
+  }
+
+  $pad.addEventListener("click", (e)=>{
+    const b = e.target.closest("button[data-k]");
+    if (!b) return;
+    const k = b.getAttribute("data-k");
+    if (k === "⌫") backspace();
+    else if (k === "C") clearAll();
+    else pushDigit(Number(k));
+  });
+
+  $auto.addEventListener("change", ()=> auto = $auto.checked);
+  root.querySelector("#back").addEventListener("click", ()=> deps.goto?.("menu1"));
+
+  updateView();
 }

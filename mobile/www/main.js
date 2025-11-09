@@ -10,7 +10,7 @@ import * as Practice from "./practice/view.js";
 import { getLang } from "./i18n.js";
 import { createState, setRange, setSet, setMode, computeAbsoluteLevel } from "./state.js";
 import * as TestTitle from "./testTitle/view.js";
-import * as ViewNumbers from "./numbers/view.js";
+import * as Numbers  from "./numbers/view.js";
 import * as ViewHira    from "./hiragana/view.js";
 import * as ViewKata    from "./katakana/view.js";
 
@@ -30,7 +30,7 @@ let currentRange = [1, 20]; // ← デフォルト値（初回はLv1〜20）
    quiz: Quiz,
    results: Results,
    testTitle: TestTitle,
-   numbers:  ViewNumbers,
+   numbers: Numbers,
    hiragana: ViewHira,
    katakana: ViewKata,
  };
