@@ -1,23 +1,6 @@
 // mobile/www/tts.v2.js
 const __VER = 'v2-20251109d';
 
-// === UIログ（画面右上に表示） ===
-function ttsUILog(label, data) {
-  try {
-    let box = document.getElementById('tts-ui-log');
-    if (!box) {
-      box = document.createElement('div');
-      box.id = 'tts-ui-log';
-      box.style.cssText = 'position:fixed;top:8px;right:8px;z-index:999999;padding:6px 8px;background:rgba(0,0,0,.75);color:#fff;border-radius:6px;font:12px/1.3 system-ui;max-width:70vw';
-      document.body.appendChild(box);
-    }
-    const line = document.createElement('div');
-    line.textContent = `[TTS ${__VER}] ${label}` + (data ? ` ${JSON.stringify(data)}` : '');
-    box.appendChild(line);
-    while (box.childElementCount > 10) box.removeChild(box.firstChild);
-    console.log(`[TTS ${__VER}]`, label, data || '');
-  } catch (_) {}
-}
 
 // ===== ここで “読まれた印” を即出す
 (function bootLog(){
