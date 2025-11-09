@@ -44,29 +44,31 @@ export async function render(el, deps = {}) {
   div.className = "screen";
   div.innerHTML = `
   <div style="
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    padding:0 16px;
-    box-sizing:border-box;
-  ">
-    <h1 style="text-align:center;margin:0 0 20px;">
+  /* 画面ど真ん中に固定 */
+  display:grid;
+  place-items:center;
+  height:100dvh;           /* ← 100vh ではなく 100dvh を使用 */
+  padding:16px;
+  box-sizing:border-box;
+">
+  <div style="width:100%;max-width:480px;display:grid;gap:20px;justify-items:center">
+    <h1 style="text-align:center;margin:0;">
       ${t("level.label", { n: levelNum }) || `${t("level") || "Level"} ${levelNum}`}
     </h1>
+
     <div style="
       display:grid;
       gap:12px;
       grid-template-columns:1fr;
       width:100%;
-      max-width:480px;
     ">
       <button class="btn" id="btnPractice">${t("menu3.practice") || "Practice"}</button>
       <button class="btn" id="btnTest">${t("menu3.test") || "Test"}</button>
       <button class="btn" id="btnBack">${t("common.back") || "Back"}</button>
     </div>
   </div>
+</div>
+
 `;
 
   el.appendChild(div);
@@ -107,11 +109,6 @@ div.querySelector("#btnTest").addEventListener("click", () => {
   // D) testTitle へ
   deps.goto?.("testTitle");
 });
-
-
-
-
-
 
   div.querySelector("#btnBack").addEventListener("click", () => {
     deps.goto?.("menu2");
