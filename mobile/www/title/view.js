@@ -1,9 +1,47 @@
 // mobile/www/title/view.js
 import { t } from "../i18n.js";
 
-// ===== ここから丸ごと置き換え =====
+/* -------------------------------------------------------
+   タイトル画面（ロゴじわー / Cキラーン / TAPふわっ）
+   ・下の画面にタップが貫通しない
+   ・C画像がロゴと同寸キャンバスでもOK（自動トリミング）
+------------------------------------------------------- */
+
+// 透明余白を自動トリミング（Cだけ切り出し）して dataURL を返す
+async function autoCropTransparent(imgEl) {
+  await (imgEl.complete ? Promise.resolve()
+        : new Promise(res => imgEl.addEventListener("load", res, { once:true })));
+
+  const w = imgEl.naturalWidth, h = imgEl.naturalHeight;
+  const cvs = document.createElement("canvas");
+  cvs.width = w; cvs.height = h;
+  const ctx = cvs.getContext("2d");
+  ctx.drawImage(imgEl, 0, 0);
+
+  const data = ctx.getImageData(0, 0, w, h).data;
+  let top=h, left=w, right=0, bottom=0, hit=false;
+  for (let y=0; y<h; y++){
+    for (let x=0; x<w; x++){
+      const a = data[(y*w + x)*4 + 3];
+      if (a>0){ hit=true;
+        if (x<left) left=x;
+        if (x>right) right=x;
+        if (y<top) top=y;
+        if (y>bottom) bottom=y;
+      }
+    }
+  }
+  if (!hit) return null;
+
+  const cw = right-left+1, ch = bottom-top+1;
+  const out = document.createElement("canvas");
+  out.width = cw; out.height = ch;
+  out.getContext("2d").drawImage(cvs, left, top, cw, ch, 0, 0, cw, ch);
+  return { dataUrl: out.toDataURL("image/png") };
+}
+
 export async function render(el, deps = {}) {
-  // 覆い（下の画面にタップが貫通しない）
+  // 覆い（貫通防止）
   const wrap = document.createElement("div");
   wrap.className = "screen";
   wrap.style.cssText = `
@@ -12,7 +50,7 @@ export async function render(el, deps = {}) {
     pointer-events:auto;
   `;
 
-  // ロゴ箱（相対配置）
+  // ロゴ箱
   const box = document.createElement("div");
   box.style.cssText = `
     position:relative;
@@ -20,7 +58,7 @@ export async function render(el, deps = {}) {
     display:flex; flex-direction:column; align-items:center;
   `;
 
-  // メインロゴ（じわー は既存CSS側でやってOK）
+  // メインロゴ（じわー）
   const img = document.createElement("img");
   img.src = "./img/title.png";
   img.alt = "GreandC";
@@ -31,7 +69,7 @@ export async function render(el, deps = {}) {
     opacity:0; animation: logoIn .9s ease-out forwards;
   `;
 
-  // C 画像（重ねる専用）
+  // C（重ねる）
   const imgC = document.createElement("img");
   imgC.src = "./img/title-c.png";
   imgC.alt = "";
@@ -39,7 +77,7 @@ export async function render(el, deps = {}) {
     position:absolute; opacity:0; pointer-events:none; transform-origin:center;
   `;
 
-  // 「TAP TO START」
+  // TAP（ふわっ）
   const tap = document.createElement("div");
   tap.textContent = "—  TAP TO START  —";
   tap.style.cssText = `
@@ -48,7 +86,7 @@ export async function render(el, deps = {}) {
     opacity:0; animation: tapIn .6s ease-out .9s forwards;
   `;
 
-  // クリック抜け防止して menu1 へ
+  // クリック抜け防止 → menu1
   let navigated = false;
   const go = (ev) => {
     if (navigated) return;
@@ -61,36 +99,39 @@ export async function render(el, deps = {}) {
   };
   wrap.addEventListener("pointerdown", go, { once:true });
 
-  // ---- ここがポイント：C の位置/サイズ算出＆アニメ発火 ----
-  function placeC() {
+  // C の位置/サイズ（ロゴ基準の相対配置）
+  const placeC = () => {
     const w = img.clientWidth;
     const h = img.clientHeight;
-    // 調整係数（必要なら微調整：sizeK 0.20→0.22 など）
-    const sizeK = 0.20;   // C 幅 = ロゴ幅の 20%
-    const leftK = 0.62;   // 左位置 = ロゴ幅の 62%
-    const topK  = 0.15;   // 上位置 = ロゴ高の 15%
+    const sizeK = 0.20; // 0.20→0.22 等で微調整
+    const leftK = 0.62;
+    const topK  = 0.15;
     imgC.style.width = (w * sizeK) + "px";
     imgC.style.left  = (w * leftK) + "px";
     imgC.style.top   = (h * topK)  + "px";
-  }
+  };
 
-  function setupC() {
+  // C を確実に発火：トリミング→配置→アニメ
+  const setupC = async () => {
+    // 透明余白を切り落として “Cだけ” に
+    const cropped = await autoCropTransparent(imgC);
+    if (cropped?.dataUrl) imgC.src = cropped.dataUrl;
+
     placeC();
-    // “確実に”発火：一度止めて reflow → 再度 animation を付ける
     imgC.style.opacity = "1";
     imgC.style.animation = "none";
     // reflow
     // eslint-disable-next-line no-unused-expressions
     imgC.offsetWidth;
     imgC.style.animation = "cFlash .9s ease-in-out forwards";
-  }
+  };
 
   const startAfterLogo = () => setTimeout(setupC, 1100);
   if (img.complete) startAfterLogo();
   else img.addEventListener("load", startAfterLogo);
   window.addEventListener("resize", placeC, { passive:true });
 
-  // 追加：キーフレーム（未注入なら注入）
+  // キーフレーム（未注入なら注入）
   const styleId = "title-anim-css";
   if (!document.getElementById(styleId)) {
     const st = document.createElement("style");
@@ -107,15 +148,10 @@ export async function render(el, deps = {}) {
     document.head.appendChild(st);
   }
 
-  // DOMに載せる
+  // DOM 反映
   box.appendChild(img);
   box.appendChild(imgC);
   wrap.appendChild(box);
   wrap.appendChild(tap);
   el.appendChild(wrap);
 }
-
-
-
-
-
