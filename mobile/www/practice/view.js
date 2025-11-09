@@ -184,11 +184,8 @@ if (!items || items.length === 0) {
   return;
 }
 
-console.log(
-  'Cap?', !!window.Capacitor,
-  'isNative?', !!(window.Capacitor?.isNativePlatform && window.Capacitor.isNativePlatform()),
-  'Plugin?', !!(window.Capacitor?.Plugins?.TextToSpeech)
-);
+console.log('[chk]', !!window.Capacitor, window.Capacitor?.getPlatform?.(), 'native?', (window.Capacitor?.isNativePlatform?.()), 'plugin?', !!(window.Capacitor?.Plugins?.TextToSpeech));
+
 
   // ===== TTS（統一ラッパ使用）=====
   const canTTS = ttsAvailable();
