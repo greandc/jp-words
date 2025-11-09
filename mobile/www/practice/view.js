@@ -194,26 +194,24 @@ const msgEl      = div.querySelector("#msg");
 const LS_AUTO    = "jpVocab.practice.autoTTS";
 try { autoTtsChk.checked = localStorage.getItem(LS_AUTO) === "1"; } catch {}
 
-// 初回判定（この時点で false でも、後で再判定する）
-function applyTtsUI(can) {
-  if (!can) {
-    if (speakBtn) speakBtn.disabled = true;
-    if (autoTtsChk) autoTtsChk.disabled = true;
-    if (msgEl) { msgEl.textContent = 'tts.unsupported'; msgEl.style.display = ''; }
-  } else {
-    if (speakBtn) speakBtn.disabled = false;
-    if (autoTtsChk) autoTtsChk.disabled = false;
-    if (msgEl) msgEl.style.display = 'none';
-  }
+// いったん “必ず有効化” に寄せる（環境はOKなのでUIだけ直す）
+function enableTtsUI() {
+  if (speakBtn)   speakBtn.disabled = false;
+  if (autoTtsChk) autoTtsChk.disabled = false;
+  if (msgEl)      msgEl.style.display = "none";
 }
-applyTtsUI(ttsAvailable());
+enableTtsUI();
 
-// 200ms 後にもう一度判定（capacitor.js の読み込み遅延に対応）
-setTimeout(() => applyTtsUI(ttsAvailable()), 200);
+// （デバッグ）起動確認：300ms後に小さく一声だけ出す
+// 要らなければ、この setTimeout ブロックを消せばOK
+setTimeout(() => {
+  try { speak("テスト", { lang: "ja-JP" }); } catch(e) { console.log("self-test err", e); }
+}, 300);
 
 autoTtsChk.addEventListener("change", () => {
   try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
 });
+
 
 
 
