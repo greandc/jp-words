@@ -1,6 +1,6 @@
 // mobile/www/tts.v2.js
 // ==========================================================
-// Capacitor / Web 両対応の TTS + 画面ログ付き
+// Capacitor / Web 両対応の TTS + 画面ログ（読まれた瞬間に出る）
 // ==========================================================
 
 // === UIログ（画面右上に表示） ===
@@ -13,7 +13,7 @@ function ttsUILog(label, data) {
       box.style.cssText =
         'position:fixed;top:8px;right:8px;z-index:999999;padding:6px 8px;' +
         'background:rgba(0,0,0,.75);color:#fff;border-radius:6px;' +
-        'font:12px/1.3 system-ui;max-width:60vw';
+        'font:12px/1.3 system-ui;max-width:70vw';
       document.body.appendChild(box);
     }
     const line = document.createElement('div');
@@ -116,3 +116,14 @@ export async function speak(text, opts = {}){
 
 // （ダミー初期化）
 export async function ttsSetup(){ return true; }
+
+// ===== ここがポイント：モジュールが読まれた瞬間に表示 =====
+(function bootLog(){
+  const info = {
+    cap: !!window.Capacitor,
+    plat: window.Capacitor?.getPlatform?.() || 'n/a',
+    native: !!(window.Capacitor?.isNativePlatform?.() && window.Capacitor.isNativePlatform()),
+    plugin: !!NativeTTS
+  };
+  ttsUILog('LOADED', info);
+})();
