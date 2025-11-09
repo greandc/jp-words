@@ -211,52 +211,57 @@ body{
   padding-top: 8px;
 }
 
-/* タイトル画面：全面オーバーレイ + 中央寄せ */
+/* タイトル画面：全面オーバーレイ（下に抜けない） */
 .title-screen{
   position: fixed; inset: 0;
-  background: #fff;                 /* 下を隠す */
-  z-index: 9999;                    /* 最前面 */
-  display: grid; place-items: center;  /* 上下左右センター */
+  background: #fff;
+  z-index: 9999;
+  display: grid; place-items: center;     /* 中央基準 */
+  pointer-events: auto;                    /* 自身で受ける */
 }
 
+/* 配置：少し上に寄せ、ロゴとTAPの距離を詰める */
 .title-wrap{
-  display: grid; gap: 18px;
+  display: grid;
   justify-items: center;
+  gap: 10px;                               /* ロゴ↔TAP の距離（近め） */
+  transform: translateY(-10vh);            /* 画面のやや上側に寄せる */
   animation: fadeIn 420ms ease-out both;
 }
 
+.logo-stack{ position: relative; }
 .title-logo{
   width: 64vw; max-width: 280px; height: auto;
+  display:block;
   animation: logoIn 550ms ease-out both;
+}
+.title-c{
+  position: absolute; inset: 0; margin:auto;
+  width: 64vw; max-width: 280px; height: auto;
+  opacity: 0;
+  filter: drop-shadow(0 0 0 rgba(255,223,0,0));
+  animation: cShine 900ms 420ms ease-out both; /* 少し遅れてキラーン */
 }
 
 .title-wrap .tap{
+  margin-top: 4px;                          /* さらに近づけるなら 0〜4px */
   color: #9aa7b5; letter-spacing: .12em;
   font-weight: 700;
 }
 
 @keyframes fadeIn{
-  from{ opacity: 0; transform: translateY(8px); }
-  to  { opacity: 1; transform: translateY(0); }
+  from{ opacity:0; transform: translateY(-12vh); }
+  to  { opacity:1; transform: translateY(-10vh); }
 }
 @keyframes logoIn{
-  from{ opacity: 0; transform: scale(.96); }
-  to  { opacity: 1; transform: scale(1); }
+  from{ opacity:0; transform: scale(.96); }
+  to  { opacity:1; transform: scale(1); }
 }
-.logo-stack{ position: relative; }
-.logo-stack .title-logo{ display:block; }
-.logo-stack .title-c{
-  position: absolute; inset: 0; margin: auto;
-  width: 64vw; max-width: 280px; height: auto;
-  opacity: 0;
-  filter: drop-shadow(0 0 0 rgba(255, 223, 0, 0));
-  animation: cShine 900ms 420ms ease-out both; /* ロゴ後、少し遅れて */
+@keyframes cShine{
+  0%   { opacity:0; filter:drop-shadow(0 0 0 rgba(255,223,0,0)); }
+  25%  { opacity:1; filter:drop-shadow(0 0 14px rgba(255,223,0,.85)); transform:scale(1.02); }
+  60%  { opacity:1; filter:drop-shadow(0 0 18px rgba(255,223,0,.6));  transform:scale(1.00); }
+  100% { opacity:0; filter:drop-shadow(0 0 0 rgba(255,223,0,0)); }
 }
 
-@keyframes cShine{
-  0%   { opacity: 0; filter: drop-shadow(0 0 0 rgba(255,223,0,0)); }
-  25%  { opacity: 1; filter: drop-shadow(0 0 14px rgba(255,223,0,.85)); transform: scale(1.02); }
-  60%  { opacity: 1; filter: drop-shadow(0 0 18px rgba(255,223,0,.6));  transform: scale(1.00); }
-  100% { opacity: 0; filter: drop-shadow(0 0 0 rgba(255,223,0,0)); }
-}
 

@@ -3,34 +3,45 @@ import { t } from "../i18n.js";
 // mobile/www/title/view.js
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 
+// mobile/www/title/view.js
 export async function render(el, deps = {}) {
-  // 画面全体を覆う（下の画面を触れなくする）
   const div = document.createElement("div");
   div.className = "title-screen";
   div.innerHTML = `
     <div class="title-wrap">
-   <div class="logo-stack">
-    <img src="./img/title.png" class="title-logo" alt="GreandC">
-    <img src="./img/title-C.png"    class="title-c"    alt="">
-   </div>
-   <div class="tap">— TAP TO START —</div>
-  </div>
+      <div class="logo-stack">
+        <img src="./img/title.png" class="title-logo" alt="GreandC">
+        <img src="./img/title-C.png"    class="title-c"    alt="">
+      </div>
+      <div class="tap">— TAP TO START —</div>
+    </div>
   `;
   el.appendChild(div);
 
-  // タップ（またはクリック）で menu1 へ
+  // クリック抜け防止の盾（300ms）を用意
+  let navigated = false;
   const go = (ev) => {
-    // これで“下のボタン”にイベントが抜けない
+    if (navigated) return;
+    navigated = true;
     ev.preventDefault();
     ev.stopPropagation();
     ev.stopImmediatePropagation?.();
-    // 同フレームでルーティングすると稀にバブリングが残るので遅延
-    setTimeout(() => deps.goto?.("menu1"), 0);
+
+    // 盾を張って同フレームの下層クリックを吸収
+    const shield = document.createElement("div");
+    shield.style.cssText = `
+      position:fixed; inset:0; z-index:10000;
+      background:transparent; pointer-events:auto;
+    `;
+    document.body.appendChild(shield);
+
+    setTimeout(() => {
+      deps.goto?.("menu1");
+      // 万一残っても300msで消す
+      setTimeout(() => shield.remove(), 300);
+    }, 0);
   };
-  // 1回だけ発火
+
+  // 画面全体で一回だけ
   div.addEventListener("pointerdown", go, { once: true });
-
-  // 画面離脱時の後片付け
-  return () => { stop(); };
 }
-
