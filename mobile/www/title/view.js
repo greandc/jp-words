@@ -10,8 +10,8 @@ export async function render(el, deps = {}) {
   div.innerHTML = `
     <div class="title-wrap">
    <div class="logo-stack">
-    <img src="./img/logo-main.png" class="title-logo" alt="GreandC">
-    <img src="./img/logo-C.png"    class="title-c"    alt="">
+    <img src="./img/title.png" class="title-logo" alt="GreandC">
+    <img src="./img/title-C.png"    class="title-c"    alt="">
    </div>
    <div class="tap">— TAP TO START —</div>
   </div>
