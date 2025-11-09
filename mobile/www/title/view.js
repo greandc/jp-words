@@ -1,49 +1,43 @@
-// app/features/title/view.js
-import { t } from "../i18n.js";
 // mobile/www/title/view.js
-import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
-
-// ...冒頭のimportなどはそのまま...
+import { t } from "../i18n.js"; // 使うならそのまま。未使用でも害なし。
 
 export async function render(el, deps = {}) {
   const wrap = document.createElement("div");
   wrap.className = "screen";
-  // 画面全面の独立レイヤ（タップ吸収＆メニュー貫通防止）
   wrap.style.cssText = `
     position:fixed; inset:0; z-index:9999;
     background:#fff;
     display:flex; flex-direction:column;
     justify-content:center; align-items:center;
-    pointer-events:auto;               /* ← これで下に貫通しない */
+    pointer-events:auto;
   `;
 
-  // ロゴ＋キラーンを包むボックス（少しだけ上にオフセット）
+  // ロゴブロック（少しだけ上寄せ）
   const box = document.createElement("div");
   box.style.cssText = `
     position:relative;
-    transform: translateY(-6vh);       /* ほんの少し上寄せ */
+    transform: translateY(-6vh);
     display:flex; flex-direction:column; align-items:center;
   `;
 
   // メインロゴ
   const img = document.createElement("img");
-  img.src = "./img/title.png";         // ← 画像名修正済み版
+  img.src = "./img/title.png";
   img.alt = "GreandC";
   img.style.cssText = `
     width:min(68vw, 360px);
-    height:auto;
-    display:block;
+    height:auto; display:block;
     filter: drop-shadow(0 1px 0 rgba(0,0,0,.08));
   `;
 
-  // “C”キラーン
+  // “C” キラーン
   const imgC = document.createElement("img");
-  imgC.src = "./img/title-c.png";      // ← 画像名修正済み版
+  imgC.src = "./img/title-c.png";
   imgC.alt = "";
   imgC.style.cssText = `
     position:absolute; right:6.5%; top:7%;
-    width: min(10vw, 56px); height:auto; opacity:0;
-    animation: cflash .9s ease-in-out .9s forwards;
+    width:min(10vw,56px); height:auto; opacity:0;
+    animation:cflash .9s ease-in-out .9s forwards;
     pointer-events:none;
   `;
 
@@ -51,13 +45,10 @@ export async function render(el, deps = {}) {
   const tap = document.createElement("div");
   tap.textContent = "—  TAP TO START  —";
   tap.style.cssText = `
-    margin-top: 12px;                  /* ロゴとの距離：ここで調整 */
+    margin-top:12px;
     color:#94a3b8; letter-spacing:.12em; font-weight:600;
-    font-size: clamp(14px, 2.9vw, 16px);
+    font-size:clamp(14px,2.9vw,16px);
   `;
-
-  // クリックでmenu1へ
-  wrap.addEventListener("click", () => deps.goto?.("menu1"));
 
   box.appendChild(img);
   box.appendChild(imgC);
@@ -65,32 +56,29 @@ export async function render(el, deps = {}) {
   wrap.appendChild(tap);
   el.appendChild(wrap);
 
-  // キーフレーム（1回だけ付与）
-  const styleId = "title-anim-css";
-  if (!document.getElementById(styleId)) {
+  // キーフレーム（重複追加しない）
+  if (!document.getElementById("title-anim-css")) {
     const st = document.createElement("style");
-    st.id = styleId;
+    st.id = "title-anim-css";
     st.textContent = `
-      @keyframes cflash {
-        0% { opacity:0; transform:scale(.9); filter:brightness(1); }
-        30%{ opacity:1; transform:scale(1.08); filter:brightness(1.8); }
-        100%{ opacity:1; transform:scale(1); filter:brightness(1); }
+      @keyframes cflash{
+        0%{opacity:0;transform:scale(.9);filter:brightness(1)}
+        30%{opacity:1;transform:scale(1.08);filter:brightness(1.8)}
+        100%{opacity:1;transform:scale(1);filter:brightness(1)}
       }
     `;
     document.head.appendChild(st);
   }
 
-
-  // クリック抜け防止の盾（300ms）を用意
+  // 下層への貫通防止付きのワンタップ遷移（1回だけ）
   let navigated = false;
-  const go = (ev) => {
+  wrap.addEventListener("pointerdown", (ev) => {
     if (navigated) return;
     navigated = true;
     ev.preventDefault();
     ev.stopPropagation();
-    ev.stopImmediatePropagation?.();
 
-    // 盾を張って同フレームの下層クリックを吸収
+    // 盾で同フレーム貫通を吸収
     const shield = document.createElement("div");
     shield.style.cssText = `
       position:fixed; inset:0; z-index:10000;
@@ -98,13 +86,10 @@ export async function render(el, deps = {}) {
     `;
     document.body.appendChild(shield);
 
+    // 次フレームで遷移、少しして盾を外す
     setTimeout(() => {
       deps.goto?.("menu1");
-      // 万一残っても300msで消す
       setTimeout(() => shield.remove(), 300);
     }, 0);
-  };
-
-  // 画面全体で一回だけ
-  div.addEventListener("pointerdown", go, { once: true });
+  }, { once: true });
 }
