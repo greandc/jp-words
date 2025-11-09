@@ -189,6 +189,17 @@ console.log('[chk]', !!window.Capacitor, window.Capacitor?.getPlatform?.(), 'nat
 
   // ===== TTS（統一ラッパ使用）=====
   const canTTS = ttsAvailable();
+  {
+  const dbg = [
+    'Cap=' + (!!window.Capacitor),
+    'plat=' + (window.Capacitor?.getPlatform?.() ?? 'n/a'),
+    'native=' + (!!(window.Capacitor?.isNativePlatform?.() && window.Capacitor.isNativePlatform())),
+    'plugin=' + (!!(window.Capacitor?.Plugins?.TextToSpeech))
+  ].join(' / ');
+  const m = div.querySelector("#msg");
+  if (m) { m.textContent = dbg; m.style.display = ""; }
+  console.log('[TTS-CHK]', dbg);
+}
   const speakBtn = div.querySelector("#speakBtn");
   const autoTtsChk = div.querySelector("#autoTts");
   const LS_AUTO = "jpVocab.practice.autoTTS";
