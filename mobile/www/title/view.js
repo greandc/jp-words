@@ -69,15 +69,14 @@ export async function render(el, deps = {}) {
     opacity:0; animation: logoIn .9s ease-out forwards;
   `;
 
-  // C（重ねる）
+  /// --- C 画像（ロゴと同キャンバスなので全面重ねる） ---
   const imgC = document.createElement("img");
-  imgC.src = "./img/title-c.png";   // キラーン用の透明PNG（キャンバスサイズはロゴと同じでOK）
-  imgC.alt = "";
-  imgC.style.cssText = `
-   position:absolute; left:0; top:0;       /* ロゴにピッタリ重ねる */
-   width:100%; height:auto;                /* ロゴと同じスケールで追従 */
-   opacity:0; pointer-events:none;
- `;
+   imgC.src = "./img/title-c.png";
+   imgC.alt = "";
+   imgC.style.cssText = `
+     position:absolute; left:0; top:0; width:100%; height:auto;
+     opacity:0; pointer-events:none; transform-origin:center;
+  `;
 
   // TAP（ふわっ）
   const tap = document.createElement("div");
@@ -113,47 +112,51 @@ export async function render(el, deps = {}) {
     imgC.style.top   = (h * topK)  + "px";
   };
 
-  // === C を“確実に・派手に”光らせる ===
- function flashC() {
-  // 目に見えるように派手めに
+  // === C を“確実に”光らせる（毎回発火） ===
+function flashC() {
+  console.log("[title] flashC start");
   imgC.style.opacity = "1";
   imgC.style.willChange = "transform,filter,opacity";
 
-  // いったん切って → reflow → 付け直し（確実に発火）
+  // 一旦外して reflow → 付け直し
   imgC.style.animation = "none";
   // reflow
   // eslint-disable-next-line no-unused-expressions
   imgC.offsetWidth;
   imgC.style.animation = "cFlash 900ms ease-out forwards";
- }
+}
 
-  // ロゴの“じわー”が見えた後にCを光らせる
-  const startAfterLogo = () => setTimeout(flashC, 1100);
+// ロゴの“じわー”が見えた後にCを光らせる
+const startAfterLogo = () => setTimeout(flashC, 1100);
+if (img.complete) startAfterLogo();
+else img.addEventListener("load", startAfterLogo);
 
-  // 画像キャッシュ済みでも必ず走る
-  if (img.complete) startAfterLogo();
-  else img.addEventListener("load", startAfterLogo);
+// （デバッグ）アニメイベントを Logcat に出す
+imgC.addEventListener("animationstart", e => console.log("[title] C anim start:", e.animationName));
+imgC.addEventListener("animationend",   e => console.log("[title] C anim end:",   e.animationName));
 
   window.addEventListener("resize", placeC, { passive:true });
 
-  // キーフレーム（未注入なら注入）
-  const styleId = "title-anim-css";
-  if (!document.getElementById(styleId)) {
-    const st = document.createElement("style");
-    st.id = styleId;
-    st.textContent = `
-      @keyframes logoIn { from{opacity:0; transform:translateY(6px) scale(.98);} to{opacity:1; transform:none;} }
-      @keyframes tapIn  { from{opacity:0; transform:translateY(4px);}       to{opacity:1; transform:none;} }
-      // 既存の style 要素生成部の中の cFlash をこれに差し替え
-      @keyframes cFlash {
-       0%   { opacity:0; transform:scale(.92); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
-       30%  { opacity:1; transform:scale(1.10); filter:brightness(2.2) drop-shadow(0 0 14px rgba(255,215,0,.95)); }
-       55%  { opacity:1; transform:scale(1.04); filter:brightness(1.6) drop-shadow(0 0 7px rgba(255,215,0,.6)); }
-       100% { opacity:1; transform:scale(1.00); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
-      }
-    `;
-    document.head.appendChild(st);
-  }
+  // --- キーフレーム注入（毎回リフレッシュ） ---
+const styleId = "title-anim-css";
+const old = document.getElementById(styleId);
+if (old) old.remove();            // ←ここが効く（古い定義を消す）
+
+  const st = document.createElement("style");
+  st.id = styleId;
+  st.textContent = `
+    @keyframes logoIn { from{opacity:0; transform:translateY(6px) scale(.98);} to{opacity:1; transform:none;} }
+    @keyframes tapIn  { from{opacity:0; transform:translateY(4px);}       to{opacity:1; transform:none;} }
+    @keyframes cFlash{
+     0%   { opacity:0; transform:scale(.92); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
+     30%  { opacity:1; transform:scale(1.10); filter:brightness(2.2) drop-shadow(0 0 14px rgba(255,215,0,.95)); }
+     55%  { opacity:1; transform:scale(1.04); filter:brightness(1.6) drop-shadow(0 0 7px rgba(255,215,0,.6)); }
+     100% { opacity:1; transform:scale(1.00); filter:brightness(1)   drop-shadow(0 0 0 rgba(255,215,0,0)); }
+   }
+ `;
+  document.head.appendChild(st);
+
+  
 
   // DOM 反映
   box.appendChild(img);
