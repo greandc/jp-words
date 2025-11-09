@@ -113,19 +113,27 @@ export async function render(el, deps = {}) {
     imgC.style.top   = (h * topK)  + "px";
   };
 
-  // C を確実に発火：トリミング→配置→アニメ
-  function flashC() {
+  // === C を“確実に・派手に”光らせる ===
+ function flashC() {
+  // 目に見えるように派手めに
   imgC.style.opacity = "1";
+  imgC.style.willChange = "transform,filter,opacity";
+
+  // いったん切って → reflow → 付け直し（確実に発火）
   imgC.style.animation = "none";
   // reflow
   // eslint-disable-next-line no-unused-expressions
   imgC.offsetWidth;
-  imgC.style.animation = "cFlash 850ms ease-in-out forwards";
-  }
+  imgC.style.animation = "cFlash 900ms ease-out forwards";
+ }
 
+  // ロゴの“じわー”が見えた後にCを光らせる
   const startAfterLogo = () => setTimeout(flashC, 1100);
+
+  // 画像キャッシュ済みでも必ず走る
   if (img.complete) startAfterLogo();
   else img.addEventListener("load", startAfterLogo);
+
   window.addEventListener("resize", placeC, { passive:true });
 
   // キーフレーム（未注入なら注入）
@@ -138,12 +146,11 @@ export async function render(el, deps = {}) {
       @keyframes tapIn  { from{opacity:0; transform:translateY(4px);}       to{opacity:1; transform:none;} }
       // 既存の style 要素生成部の中の cFlash をこれに差し替え
       @keyframes cFlash {
-       0%   { opacity:0; filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
-       20%  { opacity:1; filter:brightness(2.0) drop-shadow(0 0 6px rgba(255,215,0,.9)); }
-       50%  { opacity:1; filter:brightness(1.6) drop-shadow(0 0 3px rgba(255,215,0,.6)); }
-       100% { opacity:1; filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
+       0%   { opacity:0; transform:scale(.92); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
+       30%  { opacity:1; transform:scale(1.10); filter:brightness(2.2) drop-shadow(0 0 14px rgba(255,215,0,.95)); }
+       55%  { opacity:1; transform:scale(1.04); filter:brightness(1.6) drop-shadow(0 0 7px rgba(255,215,0,.6)); }
+       100% { opacity:1; transform:scale(1.00); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
       }
-
     `;
     document.head.appendChild(st);
   }
