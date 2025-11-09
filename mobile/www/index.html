@@ -24,10 +24,28 @@
   <!-- 既存：アプリ起動 -->
   <script type="module" src="./boot.js?v=20251102"></script>
 
+  
 </head>
 
 <body>
   <div id="app">Loading...</div>
  
+  <script>
+    (function () {
+      const cap = !!window.Capacitor;
+      const plat = window.Capacitor?.getPlatform?.() ?? 'n/a';
+      const native = !!(window.Capacitor?.isNativePlatform?.() && window.Capacitor.isNativePlatform());
+      const plugin = !!(window.Capacitor?.Plugins?.TextToSpeech);
+
+      const box = document.createElement('div');
+      box.style.cssText =
+        'position:fixed;left:8px;bottom:8px;z-index:999999;padding:6px 8px;' +
+        'background:rgba(0,0,0,.7);color:#fff;border-radius:6px;font:12px/1.3 sans-serif';
+      box.textContent = `Cap=${cap} / plat=${plat} / native=${native} / plugin=${plugin}`;
+      document.body.appendChild(box);
+
+      console.log('[cap-overlay]', `Cap=${cap} / plat=${plat} / native=${native} / plugin=${plugin}`);
+    })();
+  </script>
 </body>
 </html>
