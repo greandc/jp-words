@@ -486,6 +486,38 @@ function JpLabel({ jp, kana, showFuri }){
  function QuizScreen(props){
   ensureStyle();
 
+  // --- TTS 初期化（この画面中は日本語・標準速度） ---
+ttsSetLang('ja-JP');
+ttsSetRate(1.0);
+ttsSetPitch(1.0);
+
+// 画面が隠れたり回転したら必ず止める
+const handleHide = () => stop();
+window.addEventListener('visibilitychange', handleHide);
+window.addEventListener('pagehide', handleHide);
+window.addEventListener('freeze', handleHide);
+window.addEventListener('resize', handleHide);
+
+// この画面を離れる時に呼ぶ（Backや他画面遷移の直前で使う）
+function cleanupTTS(){
+  window.removeEventListener('visibilitychange', handleHide);
+  window.removeEventListener('pagehide', handleHide);
+  window.removeEventListener('freeze', handleHide);
+  window.removeEventListener('resize', handleHide);
+  stop();
+}
+
+// 右（日本語）を押した時だけ読む
+function speakJPFromItem(it, preferReading = true){
+  if (!tts) return;                                   // チェックボックス尊重
+  const yomi =
+    (preferReading ? (it?.jp?.reading || it?.kana) : '') ||
+    it?.jp?.orth || '';
+  if (!yomi) return;
+  stop();
+  speak(yomi, { lang: 'ja-JP' });
+}
+
   // 状態
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
   const [ui, setUI]       = R.useState("title");   // title / playing
@@ -878,7 +910,13 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
     h("div", { className:"meta" }, `${remain} questions · ${fmtTime(secs)}`)
   ),
   h("div", { className:"board" }, ...cells),
-  h("button", { className:"backbtn", onClick: () => props.goto?.("testTitle") }, "Back"),
+  h("button",
+  { className:"backbtn",
+    onClick: () => { cleanupTTS(); props.goto?.("testTitle"); }
+  },
+  "Back"
+),
+
 
   // ★ クリア時に現在レベルを開放してから menu2 へ
   h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel })
