@@ -1,7 +1,8 @@
 import { t, getLang, setLang as setUILang } from "../i18n.js";
 import { MAX_Q, SECS_PER_Q } from "../config.js";
 import { loadLevel } from "../data/loader.js";
-import { speak, stop, ttsAvailable, setLang as ttsSetLang, setRate as ttsSetRate, setPitch as ttsSetPitch } from "../tts.v2.js";
+import { speak, stop, ttsAvailable, setLang as ttsSetLang, setRate as ttsSetRate, setPitch as ttsSetPitch } from "../tts.v2.js?v=v2-20251109d";
+
 
 
 
