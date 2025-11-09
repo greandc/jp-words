@@ -1,12 +1,40 @@
 // mobile/www/tts.js
-// 依存に失敗しないよう window.Capacitor を直接使う
+// ==========================================================
+// Capacitor / Web 両対応の TTS + 画面ログ付き
+// ==========================================================
+
+// === UIログ（画面右上に表示） ===
+function ttsUILog(label, data) {
+  try {
+    let box = document.getElementById('tts-ui-log');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'tts-ui-log';
+      box.style.cssText =
+        'position:fixed;top:8px;right:8px;z-index:999999;padding:6px 8px;' +
+        'background:rgba(0,0,0,.75);color:#fff;border-radius:6px;' +
+        'font:12px/1.3 system-ui;max-width:60vw';
+      document.body.appendChild(box);
+    }
+    const line = document.createElement('div');
+    line.textContent = `[TTS] ${label}` + (data ? ` ${JSON.stringify(data)}` : '');
+    box.appendChild(line);
+    // 10行以上は古い行を削除
+    while (box.childElementCount > 10) box.removeChild(box.firstChild);
+    console.log('[TTS]', label, data || '');
+  } catch (_) {}
+}
+
+// ==========================================================
+// TTS 本体
+// ==========================================================
 const Cap = window.Capacitor || {};
 const NativeTTS = Cap?.Plugins?.TextToSpeech || null;
 
 let cfg = {
-  lang:  "ja-JP",
-  rate:  1.0,   // Androidは 0.1〜2.0 程度（端末依存）
-  pitch: 1.0,   // 0.1〜2.0
+  lang: "ja-JP",
+  rate: 1.0,
+  pitch: 1.0,
   volume: 1.0
 };
 
@@ -25,6 +53,7 @@ export function ttsAvailable(){
 }
 
 export async function stop(){
+  ttsUILog('stop() called');
   try {
     if (isNative() && NativeTTS?.stop) {
       await NativeTTS.stop();
@@ -32,23 +61,23 @@ export async function stop(){
       window.speechSynthesis.cancel();
     }
   } catch(e){
-    console.log("[TTS] stop err", e);
+    ttsUILog('stop() err', String(e && e.message || e));
   }
+  ttsUILog('stop() done');
 }
 
 async function ensureNativeVoice(lang){
-  // 壊れても無視（オプショナル）
+  ttsUILog('ensureNativeVoice', { tryLang: lang });
   try {
     if (NativeTTS?.getSupportedVoices) {
       const res = await NativeTTS.getSupportedVoices();
       const has = (res?.voices || []).some(v => (v?.lang || v?.locale) === lang);
       if (!has && NativeTTS?.openInstall) {
-        // 端末に該当言語が無ければ、音声データの画面を開く（ユーザーがDL）
         await NativeTTS.openInstall();
       }
     }
   } catch(e){
-    console.log("[TTS] ensureNativeVoice warn", e);
+    ttsUILog('ensureNativeVoice warn', String(e && e.message || e));
   }
 }
 
@@ -60,19 +89,22 @@ export async function speak(text, opts = {}){
   const rate  = typeof opts.rate  === "number" ? opts.rate  : cfg.rate;
   const pitch = typeof opts.pitch === "number" ? opts.pitch : cfg.pitch;
 
+  ttsUILog('speak() enter', { msg, lang });
+
   if (isNative() && NativeTTS) {
     try {
-      await stop();                       // 先に必ず止める
-      await ensureNativeVoice(lang);      // 言語データの有無チェック（任意）
+      await stop();
+      await ensureNativeVoice(lang);
 
-      // iOS向け category は渡さない（Androidで無視されるが念のため）
       const payload = { text: msg, lang, rate, pitch, volume: cfg.volume };
-      console.log("[TTS] native speak", payload);
+      ttsUILog('native speak try', payload);
+
       await NativeTTS.speak(payload);
+      ttsUILog('native speak OK');
       return;
     } catch (e) {
-      console.log("[TTS] native speak err → web fallback", e);
-      // ネイティブが沈黙したら Web にフォールバック
+      ttsUILog('native speak ERR', String(e && e.message || e));
+      ttsUILog('→ web fallback');
     }
   }
 
@@ -82,12 +114,11 @@ export async function speak(text, opts = {}){
     u.lang = lang; u.rate = rate; u.pitch = pitch;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
-    console.log("[TTS] web speak", {msg, lang, rate, pitch});
+    ttsUILog('web speak OK', { msg, lang, rate, pitch });
   } catch(e){
-    console.log("[TTS] web speak err", e);
+    ttsUILog('web speak ERR', String(e && e.message || e));
   }
 }
 
-// 互換用（いまは何もしないが、将来の初期化待ちに使える）
+// （ダミー初期化）
 export async function ttsSetup(){ return true; }
-
