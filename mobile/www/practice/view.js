@@ -118,6 +118,10 @@ function cleanup() {
   `;
   el.appendChild(div);
 
+  // ★ビルド印（見えなければ古いファイルが動いてる）
+div.insertAdjacentHTML("beforeend",
+  `<div id="buildMark" style="margin-top:6px;color:#0a0;font-size:.85rem">BUILD P-20251109b</div>`);
+
 // ===== Google Form: 自動送信用 =====
 const FORM_ACTION = "https://docs.google.com/forms/d/e/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/formResponse"; 
 // ↑ あなたのフォームの formResponse URL に差し替え（必須）
