@@ -71,11 +71,13 @@ export async function render(el, deps = {}) {
 
   // C（重ねる）
   const imgC = document.createElement("img");
-  imgC.src = "./img/title-c.png";
+  imgC.src = "./img/title-c.png";   // キラーン用の透明PNG（キャンバスサイズはロゴと同じでOK）
   imgC.alt = "";
   imgC.style.cssText = `
-    position:absolute; opacity:0; pointer-events:none; transform-origin:center;
-  `;
+   position:absolute; left:0; top:0;       /* ロゴにピッタリ重ねる */
+   width:100%; height:auto;                /* ロゴと同じスケールで追従 */
+   opacity:0; pointer-events:none;
+ `;
 
   // TAP（ふわっ）
   const tap = document.createElement("div");
@@ -112,21 +114,16 @@ export async function render(el, deps = {}) {
   };
 
   // C を確実に発火：トリミング→配置→アニメ
-  const setupC = async () => {
-    // 透明余白を切り落として “Cだけ” に
-    const cropped = await autoCropTransparent(imgC);
-    if (cropped?.dataUrl) imgC.src = cropped.dataUrl;
+  function flashC() {
+  imgC.style.opacity = "1";
+  imgC.style.animation = "none";
+  // reflow
+  // eslint-disable-next-line no-unused-expressions
+  imgC.offsetWidth;
+  imgC.style.animation = "cFlash 850ms ease-in-out forwards";
+  }
 
-    placeC();
-    imgC.style.opacity = "1";
-    imgC.style.animation = "none";
-    // reflow
-    // eslint-disable-next-line no-unused-expressions
-    imgC.offsetWidth;
-    imgC.style.animation = "cFlash .9s ease-in-out forwards";
-  };
-
-  const startAfterLogo = () => setTimeout(setupC, 1100);
+  const startAfterLogo = () => setTimeout(flashC, 1100);
   if (img.complete) startAfterLogo();
   else img.addEventListener("load", startAfterLogo);
   window.addEventListener("resize", placeC, { passive:true });
@@ -139,11 +136,14 @@ export async function render(el, deps = {}) {
     st.textContent = `
       @keyframes logoIn { from{opacity:0; transform:translateY(6px) scale(.98);} to{opacity:1; transform:none;} }
       @keyframes tapIn  { from{opacity:0; transform:translateY(4px);}       to{opacity:1; transform:none;} }
-      @keyframes cFlash{
-        0%   { opacity:0; transform:scale(.92); filter:brightness(1); }
-        30%  { opacity:1; transform:scale(1.10); filter:brightness(1.9); }
-        100% { opacity:1; transform:scale(1);    filter:brightness(1); }
+      // 既存の style 要素生成部の中の cFlash をこれに差し替え
+      @keyframes cFlash {
+       0%   { opacity:0; filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
+       20%  { opacity:1; filter:brightness(2.0) drop-shadow(0 0 6px rgba(255,215,0,.9)); }
+       50%  { opacity:1; filter:brightness(1.6) drop-shadow(0 0 3px rgba(255,215,0,.6)); }
+       100% { opacity:1; filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
       }
+
     `;
     document.head.appendChild(st);
   }
