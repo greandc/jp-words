@@ -13,6 +13,7 @@ for (const row of ROWS) {
 }
 
 export async function render(el, deps = {}) {
+  ensureStyle();
   ttsSetLang("ja-JP");
 
   let curKana = "あ"; // 直近でタップされた仮名
@@ -25,6 +26,46 @@ export async function render(el, deps = {}) {
   wrap.style.cssText = "display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;";
   root.appendChild(wrap);
 
+  function ensureStyle(){
+  if (document.getElementById("hira-style")) return;
+  const st = document.createElement("style");
+  st.id = "hira-style";
+  st.textContent = `
+    /* 例語ボタンを“ボタンらしく” */
+    .hira-exbtn {
+      display:inline-flex; align-items:baseline; gap:.5rem;
+      padding:.35rem .6rem; border:1px solid #e5e7eb; border-radius:10px;
+      background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02);
+    }
+    .hira-exbtn:hover { filter:brightness(0.98); }
+
+    /* 行ごと（1段飛ばし）に色分け */
+    .hiraA { background:#eef6ff; border-color:#cfe4ff; }   /* あ・さ・な… */
+    .hiraB { background:#f5f7ff; border-color:#dfe4ff; }   /* い・す・に… */
+    /* ボタンの文字が見やすいように少し太め */
+    .hira-grid .btn { font-weight:600; }
+  `;
+  document.head.appendChild(st);
+}
+
+  function renderCard(root){
+  const card = root.querySelector("#card");
+  if (!card) return;
+  card.innerHTML = cardHTML();
+
+  // もう一回 → かなを読む
+  root.querySelector("#again")?.addEventListener("click", () => speak(curKana));
+
+  // 例語ボタン → よみ（かな）を読む
+  const it = findItem(curRow, curKana);
+  root.querySelector("#ex")?.addEventListener("click", () => {
+    const y = it?.ex?.yomi;
+    if (y) speak(y);
+  });
+}
+
+
+
   function header() {
     return `
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -34,42 +75,40 @@ export async function render(el, deps = {}) {
   }
 
   // --- 2) 50音表（行セレクタなし・テストなし） ---
-  function gridHTML() {
-    return ROWS.map(row => {
-      const cells = row.items.map(it => {
-        const hole = !it.k || it.k === "・";
-        return `<button class="btn" data-k="${it.k || ""}" ${
-          hole ? "disabled" : ""
-        } style="height:48px;font-size:1.2rem;${hole ? "opacity:0;pointer-events:none;" : ""}">
-          ${hole ? "" : it.k}
-        </button>`;
-      }).join("");
-      return `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
+ function gridHTML(){
+  return ROWS.map((row, rowIdx)=>{
+    const rowClass = (rowIdx % 2 === 0) ? "hiraA" : "hiraB"; // 1段飛ばし
+    const cells = row.items.map(it=>{
+      const hole = !it.k || it.k === "・";
+      return `<button class="btn ${rowClass}" data-k="${it.k||""}" ${
+        hole ? "disabled" : ""
+      } style="height:48px;font-size:1.2rem;${hole?"opacity:0;pointer-events:none;":""}">
+        ${hole?"":it.k}
+      </button>`;
     }).join("");
-  }
+    return `<div class="hira-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
+  }).join("");
+}
+
 
   // --- 3) カード ---
   function cardHTML(){
-  const ex = KANA_MAP.get(curKana) || { kanji:"", yomi:"" };
-  // 1段目：あ + もう一回
-  // 2段目：朝（あさ） …全体をボタン化してタップで読み上げ
+  const it = findItem(curRow, curKana) || { ex:{kanji:"", yomi:""} };
   return `
     <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
+      <!-- 1段目：仮名 + もう一回 -->
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 もう一回</button>
       </div>
-
-      <button id="ex" style="
-        margin-top:8px;
-        display:inline-flex;align-items:baseline;gap:8px;
-        background:transparent;border:0;padding:0;cursor:pointer;
-        color:#111; ">
-        <span style="font-size:1.2rem;">${ex.kanji || ""}</span>
-        <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
+      <!-- 2段目：例語（ボタン化） -->
+      <button id="ex" class="hira-exbtn" style="margin-top:8px;">
+        <span style="font-size:1.2rem;">${it.ex?.kanji ?? ""}</span>
+        <span style="font-size:1rem;color:#374151;">${it.ex?.yomi ? `（${it.ex.yomi}）` : ""}</span>
       </button>
     </div>`;
 }
+
 
 
   // --- 4) 一括描画（超シンプル） ---
