@@ -49,18 +49,28 @@ export async function render(el, deps = {}) {
   }
 
   // --- 3) カード ---
-  function cardHTML() {
-    const ex = KANA_MAP.get(curKana) || { kanji: "", yomi: "" };
-    const exText = ex.kanji ? `${ex.kanji}${ex.yomi ? `（${ex.yomi}）` : ""}` : "";
-    return `
-      <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
-        <div style="font-size:2.2rem;font-weight:700">${curKana}</div>
-        <div style="margin-top:6px;font-size:1.1rem;display:flex;gap:12px;align-items:center">
-          <button class="btn" id="again" style="padding:.35rem .6rem;">🔁 もう一回</button>
-          <span id="ex" style="cursor:pointer">${exText}</span>
-        </div>
-      </div>`;
-  }
+  function cardHTML(){
+  const ex = KANA_MAP.get(curKana) || { kanji:"", yomi:"" };
+  // 1段目：あ + もう一回
+  // 2段目：朝（あさ） …全体をボタン化してタップで読み上げ
+  return `
+    <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
+        <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 もう一回</button>
+      </div>
+
+      <button id="ex" style="
+        margin-top:8px;
+        display:inline-flex;align-items:baseline;gap:8px;
+        background:transparent;border:0;padding:0;cursor:pointer;
+        color:#111; ">
+        <span style="font-size:1.2rem;">${ex.kanji || ""}</span>
+        <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
+      </button>
+    </div>`;
+}
+
 
   // --- 4) 一括描画（超シンプル） ---
   function mountGrid() {
@@ -90,12 +100,15 @@ export async function render(el, deps = {}) {
   }
 
   function wireCardEvents() {
-    wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
-    wrap.querySelector("#ex")?.addEventListener("click", () => {
-      const ex = KANA_MAP.get(curKana);
-      if (ex?.yomi) speak(ex.yomi);
-    });
-  }
+  // 「もう一回」→ 仮名を読む
+  wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
+
+  // 例語ボタン → よみ（かな）を読む
+  const ex = KANA_MAP.get(curKana);
+  wrap.querySelector("#ex")?.addEventListener("click", () => {
+    if (ex?.yomi) speak(ex.yomi);
+  });
+}
 
   // 初期表示
   mountGrid();
