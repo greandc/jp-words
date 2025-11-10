@@ -13,7 +13,8 @@ import * as TestTitle from "./testTitle/view.js";
 import * as Numbers  from "./numbers/view.js";
 import * as ViewHira    from "./hiragana/view.js";
 import * as ViewKata    from "./katakana/view.js";
-
+import * as Hira     from "./hiragana/view.js";   
+import * as Kata     from "./katakana/view.js";
 
  // ====== グローバル状態（範囲・レベル） ======
 let currentRange = [1, 20]; // ← デフォルト値（初回はLv1〜20）
@@ -22,7 +23,9 @@ let currentRange = [1, 20]; // ← デフォルト値（初回はLv1〜20）
 
  const routes = {
    title: Title,
-   menu1: Menu,   // （タイトルはMenuに変更済み）
+   menu1: Menu,   
+   hiragana: Hira,     
+   katakana: Kata,
    menu2: Menu2,
    menu3: Menu3,
    lang: Lang,
