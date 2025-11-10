@@ -26,6 +26,13 @@ export async function render(el, deps = {}) {
     t.textContent=msg; t.style.opacity="1"; setTimeout(()=>t.style.opacity="0",1200);
   }
 
+  // 現在行からかなアイテムを取得
+  function findItem(rowIdx, k){
+    const row = ROWS[rowIdx];
+    return row?.items?.find(it => it.k === k) || null;
+  }
+
+
   function header(){
     return `
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -48,31 +55,55 @@ export async function render(el, deps = {}) {
   }).join("");
 }
 
-  function cardHTML(){
-  // 現在行の items から該当かなを探す
-  const it = ROWS[curRow].items.find(x=>x.k===curKana) || { ex:{kanji:"", yomi:""} };
+  // ----- カードHTML -----
+function cardHTML(){
+  const it = findItem(curRow, curKana) || { ex:{kanji:"", yomi:""} };
   return `
     <div style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
-      <div style="font-size:2.2rem;font-weight:700">${curKana}</div>
+      <div style="font-size:2.2rem;font-weight:700">${curKana || ""}</div>
       <div style="margin-top:6px;font-size:1.1rem;display:flex;gap:12px;align-items:center">
         <button class="btn" id="again" style="padding:.35rem .6rem;">🔁 もう一回</button>
-        <span id="ex" style="cursor:pointer">${it.ex?.kanji ?? ""}${it.ex?.yomi ? `（${it.ex.yomi}）` : ""}</span>
+        <span id="ex" style="cursor:pointer">
+          ${it.ex?.kanji ?? ""}${it.ex?.yomi ? `（${it.ex.yomi}）` : ""}
+        </span>
       </div>
     </div>`;
 }
 
+// カードを差し替えてイベントを張り直す
+function renderCard(root){
+  const card = root.querySelector("#card");
+  if (!card) return;
+  card.innerHTML = cardHTML();
+
+  // もう一回
+  root.querySelector("#again")?.addEventListener("click", () => {
+    if (curKana) speak(curKana);
+  });
+  // 例語を読む
+  const it = findItem(curRow, curKana);
+  root.querySelector("#ex")?.addEventListener("click", () => {
+    const y = it?.ex?.yomi;
+    if (y) speak(y);
+  });
+}
+
+
   function selectorHTML(){
-    return `
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <select id="rowSel">
-          ${ROWS.map((row,i)=>`<option value="${i}">${row.name}</option>`).join("")}
-        </select>
-        <button class="btn" id="start">この行をテスト</button>
-      </div>`;
-  }
+  return `
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="rowSel">
+        ${ROWS.map((row,i)=>`<option value="${i}">${row.name}</option>`).join("")}
+      </select>
+      <button class="btn" id="start">この行をテスト</button>
+    </div>`;
+}
+
 
   function testHTML(){
-  const set = ROWS[curRow].items.filter(it=>it.k && it.k!=="・").map(it=>it.k);
+  const set = ROWS[curRow].items
+    .filter(it=>it.k && it.k!=="・")
+    .map(it=>it.k);
   const btns = set.map(k=>`<button class="btn" data-k="${k}" style="height:56px;font-size:1.2rem;">${k}</button>`).join("");
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -86,65 +117,57 @@ export async function render(el, deps = {}) {
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">${btns}</div>
   `;
 }
+
+function nextQ(){
+  const set = ROWS[curRow].items
+    .filter(it=>it.k && it.k!=="・")
+    .map(it=>it.k);
+  answer = set[Math.floor(Math.random()*set.length)];
+  speak(answer);
+}
+
   function mountGrid(){
-    wrap.innerHTML = header() + gridHTML() + cardHTML() + selectorHTML();
+  // 1) 画面を描画（カードは“入れ物”を用意して中身は cardHTML()）
+  wrap.innerHTML = header() + gridHTML() + `<div id="card">${cardHTML()}</div>` + selectorHTML();
 
-    wrap.querySelector("#back").onclick = ()=> deps.goto?.("menu1");
+  // 2) 戻る
+  wrap.querySelector("#back").onclick = ()=> deps.goto?.("menu1");
 
-    wrap.querySelectorAll("button[data-k]").forEach(b=>{
-      b.onclick=()=>{
-        const k = b.getAttribute("data-k");
-        if (k==="・") return;
-        curKana = k;
-        speak(k);
-        // 例は選択行を維持
-      };
-    });
-
-    wrap.querySelector("#again").onclick = ()=> speak(curKana);
-
-    wrap.querySelector("#ex").onclick = ()=> {
-      const r = ROWS[curRow]; speak(r.ex.yomi);
+  // 3) グリッド（かな）クリック → curKana 更新 → カード再描画 → 発声
+  wrap.querySelectorAll("button[data-k]").forEach(b=>{
+    b.onclick=()=>{
+      const k = b.getAttribute("data-k");
+      if (!k || k === "・") return;
+      curKana = k;
+      renderCard(wrap);     // ← ここでカードを差し替え
+      speak(k);
     };
+  });
 
-    const sel = wrap.querySelector("#rowSel");
-    sel.value = String(curRow);
-    sel.onchange = e=>{ curRow = Number(e.target.value); };
+  // 4) 行セレクタ変更 → その行の先頭の有効かなに切替 → カード再描画
+  const sel = wrap.querySelector("#rowSel");
+  sel.value = String(curRow);
+  sel.onchange = e=>{
+    curRow = Number(e.target.value);
+    const first = (ROWS[curRow].items.find(it=>it.k && it.k!=="・") || {}).k || "あ";
+    curKana = first;
+    renderCard(wrap);
+  };
 
-    wrap.querySelector("#start").onclick = ()=>{
+  // 5) テスト開始（行テスト）
+  const startBtn = wrap.querySelector("#start");
+  if (startBtn){
+    startBtn.onclick = ()=>{
       mode="test"; q=0; score=0; hearts=3; answer=null;
       nextQ(); mountTest();
     };
   }
 
-  function nextQ(){
-    const set = ROWS[curRow].kana.filter(k=>k!=="・");
-    answer = set[Math.floor(Math.random()*set.length)];
-    // 出題音声
-    speak(answer);
-  }
+  // 6) 初期カードのイベントを“確実に”張る
+  renderCard(wrap);
+}
 
-  function mountTest(){
-    wrap.innerHTML = header() + testHTML();
-
-    wrap.querySelector("#back").onclick = ()=> { mode="grid"; mountGrid(); };
-    wrap.querySelector("#listen").onclick = ()=> speak(answer);
-    wrap.querySelector("#quit").onclick   = ()=> { mode="grid"; mountGrid(); };
-
-    wrap.querySelectorAll("button[data-k]").forEach(b=>{
-      b.onclick=()=>{
-        const ok = b.getAttribute("data-k") === answer;
-        if (ok) score++; else hearts = Math.max(0, hearts-1);
-        q++;
-        if (q>=maxQ || hearts===0){
-          toast(`結果: ${score}/${q}`);
-          mode="grid"; mountGrid(); return;
-        }
-        nextQ(); mountTest();
-      };
-    });
-  }
-
+  
   // 初期表示
   mountGrid();
 
