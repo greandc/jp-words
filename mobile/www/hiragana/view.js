@@ -15,6 +15,7 @@ for (const row of ROWS) {
 export async function render(el, deps = {}) {
   ensureStyle();
   ttsSetLang("ja-JP");
+  const getEx = (k) => KANA_MAP.get(k) || { kanji:"", yomi:"" };
 
   let curKana = "あ"; // 直近でタップされた仮名
 
@@ -48,24 +49,6 @@ export async function render(el, deps = {}) {
   document.head.appendChild(st);
 }
 
-  function renderCard(root){
-  const card = root.querySelector("#card");
-  if (!card) return;
-  card.innerHTML = cardHTML();
-
-  // もう一回 → かなを読む
-  root.querySelector("#again")?.addEventListener("click", () => speak(curKana));
-
-  // 例語ボタン → よみ（かな）を読む
-  const it = findItem(curRow, curKana);
-  root.querySelector("#ex")?.addEventListener("click", () => {
-    const y = it?.ex?.yomi;
-    if (y) speak(y);
-  });
-}
-
-
-
   function header() {
     return `
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -90,26 +73,21 @@ export async function render(el, deps = {}) {
   }).join("");
 }
 
-
   // --- 3) カード ---
   function cardHTML(){
-  const it = findItem(curRow, curKana) || { ex:{kanji:"", yomi:""} };
+  const ex = getEx(curKana);
   return `
     <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
-      <!-- 1段目：仮名 + もう一回 -->
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 もう一回</button>
       </div>
-      <!-- 2段目：例語（ボタン化） -->
       <button id="ex" class="hira-exbtn" style="margin-top:8px;">
-        <span style="font-size:1.2rem;">${it.ex?.kanji ?? ""}</span>
-        <span style="font-size:1rem;color:#374151;">${it.ex?.yomi ? `（${it.ex.yomi}）` : ""}</span>
+        <span style="font-size:1.2rem;">${ex.kanji}</span>
+        <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
       </button>
     </div>`;
 }
-
-
 
   // --- 4) 一括描画（超シンプル） ---
   function mountGrid() {
@@ -138,16 +116,17 @@ export async function render(el, deps = {}) {
     wireCardEvents();
   }
 
-  function wireCardEvents() {
-  // 「もう一回」→ 仮名を読む
+  function wireCardEvents(){
+  // もう一回 → かな
   wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
 
-  // 例語ボタン → よみ（かな）を読む
-  const ex = KANA_MAP.get(curKana);
+  // 例語 → よみ（かな）
+  const ex = getEx(curKana);
   wrap.querySelector("#ex")?.addEventListener("click", () => {
-    if (ex?.yomi) speak(ex.yomi);
+    if (ex.yomi) speak(ex.yomi);
   });
 }
+
 
   // 初期表示
   mountGrid();
