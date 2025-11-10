@@ -24,15 +24,20 @@ export async function render(el, deps = {}) {
   el.appendChild(root);
 
   const wrap = document.createElement("div");
-wrap.style.cssText = `
+  wrap.style.cssText = `
   display:flex; flex-direction:column; gap:12px;
   width:100%; box-sizing:border-box; padding:0 12px;  /* ← 端まで広げて左右だけ余白 */
   margin:0;
-`;
-root.appendChild(wrap);
+  `;
+  root.appendChild(wrap);
+  root.style.padding = "0 12px";
+  root.style.boxSizing = "border-box";
+
+  wrap.style.width = "100%";
+  wrap.style.maxWidth = "unset"; // 以前の max-width:520px を無効化
 
 
- function ensureStyle(){
+  function ensureStyle(){
   if (document.getElementById("hira-style")) return;
   const st = document.createElement("style");
   st.id = "hira-style";
@@ -81,7 +86,7 @@ root.appendChild(wrap);
   .hira-exbtn{
   width:100%; justify-content:flex-start; gap:.6rem;
 }
-
+  .hira-exbtn{ width:100%; justify-content:flex-start; gap:.6rem; }
 
   `;
   document.head.appendChild(st);
@@ -115,29 +120,25 @@ root.appendChild(wrap);
 
   // --- 3) カード ---
   function cardHTML(){
-  const it = KANA_MAP.get(curKana) || { kanji:"", yomi:"" };
+  const ex = KANA_MAP.get(curKana) || { kanji:"", yomi:"" };
   return `
-    <div id="card"
+    <div id="card" 
       style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa;
              width:100%; box-sizing:border-box;">
-      <!-- 1段目：仮名 + もう一回 -->
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 もう一回</button>
       </div>
 
-      <!-- 2段目：例語（ボタン化・横いっぱい） -->
       <button id="ex" class="hira-exbtn" style="margin-top:8px;width:100%;">
         <span aria-hidden="true">🔊</span>
         <span style="display:flex; gap:.5rem; min-width:0;">
-          <span style="font-size:1.1rem; white-space:nowrap;">${it.kanji}</span>
-          <span style="color:#374151; overflow:hidden; text-overflow:ellipsis;">（${it.yomi||""}）</span>
+          <span style="font-size:1.1rem; white-space:nowrap;">${ex.kanji}</span>
+          <span style="color:#374151; overflow:hidden; text-overflow:ellipsis;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
         </span>
       </button>
     </div>`;
 }
-
-
 
   // --- 4) 一括描画（超シンプル） ---
   function mountGrid() {
@@ -176,7 +177,6 @@ root.appendChild(wrap);
     if (ex.yomi) speak(ex.yomi);
   });
 }
-
 
   // 初期表示
   mountGrid();
