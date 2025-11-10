@@ -27,24 +27,62 @@ export async function render(el, deps = {}) {
   wrap.style.cssText = "display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;";
   root.appendChild(wrap);
 
-  function ensureStyle(){
+ function ensureStyle(){
   if (document.getElementById("hira-style")) return;
   const st = document.createElement("style");
   st.id = "hira-style";
   st.textContent = `
-    /* 例語ボタンを“ボタンらしく” */
-    .hira-exbtn {
-      display:inline-flex; align-items:baseline; gap:.5rem;
-      padding:.35rem .6rem; border:1px solid #e5e7eb; border-radius:10px;
-      background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02);
-    }
-    .hira-exbtn:hover { filter:brightness(0.98); }
+    :root{
+  --hiraA-bg:#E0F2FE;  /* ← 案A: sky-200 */
+  --hiraA-bd:#93C5FD;  /* sky-300 */
+  --hiraB-bg:#E2E8F0;  /* slate-200 */
+  --hiraB-bd:#CBD5E1;  /* slate-300 */
 
-    /* 行ごと（1段飛ばし）に色分け */
-    .hiraA { background:#eef6ff; border-color:#cfe4ff; }   /* あ・さ・な… */
-    .hiraB { background:#f5f7ff; border-color:#dfe4ff; }   /* い・す・に… */
-    /* ボタンの文字が見やすいように少し太め */
-    .hira-grid .btn { font-weight:600; }
+  --hira-btn-fg:#0F172A;      /* slate-900 */
+  --hira-btn-shadow:0 1px 0 rgba(0,0,0,.06);
+  --hira-ring:#60A5FA;        /* ring color */
+}
+
+/* 50音ボタン */
+.hira-grid .btn{
+  font-weight:600;
+  border-radius:12px;
+  box-shadow:var(--hira-btn-shadow);
+  color:var(--hira-btn-fg);
+  transition:transform .04s ease, filter .12s ease, box-shadow .12s ease;
+}
+.hiraA{ background:var(--hiraA-bg); border-color:var(--hiraA-bd); }
+.hiraB{ background:var(--hiraB-bg); border-color:var(--hiraB-bd); }
+.hira-grid .btn:hover{ filter:brightness(.98); }
+.hira-grid .btn:active{ transform:translateY(1px); }
+.hira-grid .btn:focus-visible{
+  outline:2px solid var(--hira-ring);
+  outline-offset:2px;
+}
+
+/* 例語ボタン（カード内） */
+.hira-exbtn{
+  display:inline-flex; align-items:baseline; gap:.5rem;
+  padding:.45rem .7rem;
+  border:1px solid #CBD5E1; border-radius:10px;
+  background:#FFFFFF; box-shadow:var(--hira-btn-shadow);
+  transition:transform .04s ease, filter .12s ease, box-shadow .12s ease;
+}
+.hira-exbtn:hover{ filter:brightness(.98); }
+.hira-exbtn:active{ transform:translateY(1px); }
+.hira-exbtn:focus-visible{
+  outline:2px solid var(--hira-ring); outline-offset:2px;
+}
+
+/* ダークモード（任意） */
+@media (prefers-color-scheme: dark){
+  :root{
+    --hiraA-bg:#0B2530; --hiraA-bd:#124559;
+    --hiraB-bg:#111827; --hiraB-bd:#374151;
+    --hira-btn-fg:#E5E7EB; --hira-ring:#60A5FA;
+  }
+}
+
   `;
   document.head.appendChild(st);
 }
@@ -78,16 +116,21 @@ export async function render(el, deps = {}) {
   const ex = getEx(curKana);
   return `
     <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
+      <!-- 1段目：仮名 + もう一回 -->
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 もう一回</button>
       </div>
+
+      <!-- 2段目：例語（ボタン化） -->
       <button id="ex" class="hira-exbtn" style="margin-top:8px;">
+        <span style="font-size:1.1rem;">🔊</span> <!-- ←ここ追加：音声アイコン -->
         <span style="font-size:1.2rem;">${ex.kanji}</span>
         <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
       </button>
     </div>`;
 }
+
 
   // --- 4) 一括描画（超シンプル） ---
   function mountGrid() {
