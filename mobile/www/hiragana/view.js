@@ -74,15 +74,6 @@ export async function render(el, deps = {}) {
   outline:2px solid var(--hira-ring); outline-offset:2px;
 }
 
-/* ダークモード（任意） */
-@media (prefers-color-scheme: dark){
-  :root{
-    --hiraA-bg:#0B2530; --hiraA-bd:#124559;
-    --hiraB-bg:#111827; --hiraB-bd:#374151;
-    --hira-btn-fg:#E5E7EB; --hira-ring:#60A5FA;
-  }
-}
-
   `;
   document.head.appendChild(st);
 }
