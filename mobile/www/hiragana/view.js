@@ -1,6 +1,7 @@
 // mobile/www/hiragana/view.js
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS } from "./data.hira.js";
+import { t } from "../i18n.js";
 
 // --- 1) すべての仮名→例語 を行に依存せず引けるマップを用意 ---
 const KANA_MAP = new Map();
@@ -93,12 +94,15 @@ export async function render(el, deps = {}) {
 }
 
   function header() {
-    return `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h1 style="margin:0;">ひらがな</h1>
-        <button id="back" class="btn" style="padding:.35rem .7rem;">Back</button>
-      </div>`;
-  }
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h1 style="margin:0;">${t("hira.title") || "ひらがな"}</h1>
+      <button id="back" class="btn" style="padding:.35rem .7rem;">
+        ${t("common.back") || "Back"}
+      </button>
+    </div>`;
+}
+
 
   // --- 2) 50音表（行セレクタなし・テストなし） ---
  function gridHTML(){
@@ -120,25 +124,22 @@ export async function render(el, deps = {}) {
 
   // --- 3) カード ---
   function cardHTML(){
-  const ex = KANA_MAP.get(curKana) || { kanji:"", yomi:"" };
+  const it = KANA_MAP.get(curKana) || { kanji:"", yomi:"" };
   return `
-    <div id="card" 
-      style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa;
-             width:100%; box-sizing:border-box;">
+    <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
-        <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 もう一回</button>
+        <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">
+          🔁 ${t("hira.again") || "もう一回"}
+        </button>
       </div>
-
-      <button id="ex" class="hira-exbtn" style="margin-top:8px;width:100%;">
-        <span aria-hidden="true">🔊</span>
-        <span style="display:flex; gap:.5rem; min-width:0;">
-          <span style="font-size:1.1rem; white-space:nowrap;">${ex.kanji}</span>
-          <span style="color:#374151; overflow:hidden; text-overflow:ellipsis;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
-        </span>
+      <button id="ex" class="hira-exbtn" style="margin-top:8px;">
+        <span style="font-size:1.2rem;">${it.kanji}</span>
+        <span style="font-size:1rem;color:#374151;">${it.yomi ? `（${it.yomi}）` : ""}</span>
       </button>
     </div>`;
 }
+
 
   // --- 4) 一括描画（超シンプル） ---
   function mountGrid() {
