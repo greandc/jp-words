@@ -63,52 +63,6 @@ for (const row of ROWS) {
   }
 }
 
-// ========== 変形テーブル ==========
-const FIVE = ["あ","い","う","え","お"];
-const BASE_TO_DAKU = {
-  // か→が / さ→ざ / た→だ / は→ば
-  "か":"が","き":"ぎ","く":"ぐ","け":"げ","こ":"ご",
-  "さ":"ざ","し":"じ","す":"ず","せ":"ぜ","そ":"ぞ",
-  "た":"だ","ち":"ぢ","つ":"づ","て":"で","と":"ど",
-  "は":"ば","ひ":"び","ふ":"ぶ","へ":"べ","ほ":"ぼ",
-};
-const BASE_TO_HANDAKU = {
-  // は→ぱ
-  "は":"ぱ","ひ":"ぴ","ふ":"ぷ","へ":"ぺ","ほ":"ぽ",
-};
-// 小書き（ゃゅょっ＋母音小文字）
-const SMALL_OF = {
-  "あ":"ぁ","い":"ぃ","う":"ぅ","え":"ぇ","お":"ぉ",
-  "や":"ゃ","ゆ":"ゅ","よ":"ょ","つ":"っ","わ":"ゎ"
-};
-
-// ========== ユーティリティ ==========
-function transformKana(k, mode) {
-  if (!k || k === "・") return k;
-
-  if (mode === "dakuten") {
-    return BASE_TO_DAKU[k] || k;
-  }
-  if (mode === "handaku") {
-    return BASE_TO_HANDAKU[k] || k;
-  }
-  if (mode === "small") {
-    // “や行”は ゃ・ゅ・ょ / “つ”は っ / 母音は ぁぃぅぇぉ
-    if (k === "や" || k === "ゆ" || k === "よ" || k === "つ" || FIVE.includes(k) || k === "わ") {
-      return SMALL_OF[k] || k;
-    }
-    // その他は小書きが無いので穴にする
-    return "・";
-  }
-  return k; // base
-}
-
-function exampleOf(k) {
-  const ex = KANA_MAP.get(k);
-  if (ex?.kanji || ex?.yomi) return ex;
-  return null;
-}
-
 // ========== スタイル注入 ==========
 function ensureStyle() {
   if (document.getElementById("hira-style-v2")) return;
