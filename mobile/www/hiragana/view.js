@@ -3,6 +3,56 @@ import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS } from "./data.hira.js";
 
+// かな変換ユーティリティ
+const ROW_K = {
+  ka: ["か","き","く","け","こ"],
+  sa: ["さ","し","す","せ","そ"],
+  ta: ["た","ち","つ","て","と"],
+  ha: ["は","ひ","ふ","へ","ほ"],
+};
+const DAKU = {
+  ka: ["が","ぎ","ぐ","げ","ご"],
+  sa: ["ざ","じ","ず","ぜ","ぞ"],
+  ta: ["だ","ぢ","づ","で","ど"],
+  ha: ["ば","び","ぶ","べ","ぼ"],
+};
+const HANDAKU = ["ぱ","ぴ","ぷ","ぺ","ぽ"];
+const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ", わ:"ゎ", あ:"ぁ", い:"ぃ", う:"ぅ", え:"ぇ", お:"ぉ" };
+const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v,k]));
+
+// 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
+function transformKana(k, flags){
+  const { daku=false, handaku=false, small=false } = flags || {};
+  let out = k;
+
+  // 行・列を特定
+  for (const rowKey of ["ka","sa","ta","ha"]) {
+    const idx = ROW_K[rowKey].indexOf(k);
+    if (idx !== -1) {
+      if (handaku && rowKey==="ha")      out = HANDAKU[idx];
+      else if (daku)                     out = DAKU[rowKey][idx];
+      return small ? (SMALL_MAP[out] || out) : out;
+    }
+  }
+  // 清音以外の普通の行（あ/な/ま/ら/…）
+  out = small ? (SMALL_MAP[out] || out) : out;
+  return out;
+}
+
+// 例語検索用：表示文字を清音へ戻す
+function normalizeKana(k){
+  if (UNSMALL_MAP[k]) k = UNSMALL_MAP[k];
+  // 濁点/半濁 → 清音
+  for (const rowKey of ["ka","sa","ta","ha"]) {
+    const idxD = (DAKU[rowKey]||[]).indexOf(k);
+    if (idxD !== -1) return ROW_K[rowKey][idxD];
+  }
+  const idxH = HANDAKU.indexOf(k);
+  if (idxH !== -1) return ROW_K.ha[idxH];
+  return k;
+}
+
+
 // ========== 例語ルックアップ（仮名→{kanji,yomi}） ==========
 const KANA_MAP = new Map();
 for (const row of ROWS) {
@@ -98,6 +148,9 @@ function ensureStyle() {
     .hira-card { border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fafafa; }
     .hira-card .kana { font-size:2.6rem; font-weight:700; line-height:1; }
     .row-full { width:100%; }
+
+    .hiraChanged { background:#fee2e2 !important; border-color:#fecaca !important; }
+
   `;
   document.head.appendChild(st);
 }
@@ -109,6 +162,8 @@ export async function render(el, deps = {}) {
 
   let mode = "base";           // "base" | "dakuten" | "handaku" | "small"
   let curKana = "あ";          // 直近でタップされた仮名（変形後を保持）
+  let flags = { daku:false, handaku:false, small:false };
+
   const root = document.createElement("div");
   root.className = "screen";
   el.appendChild(root);
@@ -126,127 +181,121 @@ export async function render(el, deps = {}) {
     `;
   }
 
-  function togglesHTML() {
-    return `
-      <div class="hira-toggles">
-        <button class="tbtn ${mode==="dakuten"?"on":""}" id="tg-daku">゛</button>
-        <button class="tbtn ${mode==="handaku"?"on":""}" id="tg-handaku">゜</button>
-        <button class="tbtn ${mode==="small"?"on":""}" id="tg-small">小</button>
-        <button class="tbtn" id="tg-reset">⟳</button>
-      </div>
-    `;
-  }
+  function togglesHTML(){
+  const on = (b)=> b ? 'style="background:#e5f3ff;border-color:#bfdefb;"' : "";
+  return `
+    <div style="display:flex;gap:8px;margin:6px 0 4px;">
+      <button class="btn" id="btnDaku" ${on(flags.daku)}>゛</button>
+      <button class="btn" id="btnHandaku" ${on(flags.handaku)}>゜</button>
+      <button class="btn" id="btnSmall" ${on(flags.small)}>小</button>
+    </div>`;
+}
 
-  function gridHTML() {
-    return ROWS.map((row, rowIdx) => {
-      const rowClass = (rowIdx % 2 === 0) ? "hiraA" : "hiraB";
-      const cells = row.items.map(it => {
-        let k = it.k || "";
-        if (!k || k === "・") return `<button class="btn ${rowClass}" disabled style="opacity:0;pointer-events:none;"> </button>`;
-        const tk = transformKana(k, mode);
-        const hole = (!tk || tk === "・");
-        return `<button class="btn ${rowClass}" data-base="${k}" data-k="${hole?"":tk}" ${hole?"disabled":""}>${hole?"":tk}</button>`;
-      }).join("");
-      return `<div class="hira-grid">${cells}</div>`;
+function gridHTML(){
+  return ROWS.map((row,rowIdx)=>{
+    const cells = row.items.map(it=>{
+      const base = it.k;
+      const hole = !base || base==="・";
+      if (hole) {
+        return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
+      }
+      // 表示文字
+      const disp = transformKana(base, flags);
+      const changed = (disp !== base) ? "hiraChanged" : "";
+      return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
+                style="height:48px;font-size:1.2rem;">${disp}</button>`;
     }).join("");
-  }
+    return `<div class="hira-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
+  }).join("");
+}
 
-  function cardHTML() {
-    const ex = exampleOf(curKana);
-    const exHtml = ex
-      ? `<button id="ex" class="hira-exbtn row-full">
-           <span>🔊</span>
-           <span style="font-size:1.2rem;">${ex.kanji}</span>
-           <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
-         </button>`
-      : "";
-    return `
-      <div class="hira-card">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div class="kana">${curKana}</div>
-          <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">${t("hira.again")||"Play again"}</button>
-        </div>
-        ${exHtml ? `<div style="margin-top:8px;">${exHtml}</div>` : ""}
+
+  function cardHTML(curKana){
+  const base = normalizeKana(curKana);
+  const ex = KANA_MAP.get(base) || { kanji:"", yomi:"" };
+  return `
+    <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
+        <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again")||"Play again"}</button>
       </div>
-    `;
-  }
+      <button id="ex" class="hira-exbtn" style="margin-top:8px;">
+        <span style="font-size:1.2rem;">${ex.kanji}</span>
+        <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
+      </button>
+    </div>`;
+}
 
-  function renderAll() {
-    // ラッパにモード用クラス
-    root.classList.remove("mode-dakuten","mode-handaku","mode-small");
-    if (mode==="dakuten") root.classList.add("mode-dakuten");
-    if (mode==="handaku") root.classList.add("mode-handaku");
-    if (mode==="small")   root.classList.add("mode-small");
 
-    wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML();
+  // ========= ここから貼る =========
 
-    // 戻る
-    wrap.querySelector("#back")?.addEventListener("click", () => deps.goto?.("menu1"));
+function mountGrid(){
+  // 見出し + トグル + グリッド + カード（curKana を渡す）
+  wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
 
-    // トグル
-    wrap.querySelector("#tg-daku")?.addEventListener("click", () => {
-      mode = (mode==="dakuten") ? "base" : "dakuten";
-      // は行問題時のリセット用は ⟳ で明示対応
-      renderAll();
-      // 現在の表示仮名をモードに合わせて再計算（音も一声）
-      const base = wrap.querySelector('button[data-base][data-k]')?.getAttribute("data-base") || curKana;
-      const next = transformKana(base, mode);
-      if (next && next !== "・") { curKana = next; speak(curKana); }
-    });
-    wrap.querySelector("#tg-handaku")?.addEventListener("click", () => {
-      mode = (mode==="handaku") ? "base" : "handaku";
-      renderAll();
-      const base = wrap.querySelector('button[data-base][data-k]')?.getAttribute("data-base") || curKana;
-      const next = transformKana(base, mode);
-      if (next && next !== "・") { curKana = next; speak(curKana); }
-    });
-    wrap.querySelector("#tg-small")?.addEventListener("click", () => {
-      mode = (mode==="small") ? "base" : "small";
-      renderAll();
-      // small は対象外が多いので curKana はそのまま読み直し
+  // 戻る
+  wrap.querySelector("#back")?.addEventListener("click", () => deps.goto?.("menu1"));
+
+  // 再描画ヘルパ（トグル変更時に使う）
+  const refresh = () => {
+    wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
+    wireEvents();
+  };
+
+  // ★トグル（IDは #btnDaku / #btnHandaku / #btnSmall）
+  wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
+    flags.daku = !flags.daku;           // 濁点ON/OFF
+    if (flags.daku) flags.handaku = false; // 同時ONは不可
+    refresh();
+  });
+  wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
+    flags.handaku = !flags.handaku;     // 半濁点ON/OFF
+    if (flags.handaku) flags.daku = false;
+    refresh();
+  });
+  wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
+    flags.small = !flags.small;         // 小書きON/OFF
+    refresh();
+  });
+
+  wireEvents(); // 初期のクリック配線
+}
+
+function wireEvents(){
+  // 50音表：ボタンクリック → curKana 更新 → カード差し替え → 読み上げ
+  wrap.querySelectorAll("button[data-k]").forEach((b) => {
+    b.onclick = () => {
+      const k = b.getAttribute("data-k");
+      if (!k || k === "・") return;
+      curKana = k;
+
+      // カード差し替え（id="card" を使う）
+      const card = wrap.querySelector("#card");
+      if (card) card.outerHTML = cardHTML(curKana);
+
+      wireCardEvents();
       speak(curKana);
-    });
-    wrap.querySelector("#tg-reset")?.addEventListener("click", () => {
-      mode = "base";
-      renderAll();
-      // 現在の仮名を可能なら基底に戻す（濁点/半濁点を外す）
-      const base = [...KANA_MAP.keys()].find(b => transformKana(b,"dakuten")===curKana || transformKana(b,"handaku")===curKana) || curKana;
-      curKana = base;
-      speak(curKana);
-    });
+    };
+  });
 
-    // 表タップ → curKana更新 → カード差し替え＆読み上げ
-    wrap.querySelectorAll("button[data-k]").forEach(b => {
-      b.addEventListener("click", () => {
-        const k = b.getAttribute("data-k");
-        if (!k || k === "・") return;
-        curKana = k;
-        // カード差し替え
-        const cardWrap = wrap.querySelector(".hira-card");
-        if (cardWrap) cardWrap.outerHTML = cardHTML();
-        wireCardEvents();
-        speak(curKana);
-      });
-    });
+  wireCardEvents(); // 初期カードにもイベント張る
+}
 
-    wireCardEvents();
-  }
+function wireCardEvents(){
+  // もう一回 → かなを読む
+  wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
 
-  function wireCardEvents() {
-    // もう一回
-    wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
-    // 例語（あるときだけ）
-    const exBtn = wrap.querySelector("#ex");
-    if (exBtn) {
-      exBtn.addEventListener("click", () => {
-        const ex = exampleOf(curKana);
-        if (ex?.yomi) speak(ex.yomi);
-      });
-    }
-  }
+  // 例語ボタン → よみを読む（清音に戻してから例語を取得）
+  const base = normalizeKana(curKana);
+  const ex   = KANA_MAP.get(base);
+  wrap.querySelector("#ex")?.addEventListener("click", () => {
+    if (ex?.yomi) speak(ex.yomi);
+  });
+}
+
 
   // 初期描画
-  renderAll();
+  mountGrid();
 
   // 画面離脱でTTS停止
   const onHide = () => stop();
