@@ -119,6 +119,7 @@ export const MESSAGES = {
     "result.retry": "再试一次",
     "result.returnMenu": "返回菜单",
     "numbers.title": "数字",
+    "hira.again": "再播放",
     "locked": "已锁定"
   },
 
@@ -161,6 +162,7 @@ export const MESSAGES = {
     "result.retry": "다시 시도",
     "result.returnMenu": "메뉴로 돌아가기",
     "numbers.title": "숫자",
+    "hira.again": "다시 듣기",
     "locked": "잠김"
   },
 
@@ -203,6 +205,7 @@ export const MESSAGES = {
     "result.retry": "Thử lại",
     "result.returnMenu": "Trở lại menu",
     "numbers.title": "Số",
+    "hira.again": "Nghe lại",
     "locked": "Đã khóa"
   },
 
@@ -246,6 +249,7 @@ export const MESSAGES = {
     "result.retry": "Intentar de nuevo",
     "result.returnMenu": "Volver al menú",
     "numbers.title": "Números",
+    "hira.again": "Reproducir de nuevo",
     "locked": "Bloqueado"
   },
 
@@ -288,6 +292,7 @@ export const MESSAGES = {
     "result.retry": "Réessayer",
     "result.returnMenu": "Retour au menu",
     "numbers.title": "Nombres",
+    "hira.again": "Réécouter",
     "locked": "Verrouillé"
   },
 
@@ -330,6 +335,7 @@ export const MESSAGES = {
     "result.retry": "Erneut versuchen",
     "result.returnMenu": "Zurück zum Menü",
     "numbers.title": "Zahlen",
+    "hira.again": "Noch einmal abspielen",
     "locked": "Gesperrt"
   },
 
@@ -372,6 +378,7 @@ export const MESSAGES = {
     "result.retry": "Riprova",
     "result.returnMenu": "Torna al menu",
     "numbers.title": "Numeri",
+    "hira.again": "Riproduci di nuovo",
     "locked": "Bloccato"
   },
 
@@ -414,6 +421,7 @@ export const MESSAGES = {
     "result.retry": "Tentar novamente",
     "result.returnMenu": "Voltar ao menu",
     "numbers.title": "Números",
+    "hira.again": "Reproduzir novamente",
     "locked": "Bloqueado"
   },
 
@@ -457,6 +465,7 @@ export const MESSAGES = {
     "result.retry": "Coba lagi",
     "result.returnMenu": "Kembali ke menu",
     "numbers.title": "Angka",
+    "hira.again": "Putar lagi",
     "locked": "Terkunci"
   },
 
@@ -499,6 +508,7 @@ export const MESSAGES = {
     "result.retry": "Subukan muli",
     "result.returnMenu": "Bumalik sa menu",
     "numbers.title": "Mga Numero",
+    "hira.again": "Pakinggan muli",
     "locked": "Naka-lock"
   },
 
@@ -541,6 +551,7 @@ export const MESSAGES = {
     "result.retry": "ลองอีกครั้ง",
     "result.returnMenu": "กลับไปที่เมนู",
     "numbers.title": "ตัวเลข",
+    "hira.again": "เล่นอีกครั้ง",
     "locked": "ถูกล็อก"
   },
 
@@ -583,6 +594,7 @@ export const MESSAGES = {
     "result.retry": "Попробовать снова",
     "result.returnMenu": "Вернуться в меню",
     "numbers.title": "Числа",
+    "hira.again": "Проиграть снова",
     "locked": "Заблокировано"
   },
 
@@ -625,6 +637,7 @@ export const MESSAGES = {
     "result.retry": "फिर से प्रयास करें",
     "result.returnMenu": "मेनू पर वापस जाएँ",
     "numbers.title": "संख्याएँ",
+    "hira.again": "फिर से चलाएं",
     "locked": "लॉक किया गया"
   },
 
@@ -667,6 +680,7 @@ export const MESSAGES = {
     "result.retry": "សាកល្បងម្ដងទៀត",
     "result.returnMenu": "ត្រឡប់ទៅម៉ឺនុយ",
     "numbers.title": "លេខ",
+    "hira.again": "បញ្ចាំងម្ដងទៀត",
     "locked": "បានចាក់សោ"
   },
 
@@ -709,6 +723,7 @@ export const MESSAGES = {
     "result.retry": "ລອງອີກຄັ້ງ",
     "result.returnMenu": "ກັບໄປໜ້າເມນູ",
     "numbers.title": "ຕົວເລກ",
+    "hira.again": "ເປີດອີກຄັ້ງ",
     "locked": "ຖືກລັອກ"
   },
 
@@ -751,6 +766,7 @@ export const MESSAGES = {
     "result.retry": "फेरि प्रयास गर्नुहोस्",
     "result.returnMenu": "मेनुमा फर्कनुहोस्",
     "numbers.title": "सङ्ख्याहरू",
+    "hira.again": "फेरि चलाउनुहोस्",
     "locked": "लक गरिएको"
   }
 };
