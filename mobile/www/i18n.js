@@ -42,6 +42,8 @@ export const MESSAGES = {
   "result.retry": "Try again",
   "result.returnMenu": "Return menu",
   "numbers.title": "Numbers", 
+  "hira.title": "Hiragana",
+  "hira.again": "Play again",
   "locked": "Locked"
 },
 
