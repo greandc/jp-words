@@ -293,7 +293,6 @@ function wireCardEvents(){
   });
 }
 
-
   // 初期描画
   mountGrid();
 
