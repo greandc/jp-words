@@ -3,6 +3,12 @@ import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS } from "./data.hira.js";
 
+console.log("HIRAGANA BUILD = zebra42");
+
+const BUILD_TAG = "ps-fix-01";
+
+
+
 // かな変換ユーティリティ
 const ROW_K = {
   ka: ["か","き","く","け","こ"],
@@ -133,6 +139,8 @@ export async function render(el, deps = {}) {
       <button id="back" class="btn" style="padding:.35rem .7rem;">
         ${t("common.back") || "Back"}
       </button>
+      <span style="font-size:.8rem;color:#64748b;margin-left:.5rem;">${BUILD_TAG}</span>
+
     </div>
   `;
 }
