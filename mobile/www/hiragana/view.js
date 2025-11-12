@@ -157,7 +157,7 @@ function gridHTML(){
         return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
       }
       // 表示文字
-      const disp = applyKanaTransform(base, flags);
+      const disp = transformKana(base, flags);
       const changed = (disp !== base) ? "hiraChanged" : "";
       return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
                 style="height:48px;font-size:1.2rem;">${disp}</button>`;
