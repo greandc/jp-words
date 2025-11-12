@@ -137,13 +137,15 @@ export async function render(el, deps = {}) {
 
   function togglesHTML(){
   return `
-    <div class="hira-toggles" style="display:flex;gap:8px;margin:6px 0 4px;align-items:center;">
+    <div id="hira-toggles" class="hira-toggles"
+         style="display:flex;gap:8px;margin:6px 0 4px;align-items:center;">
       <button class="btn tbtn" id="btnDaku"    title="濁点">゛</button>
       <button class="btn tbtn" id="btnHandaku" title="半濁点">゜</button>
       <button class="btn tbtn" id="btnSmall"   title="小書き">小</button>
       <button class="btn tbtn" id="btnReset"   title="リセット">⟳</button>
     </div>`;
 }
+
 
 
 function gridHTML(){
@@ -181,45 +183,51 @@ function gridHTML(){
     </div>`;
 }
 
-
-  // ========= ここから貼る =========
-
 function mountGrid(){
-  // 見出し + トグル + グリッド + カード（curKana を渡す）
+  // 1) 描画（必ずトグルを含める）
   wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
 
-  // 戻る
+  // 2) 保険：何らかの理由でトグルが消えた/未描画なら強制挿入
+  if (!wrap.querySelector("#hira-toggles")) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = togglesHTML();
+    const firstGrid = wrap.querySelector(".hira-grid")?.parentElement || wrap.firstChild?.nextSibling;
+    wrap.insertBefore(tmp.firstElementChild, firstGrid || wrap.firstChild);
+  }
+
+  // 3) 戻る
   wrap.querySelector("#back")?.addEventListener("click", () => deps.goto?.("menu1"));
 
-  // 再描画ヘルパ（トグル変更時に使う）
+  // 4) 再描画ヘルパ
   const refresh = () => {
     wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
     wireEvents();
   };
 
-  // トグル
-wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
-  flags.daku = !flags.daku;
-  if (flags.daku) flags.handaku = false;
-  mountGrid();
-});
-wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
-  flags.handaku = !flags.handaku;
-  if (flags.handaku) flags.daku = false;
-  mountGrid();
-});
-wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
-  flags.small = !flags.small;
-  mountGrid();
-});
-wrap.querySelector("#btnReset")?.addEventListener("click", () => {
-  flags = { daku:false, handaku:false, small:false };
-  mountGrid();
-});
+  // 5) トグル配線（IDは固定）
+  wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
+    flags.daku = !flags.daku;
+    if (flags.daku) flags.handaku = false;
+    refresh();
+  });
+  wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
+    flags.handaku = !flags.handaku;
+    if (flags.handaku) flags.daku = false;
+    refresh();
+  });
+  wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
+    flags.small = !flags.small;
+    refresh();
+  });
+  wrap.querySelector("#btnReset")?.addEventListener("click", () => {
+    flags = { daku:false, handaku:false, small:false };
+    refresh();
+  });
 
-
-  wireEvents(); // 初期のクリック配線
+  // 6) 表クリック配線
+  wireEvents();
 }
+
 
 function wireEvents(){
   // 50音表：ボタンクリック → curKana 更新 → カード差し替え → 読み上げ
