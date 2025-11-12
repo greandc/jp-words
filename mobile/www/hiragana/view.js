@@ -136,14 +136,15 @@ export async function render(el, deps = {}) {
   }
 
   function togglesHTML(){
-  const on = (b)=> b ? 'style="background:#e5f3ff;border-color:#bfdefb;"' : "";
   return `
-    <div style="display:flex;gap:8px;margin:6px 0 4px;">
-      <button class="btn" id="btnDaku" ${on(flags.daku)}>゛</button>
-      <button class="btn" id="btnHandaku" ${on(flags.handaku)}>゜</button>
-      <button class="btn" id="btnSmall" ${on(flags.small)}>小</button>
+    <div class="hira-toggles" style="display:flex;gap:8px;margin:6px 0 4px;align-items:center;">
+      <button class="btn tbtn" id="btnDaku"    title="濁点">゛</button>
+      <button class="btn tbtn" id="btnHandaku" title="半濁点">゜</button>
+      <button class="btn tbtn" id="btnSmall"   title="小書き">小</button>
+      <button class="btn tbtn" id="btnReset"   title="リセット">⟳</button>
     </div>`;
 }
+
 
 function gridHTML(){
   return ROWS.map((row,rowIdx)=>{
@@ -196,21 +197,26 @@ function mountGrid(){
     wireEvents();
   };
 
-  // ★トグル（IDは #btnDaku / #btnHandaku / #btnSmall）
-  wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
-    flags.daku = !flags.daku;           // 濁点ON/OFF
-    if (flags.daku) flags.handaku = false; // 同時ONは不可
-    refresh();
-  });
-  wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
-    flags.handaku = !flags.handaku;     // 半濁点ON/OFF
-    if (flags.handaku) flags.daku = false;
-    refresh();
-  });
-  wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
-    flags.small = !flags.small;         // 小書きON/OFF
-    refresh();
-  });
+  // トグル
+wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
+  flags.daku = !flags.daku;
+  if (flags.daku) flags.handaku = false;
+  mountGrid();
+});
+wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
+  flags.handaku = !flags.handaku;
+  if (flags.handaku) flags.daku = false;
+  mountGrid();
+});
+wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
+  flags.small = !flags.small;
+  mountGrid();
+});
+wrap.querySelector("#btnReset")?.addEventListener("click", () => {
+  flags = { daku:false, handaku:false, small:false };
+  mountGrid();
+});
+
 
   wireEvents(); // 初期のクリック配線
 }
