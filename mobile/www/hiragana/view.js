@@ -187,9 +187,21 @@ function gridHTML(){
     </div>`;
 }
 
+// 追加：描画後にi18nラベルを確定させる
+function applyI18nLabels() {
+  const backBtn  = wrap.querySelector("#back");
+  if (backBtn) backBtn.textContent = t("common.back") || "Back";
+
+  const againBtn = wrap.querySelector("#again");
+  if (againBtn) againBtn.innerHTML = `🔁 ${t("hira.again") || "Play again"}`;
+}
+
+
 function mountGrid(){
   // 1) 見出し + トグル + グリッド + カード
   wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
+  applyI18nLabels();
+
 
   // 1.5) デバッグ：今トグルが DOM に居るかログ
   try {
@@ -212,6 +224,7 @@ function mountGrid(){
   const refresh = () => {
     wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
     wireEvents();
+    applyI18nLabels();
   };
 
   // 5) トグル配線
@@ -247,6 +260,7 @@ function wireEvents(){
       if (card) card.outerHTML = cardHTML(curKana);
 
       wireCardEvents();
+      applyI18nLabels();
       speak(curKana);
     };
   });
