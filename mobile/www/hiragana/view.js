@@ -127,15 +127,18 @@ export async function render(el, deps = {}) {
   root.appendChild(wrap);
 
   function headerHTML() {
-    return `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h1 style="margin:0;">ひらがな</h1>
-        <button id="back" class="btn" style="padding:.35rem .7rem;">${t("common.back") || "Back"}</button>
-      </div>
-    `;
-  }
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h1 style="margin:0;">ひらがな</h1>
+      <button id="back" class="btn" style="padding:.35rem .7rem;">
+        ${t("common.back") || "Back"}
+      </button>
+    </div>
+  `;
+}
 
-  function togglesHTML(){
+
+ function togglesHTML(){
   return `
     <div id="hira-toggles" class="hira-toggles"
          style="display:flex;gap:8px;margin:10px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
