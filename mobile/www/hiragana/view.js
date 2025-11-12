@@ -138,7 +138,8 @@ export async function render(el, deps = {}) {
   function togglesHTML(){
   return `
     <div id="hira-toggles" class="hira-toggles"
-         style="display:flex;gap:8px;margin:6px 0 4px;align-items:center;">
+         style="display:flex;gap:8px;margin:10px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
+      <span style="font-size:.9rem;color:#475569;">モード：</span>
       <button class="btn tbtn" id="btnDaku"    title="濁点">゛</button>
       <button class="btn tbtn" id="btnHandaku" title="半濁点">゜</button>
       <button class="btn tbtn" id="btnSmall"   title="小書き">小</button>
@@ -184,15 +185,21 @@ function gridHTML(){
 }
 
 function mountGrid(){
-  // 1) 描画（必ずトグルを含める）
+  // 1) 見出し + トグル + グリッド + カード
   wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
 
-  // 2) 保険：何らかの理由でトグルが消えた/未描画なら強制挿入
+  // 1.5) デバッグ：今トグルが DOM に居るかログ
+  try {
+    console.log("[hiragana] has toggles:", !!wrap.querySelector("#hira-toggles"));
+  } catch (_) {}
+
+  // 2) 念のため：見当たらなければ強制挿入（グリッドの直前）
   if (!wrap.querySelector("#hira-toggles")) {
     const tmp = document.createElement("div");
     tmp.innerHTML = togglesHTML();
-    const firstGrid = wrap.querySelector(".hira-grid")?.parentElement || wrap.firstChild?.nextSibling;
-    wrap.insertBefore(tmp.firstElementChild, firstGrid || wrap.firstChild);
+    const firstGrid = wrap.querySelector(".hira-grid");
+    if (firstGrid) firstGrid.parentNode.insertBefore(tmp.firstElementChild, firstGrid);
+    else wrap.insertBefore(tmp.firstElementChild, wrap.firstChild?.nextSibling || null);
   }
 
   // 3) 戻る
@@ -204,29 +211,24 @@ function mountGrid(){
     wireEvents();
   };
 
-  // 5) トグル配線（IDは固定）
+  // 5) トグル配線
   wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
-    flags.daku = !flags.daku;
-    if (flags.daku) flags.handaku = false;
-    refresh();
+    flags.daku = !flags.daku; if (flags.daku) flags.handaku = false; refresh();
   });
   wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
-    flags.handaku = !flags.handaku;
-    if (flags.handaku) flags.daku = false;
-    refresh();
+    flags.handaku = !flags.handaku; if (flags.handaku) flags.daku = false; refresh();
   });
   wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
-    flags.small = !flags.small;
-    refresh();
+    flags.small = !flags.small; refresh();
   });
   wrap.querySelector("#btnReset")?.addEventListener("click", () => {
-    flags = { daku:false, handaku:false, small:false };
-    refresh();
+    flags = { daku:false, handaku:false, small:false }; refresh();
   });
 
   // 6) 表クリック配線
   wireEvents();
 }
+
 
 
 function wireEvents(){
