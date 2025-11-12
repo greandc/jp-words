@@ -21,7 +21,7 @@ const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ", わ:"ゎ", あ:"
 const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v,k]));
 
 // 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
-function transformKana(k, flags){
+function applyKanaTransform(k, flags){
   const { daku=false, handaku=false, small=false } = flags || {};
   let out = k;
 
@@ -154,7 +154,7 @@ function gridHTML(){
         return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
       }
       // 表示文字
-      const disp = transformKana(base, flags);
+      const disp = applyKanaTransform(base, flags);
       const changed = (disp !== base) ? "hiraChanged" : "";
       return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
                 style="height:48px;font-size:1.2rem;">${disp}</button>`;
