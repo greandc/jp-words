@@ -115,6 +115,9 @@ function ensureStyle() {
 
 // ==========================================================
 export async function render(el, deps = {}) {
+  
+  alert("HIRAGANA render() FROM SOURCE");
+
   ensureStyle();
   ttsSetLang("ja-JP");
 
