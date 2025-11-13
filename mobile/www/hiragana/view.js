@@ -2,6 +2,8 @@
 import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS } from "./data.hira.js";
+import { transformKana } from "./transformKana.js";
+
 
 console.log("HIRAGANA SRC = v1");
 
@@ -262,6 +264,8 @@ function wireEvents(){
       const k = b.getAttribute("data-k");
       if (!k || k === "・") return;
       curKana = k;
+      curKana = transformKana(curKana, flags);
+
 
       // カード差し替え（id="card" を使う）
       const card = wrap.querySelector("#card");
