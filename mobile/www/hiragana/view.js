@@ -3,11 +3,9 @@ import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS } from "./data.hira.js";
 
-console.log("HIRAGANA BUILD = zebra42");
+console.log("HIRAGANA SRC = v1");
 
 const BUILD_TAG = "ps-fix-01";
-
-
 
 // かな変換ユーティリティ
 const ROW_K = {
@@ -132,15 +130,13 @@ export async function render(el, deps = {}) {
   wrap.className = "hira-wrap";
   root.appendChild(wrap);
 
-  function headerHTML() {
+ function headerHTML() {
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <h1 style="margin:0;">ひらがな</h1>
+      <h1 style="margin:0;">ひらがな★★TEST★★</h1>
       <button id="back" class="btn" style="padding:.35rem .7rem;">
         ${t("common.back") || "Back"}
       </button>
-      <span style="font-size:.8rem;color:#64748b;margin-left:.5rem;">${BUILD_TAG}</span>
-
     </div>
   `;
 }
