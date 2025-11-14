@@ -1,9 +1,8 @@
 {
-  "appId": "com.greandc.tangoloop",
-  "appName": "TANGO Loop",
-  "webDir": "www",
-  "server": {
-    "androidScheme": "https"
-  }
+  "appId": "com.greandc.jpwords",
+  "appName": "JP Words",
+  "webDir": "docs",
+  "bundledWebRuntime": false
 }
+
 
