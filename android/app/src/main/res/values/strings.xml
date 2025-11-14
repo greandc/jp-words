@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">JP Words</string>
+    <string name="title_activity_main">JP Words</string>
+    <string name="package_name">com.greandc.jpwords</string>
+    <string name="custom_url_scheme">com.greandc.jpwords</string>
+</resources>
