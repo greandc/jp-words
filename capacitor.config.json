@@ -1,7 +1,7 @@
 {
   "appId": "com.greandc.jpwords",
   "appName": "JP Words",
-  "webDir": "docs",
+  "webDir": "mobile/www",
   "bundledWebRuntime": false
 }
 
