@@ -23,7 +23,7 @@ const DAKU = {
   ha: ["ば","び","ぶ","べ","ぼ"],
 };
 const HANDAKU = ["ぱ","ぴ","ぷ","ぺ","ぽ"];
-const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ", あ:"ぁ", い:"ぃ", う:"ぅ", え:"ぇ" };
+const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ",い:"ぃ", う:"ぅ", え:"ぇ" };
 const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v,k]));
 
 // 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
@@ -204,52 +204,59 @@ function applyI18nLabels() {
 }
 
 function mountGrid(){
-  // 1) 見出し + トグル + グリッド + カード
+  // 1) 最初の描画
   wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
   applyI18nLabels();
 
+  console.log("[hiragana] mountGrid()");
 
-  // 1.5) デバッグ：今トグルが DOM に居るかログ
-  try {
-    console.log("[hiragana] has toggles:", !!wrap.querySelector("#hira-toggles"));
-  } catch (_) {}
+  // Back & モードボタンにイベントを付ける関数
+  function bindHeaderAndToggles(){
+    // Back
+    wrap.querySelector("#back")?.addEventListener("click", () => {
+      deps.goto?.("menu1");
+    });
 
-  // 2) 念のため：見当たらなければ強制挿入（グリッドの直前）
-  if (!wrap.querySelector("#hira-toggles")) {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = togglesHTML();
-    const firstGrid = wrap.querySelector(".hira-grid");
-    if (firstGrid) firstGrid.parentNode.insertBefore(tmp.firstElementChild, firstGrid);
-    else wrap.insertBefore(tmp.firstElementChild, wrap.firstChild?.nextSibling || null);
+    // 濁点
+    wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
+      flags.daku = !flags.daku;
+      if (flags.daku) flags.handaku = false;   // 濁点ONなら半濁をOFF
+      refresh();
+    });
+
+    // 半濁点
+    wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
+      flags.handaku = !flags.handaku;
+      if (flags.handaku) flags.daku = false;   // 半濁ONなら濁点をOFF
+      refresh();
+    });
+
+    // 小書き
+    wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
+      flags.small = !flags.small;
+      refresh();
+    });
+
+    // リセット
+    wrap.querySelector("#btnReset")?.addEventListener("click", () => {
+      flags = { daku:false, handaku:false, small:false };
+      refresh();
+    });
   }
 
-  // 3) 戻る
-  wrap.querySelector("#back")?.addEventListener("click", () => deps.goto?.("menu1"));
-
-  // 4) 再描画ヘルパ
+  // 2) 再描画ヘルパ（画面を描き直してイベントを張り直す）
   const refresh = () => {
     wrap.innerHTML = headerHTML() + togglesHTML() + gridHTML() + cardHTML(curKana);
-    wireEvents();
     applyI18nLabels();
+    wireEvents();          // かなボタン & カードのイベント
+    bindHeaderAndToggles(); // Back & モードボタンのイベント
   };
 
-  // 5) トグル配線
-  wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
-    flags.daku = !flags.daku; if (flags.daku) flags.handaku = false; refresh();
-  });
-  wrap.querySelector("#btnHandaku")?.addEventListener("click", () => {
-    flags.handaku = !flags.handaku; if (flags.handaku) flags.daku = false; refresh();
-  });
-  wrap.querySelector("#btnSmall")?.addEventListener("click", () => {
-    flags.small = !flags.small; refresh();
-  });
-  wrap.querySelector("#btnReset")?.addEventListener("click", () => {
-    flags = { daku:false, handaku:false, small:false }; refresh();
-  });
-
-  // 6) 表クリック配線
+  // 3) 最初のイベント付け
   wireEvents();
+  bindHeaderAndToggles();
 }
+
 
 function wireEvents(){
   // 50音表：ボタンクリック → curKana 更新 → カード差し替え → 読み上げ
