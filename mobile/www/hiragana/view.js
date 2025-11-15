@@ -23,7 +23,7 @@ const DAKU = {
   ha: ["ば","び","ぶ","べ","ぼ"],
 };
 const HANDAKU = ["ぱ","ぴ","ぷ","ぺ","ぽ"];
-const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ", わ:"ゎ", あ:"ぁ", い:"ぃ", う:"ぅ", え:"ぇ", お:"ぉ" };
+const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ", あ:"ぁ", い:"ぃ", う:"ぅ", え:"ぇ" };
 const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v,k]));
 
 // 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
@@ -180,7 +180,7 @@ function gridHTML(){
 
 function cardHTML(curKana){
   const base = normalizeKana(curKana);
-  const ex = KANA_MAP.get(base) || { kanji:"", yomi:"" };
+    const ex = KANA_MAP.get(curKana) || KANA_MAP.get(base) || { kanji:"", yomi:"" };
   return `
     <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
       <div style="display:flex;align-items:center;gap:12px;">
@@ -280,7 +280,7 @@ function wireCardEvents(){
 
   // 例語ボタン → よみを読む（清音に戻してから例語を取得）
   const base = normalizeKana(curKana);
-  const ex   = KANA_MAP.get(base);
+  const ex   = KANA_MAP.get(curKana) || KANA_MAP.get(base);
   wrap.querySelector("#ex")?.addEventListener("click", () => {
     if (ex?.yomi) speak(ex.yomi);
   });
