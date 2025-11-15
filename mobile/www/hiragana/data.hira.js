@@ -70,11 +70,5 @@ export const ROWS = [
     {k:"ん", ex:{kanji:"新幹線", yomi:"しんかんせん"}}, // 仕様通り“わ行”に配置
     {k:"・"}, {k:"・"},
   ]},
-  { name:"が行", items:[
-    {k:"が", ex:{kanji:"外国", yomi:"がいこく"}},
-    {k:"ぎ", ex:{kanji:"銀行",  yomi:"ぎんこう"}},
-    {k:"ぐ", ex:{kanji:"軍隊", yomi:"ぐんたい"}},
-    {k:"げ", ex:{kanji:"芸者",  yomi:"げいしゃ"}},
-    {k:"ご", ex:{kanji:"誤解",  yomi:"ごかい"}},
-  ]},
+  
 ];

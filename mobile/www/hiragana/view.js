@@ -144,9 +144,6 @@ export async function render(el, deps = {}) {
   `;
 }
 
-
-
-
  function togglesHTML(){
   return `
     <div id="hira-toggles" class="hira-toggles"
@@ -158,8 +155,6 @@ export async function render(el, deps = {}) {
       <button class="btn tbtn" id="btnReset"   title="リセット">⟳</button>
     </div>`;
 }
-
-
 
 function gridHTML(){
   return ROWS.map((row,rowIdx)=>{
@@ -180,7 +175,7 @@ function gridHTML(){
 }
 
 
-  function cardHTML(curKana){
+function cardHTML(curKana){
   const base = normalizeKana(curKana);
   const ex = KANA_MAP.get(base) || { kanji:"", yomi:"" };
   return `
@@ -204,7 +199,6 @@ function applyI18nLabels() {
   const againBtn = wrap.querySelector("#again");
   if (againBtn) againBtn.innerHTML = `🔁 ${t("hira.again") || "Play again"}`;
 }
-
 
 function mountGrid(){
   // 1) 見出し + トグル + グリッド + カード
@@ -253,8 +247,6 @@ function mountGrid(){
   // 6) 表クリック配線
   wireEvents();
 }
-
-
 
 function wireEvents(){
   // 50音表：ボタンクリック → curKana 更新 → カード差し替え → 読み上げ
