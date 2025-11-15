@@ -117,8 +117,6 @@ function ensureStyle() {
 
 // ==========================================================
 export async function render(el, deps = {}) {
-  
-  alert("HIRAGANA render() FROM SOURCE");
 
   ensureStyle();
   ttsSetLang("ja-JP");
@@ -138,13 +136,14 @@ export async function render(el, deps = {}) {
  function headerHTML() {
   return `
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <h1 style="margin:0;">ひらがな★★★NATIVE TEST★★★</h1>
+      <h1 style="margin:0;">ひらがな</h1>
       <button id="back" class="btn" style="padding:.35rem .7rem;">
         ${t("common.back") || "Back"}
       </button>
     </div>
   `;
 }
+
 
 
 
