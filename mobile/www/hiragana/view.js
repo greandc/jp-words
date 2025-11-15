@@ -35,7 +35,7 @@ const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v
 
 // 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
 function applyKanaTransform(k, flags){
-  const { daku=false, handaku=false, small=false } = flags || {};
+  const { daku=false, handaku=false, SMALL_MAPl=false } = flags || {};
   let out = k;
 
   // 行・列を特定
