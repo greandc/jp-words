@@ -70,5 +70,39 @@ export const ROWS = [
     {k:"ん", ex:{kanji:"新幹線", yomi:"しんかんせん"}}, // 仕様通り“わ行”に配置
     {k:"・"}, {k:"・"},
   ]},
-  
+  { name:"が行", items:[
+    {k:"が", ex:{kanji:"外国", yomi:"がいこく"}},
+    {k:"ぎ", ex:{kanji:"銀行",  yomi:"ぎんこう"}},
+    {k:"ぐ", ex:{kanji:"軍隊", yomi:"ぐんたい"}},
+    {k:"げ", ex:{kanji:"芸者",  yomi:"げいしゃ"}},
+    {k:"ご", ex:{kanji:"誤解",  yomi:"ごかい"}},
+  ]},
+  { name:"ざ行", items:[
+    {k:"ざ", ex:{kanji:"座席", yomi:"ざせき"}},
+    {k:"じ", ex:{kanji:"自分",  yomi:"じぶん"}},
+    {k:"ず", ex:{kanji:"頭痛", yomi:"ずつう"}},
+    {k:"ぜ", ex:{kanji:"全員",  yomi:"ぜんいん"}},
+    {k:"ぞ", ex:{kanji:"象",  yomi:"ぞう"}},
+  ]},
+  { name:"だ行", items:[
+    {k:"だ", ex:{kanji:"大工", yomi:"だいく"}},
+    {k:"ぢ", ex:{kanji:"地面",  yomi:"ぢめん（じめん）"}},
+    {k:"づ", ex:{kanji:"続く", yomi:"つづく"}},
+    {k:"で", ex:{kanji:"出口",  yomi:"でぐち"}},
+    {k:"ど", ex:{kanji:"道路",  yomi:"どうろ"}},
+  ]},
+   { name:"ば行", items:[
+    {k:"ば", ex:{kanji:"場所", yomi:"ばしょ"}},
+    {k:"び", ex:{kanji:"瓶",  yomi:"びん"}},
+    {k:"ぶ", ex:{kanji:"武道", yomi:"ぶどう"}},
+    {k:"べ", ex:{kanji:"勉強",  yomi:"べんきょう"}},
+    {k:"ぼ", ex:{kanji:"帽子",  yomi:"ぼうし"}},
+  ]},
+  { name:"ぱ行", items:[
+    {k:"ぱ", ex:{kanji:"乾杯", yomi:"かんぱい"}},
+    {k:"ぴ", ex:{kanji:"金品",  yomi:"きんぴん"}},
+    {k:"ぷ", ex:{kanji:"切符", yomi:"きっぷ"}},
+    {k:"ぺ", ex:{kanji:"完璧",  yomi:"かんぺき"}},
+    {k:"ぽ", ex:{kanji:"散歩",  yomi:"さんぽ"}},
+  ]},
 ];

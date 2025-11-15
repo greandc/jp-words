@@ -157,22 +157,25 @@ export async function render(el, deps = {}) {
 }
 
 function gridHTML(){
-  return ROWS.map((row,rowIdx)=>{
-    const cells = row.items.map(it=>{
-      const base = it.k;
-      const hole = !base || base==="・";
-      if (hole) {
-        return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
-      }
-      // 表示文字
-      const disp = transformKana(base, flags);
-      const changed = (disp !== base) ? "hiraChanged" : "";
-      return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
-                style="height:48px;font-size:1.2rem;">${disp}</button>`;
+  return ROWS
+    // ★ 濁音・半濁音の行は表から除外（データは残す）
+    .filter(row => !["が行","ざ行","だ行","ば行","ぱ行"].includes(row.name))
+    .map((row,rowIdx)=>{
+      const cells = row.items.map(it=>{
+        const base = it.k;
+        const hole = !base || base==="・";
+        if (hole) {
+          return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
+        }
+        const disp = transformKana(base, flags);
+        const changed = (disp !== base) ? "hiraChanged" : "";
+        return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
+                  style="height:48px;font-size:1.2rem;">${disp}</button>`;
+      }).join("");
+      return `<div class="hira-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
     }).join("");
-    return `<div class="hira-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
-  }).join("");
 }
+
 
 
 function cardHTML(curKana){
