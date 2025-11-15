@@ -23,7 +23,14 @@ const DAKU = {
   ha: ["ば","び","ぶ","べ","ぼ"],
 };
 const HANDAKU = ["ぱ","ぴ","ぷ","ぺ","ぽ"];
-const SMALL_MAP = { や:"ゃ", ゆ:"ゅ", よ:"ょ", つ:"っ",い:"ぃ", う:"ぅ", え:"ぇ" };
+// 小書きにするのは「ゃ・ゅ・ょ・っ」だけに限定
+const SMALL_MAP = {
+  や: "ゃ",
+  ゆ: "ゅ",
+  よ: "ょ",
+  つ: "っ",
+};
+
 const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v,k]));
 
 // 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
