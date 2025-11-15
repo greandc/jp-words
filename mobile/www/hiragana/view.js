@@ -23,34 +23,52 @@ const DAKU = {
   ha: ["ば","び","ぶ","べ","ぼ"],
 };
 const HANDAKU = ["ぱ","ぴ","ぷ","ぺ","ぽ"];
-// 小書きにするのは「ゃ・ゅ・ょ・っ」だけに限定
+
+// 小書きにするのは「や・ゆ・よ・つ」だけ
+const SMALLABLE = new Set(["や","ゆ","よ","つ"]);
 const SMALL_MAP = {
-  や: "ゃ",
-  ゆ: "ゅ",
-  よ: "ょ",
-  つ: "っ",
+  "や": "ゃ",
+  "ゆ": "ゅ",
+  "よ": "ょ",
+  "つ": "っ",
 };
 
-const UNSMALL_MAP = Object.fromEntries(Object.entries(SMALL_MAP).map(([k,v])=>[v,k]));
+// 例語側で使う「小→大」の逆変換
+const UNSMALL_MAP = {};
+for (const [big, small] of Object.entries(SMALL_MAP)) {
+  UNSMALL_MAP[small] = big;
+}
 
-// 清音 → 対応ダク点/半濁/小字への変換（必要な所だけ）
+
+// 清音 → 対応ダク点 / 半濁 / 小字への変換（必要な所だけ）
 function applyKanaTransform(k, flags){
-  const { daku=false, handaku=false, SMALL_MAPl=false } = flags || {};
+  const { daku=false, handaku=false, small=false } = flags || {};
   let out = k;
 
-  // 行・列を特定
+  // 行・列を特定（か・さ・た・は行）
   for (const rowKey of ["ka","sa","ta","ha"]) {
     const idx = ROW_K[rowKey].indexOf(k);
     if (idx !== -1) {
-      if (handaku && rowKey==="ha")      out = HANDAKU[idx];
-      else if (daku)                     out = DAKU[rowKey][idx];
-      return small ? (SMALL_MAP[out] || out) : out;
+      if (handaku && rowKey === "ha") {
+        out = HANDAKU[idx];
+      } else if (daku) {
+        out = DAKU[rowKey][idx];
+      }
+      // 小書きは「や・ゆ・よ・つ」だけ
+      if (small && SMALLABLE.has(out)) {
+        out = SMALL_MAP[out];
+      }
+      return out;
     }
   }
-  // 清音以外の普通の行（あ/な/ま/ら/…）
-  out = small ? (SMALL_MAP[out] || out) : out;
+
+  // それ以外の行（あ行・な行・ま行・ら行 など）
+  if (small && SMALLABLE.has(out)) {
+    out = SMALL_MAP[out];
+  }
   return out;
 }
+
 
 // 例語検索用：表示文字を清音へ戻す
 function normalizeKana(k){
