@@ -25,28 +25,29 @@
   },
   {
     "id": "lv13-02",
-    "jp": { "orth": "小さい", "reading": "ちいさい" },
+     "jp": { "orth": "水", "reading": "みず" },
     "defs": {
-      "en": "small / little",
-      "zh": "小 / 小的",
-      "ko": "작다 / 작은",
-      "vi": "nhỏ / bé",
-      "es": "pequeño",
-      "fr": "petit",
-      "de": "klein",
-      "it": "piccolo",
-      "pt": "pequeno",
-      "id": "kecil",
-      "tl": "maliit",
-      "th": "เล็ก / น้อย",
-      "ru": "маленький / небольшой",
-      "hi": "छोटा",
-      "km": "តូច / តូចតាច",
-      "lo": "ນ້ອຍ / ຂະໜາດນ້ອຍ",
-      "ne": "सानो"
+      "en": "water",
+      "zh": "水",
+      "ko": "물",
+      "vi": "nước",
+      "es": "agua",
+      "fr": "eau",
+      "de": "Wasser",
+      "it": "acqua",
+      "pt": "água",
+      "id": "air",
+      "tl": "tubig",
+      "th": "น้ำ",
+      "ru": "вода",
+      "hi": "पानी",
+      "km": "ទឹក",
+      "lo": "ນ້ຳ",
+      "ne": "पानी"
     },
-    "pos": "adjective"
+    "pos": "noun"
   },
+    
   {
     "id": "lv13-03",
     "jp": { "orth": "長い", "reading": "ながい" },
