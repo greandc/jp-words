@@ -19,11 +19,11 @@ const DAKU = {
 // 半濁音
 const HANDAKU = ["パ","ピ","プ","ペ","ポ"];
 
-// 小文字（カタカナ版）…今回は や行＋っ だけに限定
+// 小文字（カタカナ）… や行＋っ だけに限定
 const SMALL_MAP = {
   ヤ: "ャ",
   ユ: "ュ",
-  ヨ: "ョ",
+ ヨ: "ョ",
   ツ: "ッ",
 };
 
@@ -31,7 +31,7 @@ const UNSMALL_MAP = Object.fromEntries(
   Object.entries(SMALL_MAP).map(([big, small]) => [small, big])
 );
 
-// ==== 画面表示用：清音 → （゛/゜/小）に変換 ==== //
+// ===== 画面表示用：清音 → （゛/゜/小）に変換 =====
 export function transformKana(base, flags) {
   let k = base;
   const { daku = false, handaku = false, small = false } = flags || {};
@@ -56,7 +56,7 @@ export function transformKana(base, flags) {
   return k;
 }
 
-// ==== 例語検索用：表示文字 → 清音に戻す ==== //
+// ===== 例語検索用：表示文字 → 清音に戻す =====
 export function normalizeKana(k) {
   // 小さい文字 → 大きい文字
   if (UNSMALL_MAP[k]) k = UNSMALL_MAP[k];
@@ -73,3 +73,4 @@ export function normalizeKana(k) {
 
   return k;
 }
+
