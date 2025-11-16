@@ -3,6 +3,8 @@ import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS } from "./data.kata.js";
 import { transformKana, normalizeKana } from "./transformKana.js";
+import { ROWS, EXTRA_KATA_EXAMPLES } from "./data.kata.js";
+
 
 console.log("KATAKANA SRC = v1");
 

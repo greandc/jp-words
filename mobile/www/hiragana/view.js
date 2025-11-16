@@ -93,9 +93,7 @@ for (const row of ROWS) {
     }
   }
 }
-for (const {k, ex} of EXTRA_HIRA_EXAMPLES) {
-  KANA_MAP.set(k, ex);   // 既存があっても上書きしてOK
-}
+
 
 // ========== スタイル注入 ==========
 function ensureStyle() {

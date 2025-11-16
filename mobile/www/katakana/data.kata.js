@@ -82,7 +82,7 @@ export const ROWS = [
   ]},
 ];
 // カタカナ用：濁音・半濁音＋小さい ャュョッ
-const EXTRA_KATA_EXAMPLES = [
+export const EXTRA_KATA_EXAMPLES = [
   // ガ行
   { k: "ガ", ex: { kanji: "ガラス",   yomi: "がらす" } },
   { k: "ギ", ex: { kanji: "ギター",   yomi: "ぎたー" } },
