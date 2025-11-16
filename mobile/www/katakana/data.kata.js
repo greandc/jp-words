@@ -95,11 +95,11 @@ const EXTRA_KATA_EXAMPLES = [
   { k: "ジ", ex: { kanji: "ジーパン", yomi: "じーぱん" } },
   { k: "ズ", ex: { kanji: "ズボン",   yomi: "ずぼん" } },
   { k: "ゼ", ex: { kanji: "ゼリー",   yomi: "ぜりー" } },
-  { k: "ゾ", ex: { kanji: "ゾウ",     yomi: "ぞう" } },
+  { k: "ゾ", ex: { kanji: "ゾーン",     yomi: "ぞーん" } },
 
   // ダ行
   { k: "ダ", ex: { kanji: "ダンス",   yomi: "だんす" } },
-  { k: "ヂ", ex: { kanji: "ジヂミ",   yomi: "ぢぢみ" } }, // ちょい変則だけど音は「ぢ」
+  { k: "ヂ", ex: { kanji: "チヂミ",   yomi: "ちぢみ" } }, 
   { k: "ヅ", ex: { kanji: "ヅラ",     yomi: "づら" } },
   { k: "デ", ex: { kanji: "データ",   yomi: "でーた" } },
   { k: "ド", ex: { kanji: "ドーナツ", yomi: "どーなつ" } },
