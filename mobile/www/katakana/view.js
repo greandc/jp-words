@@ -148,23 +148,27 @@ export async function render(el, deps = {}) {
 
   function cardHTML(curKana){
   const base = normalizeKana(curKana);
-  const ex = KANA_MAP.get(base) || { kanji:"", yomi:"" };
+  const ex =
+    KANA_MAP.get(curKana) ||    // ① 濁点・半濁・小さい文字 用の追加例語
+    KANA_MAP.get(base)   ||    // ② なければ清音に戻した例語
+    { kanji:"", yomi:"" };
 
   return `
-    <div id="card" class="hira-card">
+    <div id="card"
+         style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa;width:100%;box-sizing:border-box;">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again"
-                style="padding:.32rem .6rem;font-size:.95rem;">
-          🔁 ${t("hira.again") || "Play again"}
-        </button>
+                style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again") || "Play again"}</button>
       </div>
-      <button id="ex" class="hira-exbtn" style="margin-top:8px;">
+      <button id="ex" class="hira-exbtn"
+              style="margin-top:8px;width:100%;box-sizing:border-box;">
         <span style="font-size:1.2rem;">${ex.kanji}</span>
         <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
       </button>
     </div>`;
 }
+
 
 
 
@@ -249,15 +253,19 @@ export async function render(el, deps = {}) {
     wireCardEvents();
   }
 
-  function wireCardEvents() {
-    wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
+  function wireCardEvents(){
+  // もう一回 → かなを読む
+  wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
 
-    const base = normalizeKana(curKana);
-    const ex   = KANA_MAP.get(base);
-    wrap.querySelector("#ex")?.addEventListener("click", () => {
-      if (ex?.yomi) speak(ex.yomi);
-    });
-  }
+  // 例語ボタン → よみを読む
+  const base = normalizeKana(curKana);
+  const ex   = KANA_MAP.get(curKana) || KANA_MAP.get(base);
+
+  wrap.querySelector("#ex")?.addEventListener("click", () => {
+    if (ex?.yomi) speak(ex.yomi);
+  });
+}
+
 
   // 初期描画
   mountGrid();
