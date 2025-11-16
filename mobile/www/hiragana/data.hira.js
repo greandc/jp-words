@@ -19,7 +19,7 @@ export const ROWS = [
     {k:"さ", ex:{kanji:"先", yomi:"さき"}},
     {k:"し", ex:{kanji:"島", yomi:"しま"}},
     {k:"す", ex:{kanji:"砂", yomi:"すな"}},
-    {k:"せ", ex:{kanji:"背中", yomi:"せなか」"}},
+    {k:"せ", ex:{kanji:"背中", yomi:"せなか"}},
     {k:"そ", ex:{kanji:"空", yomi:"そら"}},
   ]},
   { name:"た行", items:[
@@ -86,7 +86,7 @@ export const ROWS = [
   ]},
   { name:"だ行", items:[
     {k:"だ", ex:{kanji:"大工", yomi:"だいく"}},
-    {k:"ぢ", ex:{kanji:"地面",  yomi:"ぢめん（じめん）"}},
+    {k:"ぢ", ex:{kanji:"地面",  yomi:"ぢめん"}},
     {k:"づ", ex:{kanji:"続く", yomi:"つづく"}},
     {k:"で", ex:{kanji:"出口",  yomi:"でぐち"}},
     {k:"ど", ex:{kanji:"道路",  yomi:"どうろ"}},
@@ -105,8 +105,11 @@ export const ROWS = [
     {k:"ぺ", ex:{kanji:"完璧",  yomi:"かんぺき"}},
     {k:"ぽ", ex:{kanji:"散歩",  yomi:"さんぽ"}},
   ]},
-   { k: "ゃ", ex: { kanji: "客",     yomi: "きゃく" } },      // きゃ
-  { k: "ゅ", ex: { kanji: "牛乳",   yomi: "ぎゅうにゅう" } },// ぎゅ
-  { k: "ょ", ex: { kanji: "旅行",   yomi: "りょこう" } },    // りょ
-  { k: "っ", ex: { kanji: "切手",   yomi: "きって" } },      // っ
+];
+// 小さい ぁぃぅぇぉ・ゃゅょ・っ 用の追加例語
+export const EXTRA_HIRA_EXAMPLES = [
+  { k: "ゃ", ex: { kanji: "客",   yomi: "きゃく"     } },
+  { k: "ゅ", ex: { kanji: "牛乳", yomi: "ぎゅうにゅう" } },
+  { k: "ょ", ex: { kanji: "旅行", yomi: "りょこう"   } },
+  { k: "っ", ex: { kanji: "切手", yomi: "きって"     } },
 ];

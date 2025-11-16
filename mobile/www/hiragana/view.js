@@ -1,7 +1,7 @@
 // mobile/www/hiragana/view.js
 import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
-import { ROWS } from "./data.hira.js";
+import { ROWS, EXTRA_HIRA_EXAMPLES } from "./data.hira.js";
 import { transformKana } from "./transformKana.js";
 
 
@@ -92,6 +92,9 @@ for (const row of ROWS) {
       KANA_MAP.set(it.k, it.ex || { kanji: "", yomi: "" });
     }
   }
+}
+for (const { k, ex } of EXTRA_HIRA_EXAMPLES) {
+  KANA_MAP.set(k, ex);   // 小さい文字用の例語を上書き追加
 }
 
 
@@ -214,7 +217,10 @@ function gridHTML(){
 
 function cardHTML(curKana){
   const base = normalizeKana(curKana);
-    const ex = KANA_MAP.get(curKana) || KANA_MAP.get(base) || { kanji:"", yomi:"" };
+    const ex =
+    KANA_MAP.get(curKana) ||    // ① 小さい文字・濁点の専用例語
+    KANA_MAP.get(base)   ||    // ② なければ清音に戻して検索
+    { kanji:"", yomi:"" };
   return `
     <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
       <div style="display:flex;align-items:center;gap:12px;">
@@ -319,13 +325,14 @@ function wireCardEvents(){
   // もう一回 → かなを読む
   wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
 
-  // 例語ボタン → よみを読む（清音に戻してから例語を取得）
   const base = normalizeKana(curKana);
   const ex   = KANA_MAP.get(curKana) || KANA_MAP.get(base);
+
   wrap.querySelector("#ex")?.addEventListener("click", () => {
     if (ex?.yomi) speak(ex.yomi);
   });
 }
+
 
   // 初期描画
   mountGrid();
