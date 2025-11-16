@@ -83,17 +83,17 @@ export async function render(el, deps = {}) {
     `;
   }
 
-  function togglesHTML() {
-    return `
-      <div id="hira-toggles" class="hira-toggles"
-          style="display:flex;gap:8px;margin:10px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
-        <span style="font-size:.9rem;color:#475569;">モード：</span>
-        <button class="btn tbtn" id="btnDaku"    title="濁点">゛</button>
-        <button class="btn tbtn" id="btnHandaku" title="半濁点">゜</button>
-        <button class="btn tbtn" id="btnSmall"   title="小書き">小</button>
-        <button class="btn tbtn" id="btnReset"   title="リセット">⟳</button>
-      </div>`;
-  }
+  function togglesHTML(){
+  return `
+    <div id="kata-toggles" class="hira-toggles"
+         style="display:flex;gap:8px;margin:10px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
+      <button class="btn tbtn" id="btnDaku"    title="濁点">゛</button>
+      <button class="btn tbtn" id="btnHandaku" title="半濁点">゜</button>
+      <button class="btn tbtn" id="btnSmall"   title="小書き">小</button>
+      <button class="btn tbtn" id="btnReset"   title="リセット">⟳</button>
+    </div>`;
+}
+
 
   function gridHTML() {
     return ROWS.map((row) => {
