@@ -18,35 +18,64 @@ for (const row of ROWS) {
 
 // ========== スタイル注入（ひらがなと共通の見た目） ==========
 function ensureStyle() {
-  if (document.getElementById("hira-style-v2")) return; // ひらがなと共通
+  if (document.getElementById("hira-style-v2")) return;
   const st = document.createElement("style");
   st.id = "hira-style-v2";
   st.textContent = `
-    .hira-wrap { display:flex; flex-direction:column; gap:12px; max-width:560px; margin:0 auto; }
+    .hira-wrap {
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-width:560px;
+      width:100%;              /* 追加：親幅いっぱい */
+      margin:0 auto;
+      box-sizing:border-box;
+    }
 
+    /* 例語ボタン（押せる感） */
     .hira-exbtn {
-      display:inline-flex; align-items:baseline; gap:.5rem;
-      padding:.45rem .7rem; border:1px solid #e5e7eb; border-radius:12px;
-      background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02);
-      width:100%; justify-content:flex-start;
+      display:inline-flex;
+      align-items:baseline;
+      gap:.5rem;
+      padding:.45rem .7rem;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
+      width:100%;              /* 追加：必ず親幅いっぱい */
+      box-sizing:border-box;   /* 追加 */
+      justify-content:flex-start;
     }
     .hira-exbtn:hover { filter:brightness(0.98); }
 
+    /* 格子 */
     .hira-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
     .hira-grid .btn { font-weight:700; height:48px; }
 
+    /* 行のシマ模様（見やすさ）*/
     .hiraA { background:#f0f7ff; border-color:#d7e8ff; }
     .hiraB { background:#f7f9ff; border-color:#e5e9ff; }
 
+    /* モードによって全体の色味を切替 */
     .mode-dakuten .hiraA, .mode-dakuten .hiraB { background:#fff3f3; border-color:#ffd9d9; }
     .mode-handaku .hiraA, .mode-handaku .hiraB { background:#fff8e8; border-color:#ffe6b3; }
     .mode-small   .hiraA, .mode-small   .hiraB { background:#eefaf4; border-color:#cfeedd; }
 
+    /* トグル群 */
     .hira-toggles { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
     .hira-toggles .tbtn { padding:.4rem .7rem; border-radius:999px; border:1px solid #e5e7eb; background:#fff; }
     .hira-toggles .tbtn.on { border-color:#0ea5e9; box-shadow:0 0 0 2px rgba(14,165,233,.15) inset; background:#eaf6ff; }
 
-    .hira-card { border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fafafa; }
+    /* カード */
+    .hira-card {
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:12px;
+      background:#fafafa;
+      width:100%;              /* 追加：カード自体も100% */
+      max-width:100%;
+      box-sizing:border-box;
+    }
     .hira-card .kana { font-size:2.6rem; font-weight:700; line-height:1; }
     .row-full { width:100%; }
 
@@ -54,6 +83,7 @@ function ensureStyle() {
   `;
   document.head.appendChild(st);
 }
+
 
 // ==========================================================
 export async function render(el, deps = {}) {
@@ -117,20 +147,21 @@ export async function render(el, deps = {}) {
   const ex = KANA_MAP.get(base) || { kanji:"", yomi:"" };
 
   return `
-    <div id="card"
-         style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa;width:100%;box-sizing:border-box;">
+    <div id="card" class="hira-card">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again"
-                style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again") || "Play again"}</button>
+                style="padding:.32rem .6rem;font-size:.95rem;">
+          🔁 ${t("hira.again") || "Play again"}
+        </button>
       </div>
-      <button id="ex" class="hira-exbtn"
-              style="margin-top:8px;width:100%;box-sizing:border-box;">
+      <button id="ex" class="hira-exbtn" style="margin-top:8px;">
         <span style="font-size:1.2rem;">${ex.kanji}</span>
         <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
       </button>
     </div>`;
 }
+
 
 
   function applyI18nLabels() {
