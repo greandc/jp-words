@@ -5,7 +5,7 @@ export const ROWS = [
     { k:"ア", ex:{ kanji:"アイス",      yomi:"あいす" } },
     { k:"イ", ex:{ kanji:"インク",      yomi:"いんく" } },
     { k:"ウ", ex:{ kanji:"ウサギ",      yomi:"うさぎ" } },
-    { k:"エ", ex:{ kanji:"エレベーター", yomi:"えれべーたー" } },
+    { k:"エ", ex:{ kanji:"エンジン",    yomi:"えんじん" } },
     { k:"オ", ex:{ kanji:"オレンジ",    yomi:"おれんじ" } },
   ]},
 
@@ -27,8 +27,8 @@ export const ROWS = [
 
   { name: "タ行", items: [
     { k:"タ", ex:{ kanji:"タクシー",    yomi:"たくしー" } },
-    { k:"チ", ex:{ kanji:"チョコレート",yomi:"ちょこれーと" } }, // 小「ョ」
-    { k:"ツ", ex:{ kanji:"ツナサンド",  yomi:"つなさんど" } },
+    { k:"チ", ex:{ kanji:"チャンス",    yomi:"ちゃんす" } }, // 小「ョ」
+    { k:"ツ", ex:{ kanji:"ツナ",        yomi:"つな" } },
     { k:"テ", ex:{ kanji:"テレビ",      yomi:"てれび" } },
     { k:"ト", ex:{ kanji:"トマト",      yomi:"とまと" } },
   ]},
@@ -42,10 +42,10 @@ export const ROWS = [
   ]},
 
   { name: "ハ行", items: [
-    { k:"ハ", ex:{ kanji:"ハンバーガー",yomi:"はんばーがー" } },
+    { k:"ハ", ex:{ kanji:"ハム",  yomi:"はむ" } },
     { k:"ヒ", ex:{ kanji:"ヒーター",    yomi:"ひーたー" } },
-    { k:"フ", ex:{ kanji:"フライパン",  yomi:"ふらいぱん" } },
-    { k:"ヘ", ex:{ kanji:"ヘリコプター",yomi:"へりこぷたー" } },
+    { k:"フ", ex:{ kanji:"フライト",  yomi:"ふらいと" } },
+    { k:"ヘ", ex:{ kanji:"ヘアー",yomi:"へあー" } },
     { k:"ホ", ex:{ kanji:"ホテル",      yomi:"ほてる" } },
   ]},
 
@@ -59,8 +59,8 @@ export const ROWS = [
 
   { name: "ヤ行", items: [
     { k:"ヤ", ex:{ kanji:"ヤギ",        yomi:"やぎ" } },
-    { k:"ユ", ex:{ kanji:"ユニフォーム",yomi:"ゆにふぉーむ" } },
-    { k:"ヨ", ex:{ kanji:"ヨーグルト",  yomi:"よーぐると" } },
+    { k:"ユ", ex:{ kanji:"ユニット",yomi:"ゆにっと" } },
+    { k:"ヨ", ex:{ kanji:"ヨット",  yomi:"よっと" } },
     { k:"・", ex:null },
     { k:"・", ex:null },
   ]},
