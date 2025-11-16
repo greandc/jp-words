@@ -15,6 +15,9 @@ for (const row of ROWS) {
     }
   }
 }
+for (const {k, ex} of EXTRA_KATA_EXAMPLES) {
+  KANA_MAP.set(k, ex);
+}
 
 // ========== スタイル注入（ひらがなと共通の見た目） ==========
 function ensureStyle() {

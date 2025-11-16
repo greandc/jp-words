@@ -105,4 +105,8 @@ export const ROWS = [
     {k:"ぺ", ex:{kanji:"完璧",  yomi:"かんぺき"}},
     {k:"ぽ", ex:{kanji:"散歩",  yomi:"さんぽ"}},
   ]},
+   { k: "ゃ", ex: { kanji: "客",     yomi: "きゃく" } },      // きゃ
+  { k: "ゅ", ex: { kanji: "牛乳",   yomi: "ぎゅうにゅう" } },// ぎゅ
+  { k: "ょ", ex: { kanji: "旅行",   yomi: "りょこう" } },    // りょ
+  { k: "っ", ex: { kanji: "切手",   yomi: "きって" } },      // っ
 ];

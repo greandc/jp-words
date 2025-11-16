@@ -81,4 +81,47 @@ export const ROWS = [
     { k:"・", ex:null },
   ]},
 ];
+// カタカナ用：濁音・半濁音＋小さい ャュョッ
+const EXTRA_KATA_EXAMPLES = [
+  // ガ行
+  { k: "ガ", ex: { kanji: "ガラス",   yomi: "がらす" } },
+  { k: "ギ", ex: { kanji: "ギター",   yomi: "ぎたー" } },
+  { k: "グ", ex: { kanji: "グローブ", yomi: "ぐろーぶ" } },
+  { k: "ゲ", ex: { kanji: "ゲーム",   yomi: "げーむ" } },
+  { k: "ゴ", ex: { kanji: "ゴール",   yomi: "ごーる" } },
+
+  // ザ行
+  { k: "ザ", ex: { kanji: "ザリガニ", yomi: "ざりがに" } },
+  { k: "ジ", ex: { kanji: "ジーパン", yomi: "じーぱん" } },
+  { k: "ズ", ex: { kanji: "ズボン",   yomi: "ずぼん" } },
+  { k: "ゼ", ex: { kanji: "ゼリー",   yomi: "ぜりー" } },
+  { k: "ゾ", ex: { kanji: "ゾウ",     yomi: "ぞう" } },
+
+  // ダ行
+  { k: "ダ", ex: { kanji: "ダンス",   yomi: "だんす" } },
+  { k: "ヂ", ex: { kanji: "ジヂミ",   yomi: "ぢぢみ" } }, // ちょい変則だけど音は「ぢ」
+  { k: "ヅ", ex: { kanji: "ヅラ",     yomi: "づら" } },
+  { k: "デ", ex: { kanji: "データ",   yomi: "でーた" } },
+  { k: "ド", ex: { kanji: "ドーナツ", yomi: "どーなつ" } },
+
+  // バ行
+  { k: "バ", ex: { kanji: "バス",     yomi: "ばす" } },
+  { k: "ビ", ex: { kanji: "ビール",   yomi: "びーる" } },
+  { k: "ブ", ex: { kanji: "ブルー",   yomi: "ぶるー" } },
+  { k: "ベ", ex: { kanji: "ベッド",   yomi: "べっど" } },
+  { k: "ボ", ex: { kanji: "ボール",   yomi: "ぼーる" } },
+
+  // パ行
+  { k: "パ", ex: { kanji: "パンダ",   yomi: "ぱんだ" } },
+  { k: "ピ", ex: { kanji: "ピザ",     yomi: "ぴざ" } },
+  { k: "プ", ex: { kanji: "プリン",   yomi: "ぷりん" } },
+  { k: "ペ", ex: { kanji: "ペンギン", yomi: "ぺんぎん" } },
+  { k: "ポ", ex: { kanji: "ポケット", yomi: "ぽけっと" } },
+
+  // 小さい ャュョッ
+  { k: "ャ", ex: { kanji: "キャベツ", yomi: "きゃべつ" } },
+  { k: "ュ", ex: { kanji: "シュート", yomi: "しゅーと" } },
+  { k: "ョ", ex: { kanji: "ジョギング", yomi: "じょぎんぐ" } },
+  { k: "ッ", ex: { kanji: "チケット", yomi: "ちけっと" } },
+];
 
