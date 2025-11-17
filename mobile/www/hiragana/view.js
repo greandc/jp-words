@@ -314,23 +314,6 @@ function mountGrid(){
       refresh();
     });
 
-    // ==== 行読み上げイベント ====
-wrap.querySelectorAll(".row-speaker").forEach(btn => {
-  btn.onclick = () => {
-    const idx = Number(btn.getAttribute("data-row-idx"));
-    const row = ROWS[idx];
-    if (!row || !row.items) return;
-
-    const chars = row.items
-      .map(it => it.k)
-      .filter(k => k && k !== "・")
-      .map(k => transformKana(k, flags))
-      .join("");
-
-    if (chars) speak(chars);
-  };
-});
-
   }
 
   // 2) 再描画ヘルパ（画面を描き直してイベントを張り直す）
