@@ -149,22 +149,27 @@ export async function render(el, deps = {}) {
   function cardHTML(curKana){
   const base = normalizeKana(curKana);
   const ex =
-    KANA_MAP.get(curKana) ||    // ① 濁点・半濁・小さい文字 用の追加例語
-    KANA_MAP.get(base)   ||    // ② なければ清音に戻した例語
+    KANA_MAP.get(curKana) ||
+    KANA_MAP.get(base)    ||
     { kanji:"", yomi:"" };
 
   return `
     <div id="card"
          style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa;width:100%;box-sizing:border-box;">
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again"
                 style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again") || "Play again"}</button>
       </div>
-      <button id="ex" class="hira-exbtn"
-              style="margin-top:8px;width:100%;box-sizing:border-box;">
-        <span style="font-size:1.2rem;">${ex.kanji}</span>
-        <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
+
+      <button id="ex" class="hira-exbtn" style="width:100%;box-sizing:border-box;">
+        <span class="hira-exicon">🔊</span>
+        <span class="hira-exbody">
+          <span style="font-size:1.2rem;">${ex.kanji}</span>
+          <span style="font-size:1rem;color:#374151;">
+            ${ex.yomi ? `（${ex.yomi}）` : ""}
+          </span>
+        </span>
       </button>
     </div>`;
 }
