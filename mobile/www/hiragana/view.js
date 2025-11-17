@@ -148,6 +148,23 @@ function ensureStyle() {
     .hira-row .row-speaker {
      font-size:1.1rem;
     }
+    
+        .hira-exbtn {
+      display:flex; align-items:center; gap:.6rem;
+      padding:.45rem .7rem; border:1px solid #e5e7eb; border-radius:12px;
+      background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02);
+      width:100%; justify-content:flex-start;
+      cursor:pointer;
+    }
+    .hira-exbtn:hover {
+      filter:brightness(0.97);
+      box-shadow:0 2px 4px rgba(0,0,0,.06);
+    }
+
+    .hira-exicon { font-size:1.2rem; }
+    .hira-exbody { display:flex; flex-direction:column; gap:2px; }
+    .hira-exhint { margin-left:auto; font-size:.75rem; color:#64748b; }
+
 
   `;
   document.head.appendChild(st);
@@ -248,22 +265,34 @@ function gridHTML(){
 
 function cardHTML(curKana){
   const base = normalizeKana(curKana);
-    const ex =
-    KANA_MAP.get(curKana) ||    // ① 小さい文字・濁点の専用例語
-    KANA_MAP.get(base)   ||    // ② なければ清音に戻して検索
+  const ex =
+    KANA_MAP.get(curKana) ||
+    KANA_MAP.get(base)    ||
     { kanji:"", yomi:"" };
+
+  const hint = t("hira.exHint") || "Tap to play";
+
   return `
     <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
-        <button class="btn" id="again" style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again")||"Play again"}</button>
+        <button class="btn" id="again"
+                style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again")||"Play again"}</button>
       </div>
-      <button id="ex" class="hira-exbtn" style="margin-top:8px;">
-        <span style="font-size:1.2rem;">${ex.kanji}</span>
-        <span style="font-size:1rem;color:#374151;">${ex.yomi ? `（${ex.yomi}）` : ""}</span>
+
+      <button id="ex" class="hira-exbtn">
+        <span class="hira-exicon">🔊</span>
+        <span class="hira-exbody">
+          <span style="font-size:1.15rem;">${ex.kanji}</span>
+          <span style="font-size:1rem;color:#374151;">
+            ${ex.yomi ? `（${ex.yomi}）` : ""}
+          </span>
+        </span>
+        <span class="hira-exhint">${hint}</span>
       </button>
     </div>`;
 }
+
 
 // 追加：描画後にi18nラベルを確定させる
 function applyI18nLabels() {
