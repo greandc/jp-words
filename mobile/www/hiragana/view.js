@@ -140,6 +140,15 @@ function ensureStyle() {
 
     .hiraChanged { background:#fee2e2 !important; border-color:#fecaca !important; }
 
+    .hira-row {
+     display:flex;
+     align-items:center;
+     gap:8px;
+    }
+    .hira-row .row-speaker {
+     font-size:1.1rem;
+    }
+
   `;
   document.head.appendChild(st);
 }
@@ -193,25 +202,37 @@ export async function render(el, deps = {}) {
 }
 
 
-function gridHTML(){
-  return ROWS
-    // ★ 濁音・半濁音の行は表から除外（データは残す）
-    .filter(row => !["が行","ざ行","だ行","ば行","ぱ行"].includes(row.name))
-    .map((row,rowIdx)=>{
-      const cells = row.items.map(it=>{
-        const base = it.k;
-        const hole = !base || base==="・";
-        if (hole) {
-          return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
-        }
-        const disp = transformKana(base, flags);
-        const changed = (disp !== base) ? "hiraChanged" : "";
-        return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
-                  style="height:48px;font-size:1.2rem;">${disp}</button>`;
-      }).join("");
-      return `<div class="hira-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
+// ==== 行のレンダリング：ここだけ差し替え ====
+function gridHTML() {
+  return ROWS.map((row, rowIdx) => {
+
+    if (!row.items) return "";
+
+    // ボタン部分
+    const cells = row.items.map(it => {
+      const base = it.k;
+      if (!base || base === "・") {
+        return `<button class="btn" disabled style="opacity:0;pointer-events:none;"></button>`;
+      }
+      const disp = transformKana(base, flags);
+      return `<button class="btn" data-k="${disp}" data-base="${base}">${disp}</button>`;
     }).join("");
+
+    // 🔉（行読み）ボタン
+    const speaker = `
+      <button class="btn row-speaker" data-row-idx="${rowIdx}"
+              style="width:40px;min-width:40px;padding:0;">🔉</button>
+    `;
+
+    return `
+      <div class="hira-row">
+        ${speaker}
+        <div class="hira-grid">${cells}</div>
+      </div>
+    `;
+  }).join("");
 }
+
 
 
 
@@ -282,6 +303,24 @@ function mountGrid(){
       flags = { daku:false, handaku:false, small:false };
       refresh();
     });
+
+    // ==== 行読み上げイベント ====
+wrap.querySelectorAll(".row-speaker").forEach(btn => {
+  btn.onclick = () => {
+    const idx = Number(btn.getAttribute("data-row-idx"));
+    const row = ROWS[idx];
+    if (!row || !row.items) return;
+
+    const chars = row.items
+      .map(it => it.k)
+      .filter(k => k && k !== "・")
+      .map(k => transformKana(k, flags))
+      .join("");
+
+    if (chars) speak(chars);
+  };
+});
+
   }
 
   // 2) 再描画ヘルパ（画面を描き直してイベントを張り直す）
