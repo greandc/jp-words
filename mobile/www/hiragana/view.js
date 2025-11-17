@@ -365,27 +365,35 @@ function wireEvents(){
     };
   });
 
-  // 🔊 行読み上げ
+  // 🔊 行読み上げ（ここが新しい処理）
   wrap.querySelectorAll(".row-speaker").forEach((btn) => {
     btn.onclick = async () => {
-      const grid = btn.parentElement.querySelector(".hira-grid");
+      // この🔊ボタンが入っている行を特定
+      const rowDiv = btn.closest(".hira-row");
+      if (!rowDiv) return;
+
+      // 同じ行の 50音ボタンを全部集める
+      const grid = rowDiv.querySelector(".hira-grid");
       if (!grid) return;
 
       const chars = [];
       grid.querySelectorAll("button[data-base]").forEach((b) => {
         const base = b.getAttribute("data-base");
-        if (base && base !== "・") chars.push(base);
+        if (base && base !== "・") {
+          chars.push(base);
+        }
       });
 
-      // 1文字ずつ順番に読み上げ
+      // 一文字ずつ順番に読み上げ
       for (const ch of chars) {
         await speak(ch);
       }
     };
   });
 
-  wireCardEvents(); // カード側のイベント
+  wireCardEvents();  // カード側のイベント
 }
+
 
 
 
