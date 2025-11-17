@@ -149,22 +149,6 @@ function ensureStyle() {
      font-size:1.1rem;
     }
     
-        .hira-exbtn {
-      display:flex; align-items:center; gap:.6rem;
-      padding:.45rem .7rem; border:1px solid #e5e7eb; border-radius:12px;
-      background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02);
-      width:100%; justify-content:flex-start;
-      cursor:pointer;
-    }
-    .hira-exbtn:hover {
-      filter:brightness(0.97);
-      box-shadow:0 2px 4px rgba(0,0,0,.06);
-    }
-
-    .hira-exicon { font-size:1.2rem; }
-    .hira-exbody { display:flex; flex-direction:column; gap:2px; }
-    .hira-exhint { margin-left:auto; font-size:.75rem; color:#64748b; }
-
 
   `;
   document.head.appendChild(st);
@@ -270,10 +254,9 @@ function cardHTML(curKana){
     KANA_MAP.get(base)    ||
     { kanji:"", yomi:"" };
 
-  const hint = t("hira.exHint") || "Tap to play";
-
   return `
-    <div id="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
+    <div id="card"
+         style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
         <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
         <button class="btn" id="again"
@@ -288,10 +271,10 @@ function cardHTML(curKana){
             ${ex.yomi ? `（${ex.yomi}）` : ""}
           </span>
         </span>
-        <span class="hira-exhint">${hint}</span>
       </button>
     </div>`;
 }
+
 
 
 // 追加：描画後にi18nラベルを確定させる
