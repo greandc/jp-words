@@ -121,7 +121,7 @@ export const EXTRA_KATA_EXAMPLES = [
   // 小さい ャュョッ
   { k: "ャ", ex: { kanji: "キャベツ", yomi: "きゃべつ" } },
   { k: "ュ", ex: { kanji: "シュート", yomi: "しゅーと" } },
-  { k: "ョ", ex: { kanji: "ジョギング", yomi: "じょぎんぐ" } },
+  { k: "ョ", ex: { kanji: "ショート", yomi: "しょーと" } },
   { k: "ッ", ex: { kanji: "チケット", yomi: "ちけっと" } },
 ];
 

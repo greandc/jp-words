@@ -54,9 +54,6 @@ function cleanup() {
   </button>
 </div>
 
-<button id="sayJa" class="btn" style="margin-left:8px;">Say「テスト」</button>
-<button id="sayEn" class="btn" style="margin-left:8px;">Say "test"</button>
-
 
 
     <div id="card" style="border:1px solid #eee;border-radius:12px;padding:16px;">
@@ -123,10 +120,6 @@ function cleanup() {
     </div>
   `;
   el.appendChild(div);
-
-  // ★ビルド印（見えなければ古いファイルが動いてる）
-div.insertAdjacentHTML("beforeend",
-  `<div id="buildMark" style="margin-top:6px;color:#0a0;font-size:.85rem">BUILD P-20251109b</div>`);
 
 // ===== Google Form: 自動送信用 =====
 const FORM_ACTION = "https://docs.google.com/forms/d/e/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/formResponse"; 
@@ -195,16 +188,6 @@ if (!items || items.length === 0) {
 }
 
 console.log('[chk]', !!window.Capacitor, window.Capacitor?.getPlatform?.(), 'native?', (window.Capacitor?.isNativePlatform?.()), 'plugin?', !!(window.Capacitor?.Plugins?.TextToSpeech));
-
-// ---- テスト発声（日本語 / 英語） ----
-div.querySelector("#sayJa")?.addEventListener("click", async () => {
-  try { await speak("テスト", { lang: "ja-JP" }); console.log("[TTS] ja-JP OK"); }
-  catch(e){ console.log("[TTS] ja-JP NG", e); }
-});
-div.querySelector("#sayEn")?.addEventListener("click", async () => {
-  try { await speak("test", { lang: "en-US" }); console.log("[TTS] en-US OK"); }
-  catch(e){ console.log("[TTS] en-US NG", e); }
-});
 
 
 
