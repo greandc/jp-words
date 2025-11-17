@@ -204,34 +204,51 @@ export async function render(el, deps = {}) {
 
 // ==== 行のレンダリング：ここだけ差し替え ====
 function gridHTML() {
-  return ROWS.map((row, rowIdx) => {
+  return ROWS
+    .filter(row => !row.hidden) // ← 非表示行の除外（後述の濁音グループに使う）
+    .map((row, rowIdx) => {
 
-    if (!row.items) return "";
+      // 行の読み上げテキストを作る
+      const speakText = row.items
+        .map(it => transformKana(it.k, flags))
+        .join("");
 
-    // ボタン部分
-    const cells = row.items.map(it => {
-      const base = it.k;
-      if (!base || base === "・") {
-        return `<button class="btn" disabled style="opacity:0;pointer-events:none;"></button>`;
-      }
-      const disp = transformKana(base, flags);
-      return `<button class="btn" data-k="${disp}" data-base="${base}">${disp}</button>`;
-    }).join("");
+      // 🔉ボタン（noSpeaker:true の行は非表示）
+      const speakerBtn = row.noSpeaker
+        ? `<div style="width:24px;"></div>`
+        : `<button class="row-speaker" data-idx="${rowIdx}"
+             style="border:none;background:none;font-size:1.4rem;padding:0 4px;">
+             🔉
+           </button>`;
 
-    // 🔉（行読み）ボタン
-    const speaker = `
-      <button class="btn row-speaker" data-row-idx="${rowIdx}"
-              style="width:40px;min-width:40px;padding:0;">🔉</button>
-    `;
+      // 各セル
+      const cells = row.items
+        .map(it => {
+          const base = it.k;
+          if (!base || base === "・") {
+            return `<div style="height:48px;"></div>`;
+          }
+          const disp = transformKana(base, flags);
+          const changed = disp !== base ? "hiraChanged" : "";
+          return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
+                     style="height:48px;font-size:1.2rem;">
+                     ${disp}
+                  </button>`;
+        })
+        .join("");
 
-    return `
-      <div class="hira-row">
-        ${speaker}
-        <div class="hira-grid">${cells}</div>
-      </div>
-    `;
-  }).join("");
+      return `
+        <div class="hira-row" style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          ${speakerBtn}
+          <div class="hira-grid" style="flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+            ${cells}
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
+
 
 
 
