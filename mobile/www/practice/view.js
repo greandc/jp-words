@@ -206,11 +206,7 @@ function enableTtsUI() {
 }
 enableTtsUI();
 
-// （デバッグ）起動確認：300ms後に小さく一声だけ出す
-// 要らなければ、この setTimeout ブロックを消せばOK
-setTimeout(() => {
-  try { speak("テスト", { lang: "ja-JP" }); } catch(e) { console.log("self-test err", e); }
-}, 300);
+
 
 autoTtsChk.addEventListener("change", () => {
   try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
@@ -257,8 +253,6 @@ const _m = div.querySelector("#msg"); if (_m) { _m.textContent = ""; _m.style.di
   }
 
   renderCard();
-
-  setTimeout(() => { try { speak("テスト", { lang: "ja-JP" }); } catch(e) {} }, 400);
 
 
   // ===== ボタン =====
