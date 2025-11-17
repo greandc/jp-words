@@ -40,7 +40,8 @@ function cleanup() {
   // ★ 追加：縦方向中央寄せ & 左右はそのまま
 div.style.display = "flex";
 div.style.flexDirection = "column";
-div.style.justifyContent = "center";
+div.style.paddingTop = "10vh";         // ←追加：画面高さの10%分だけ上に寄せる
+div.style.paddingBottom = "5vh";       // ←追加：バランス確保（任意）
 div.style.minHeight = "100vh";
   div.innerHTML = `
     <h1>${t("level.label",{n:levelNum})}</h1>
