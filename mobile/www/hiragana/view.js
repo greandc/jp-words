@@ -204,53 +204,48 @@ export async function render(el, deps = {}) {
 
 // ==== 行のレンダリング：ここだけ差し替え ====
 function gridHTML() {
-  return ROWS
-    .filter(row => !row.hidden) // ← 非表示行の除外（後述の濁音グループに使う）
-    .map((row, rowIdx) => {
+  return ROWS.map((row, rowIdx) => {
+    // この行の「かな」だけをつないだ文字列（例: "あいうえお"）
+    const rowKana = row.items
+      .map(it => (it?.k && it.k !== "・") ? it.k : "")
+      .join("");
 
-      // 行の読み上げテキストを作る
-      const speakText = row.items
-        .map(it => transformKana(it.k, flags))
-        .join("");
+    // 小さい文字だけの行かどうか判定（ゃゅょっ を含む行）
+    const isSmallRow = /[ゃゅょっ]/.test(rowKana);
 
-      // 🔉ボタン（noSpeaker:true の行は非表示）
-      const speakerBtn = row.noSpeaker
-        ? `<div style="width:24px;"></div>`
-        : `<button class="row-speaker" data-idx="${rowIdx}"
-             style="border:none;background:none;font-size:1.4rem;padding:0 4px;">
-             🔉
-           </button>`;
+    // 🔉ボタン（小さい文字行はナシ）
+    const speakerHtml = isSmallRow
+      ? `<div style="width:24px;"></div>`   // レイアウト用の空き
+      : `<button class="btn row-speaker"
+                  data-row="${rowKana}"
+                  style="padding:0 .3rem;min-width:24px;">🔊</button>`;
 
-      // 各セル
-      const cells = row.items
-        .map(it => {
-          const base = it.k;
-          if (!base || base === "・") {
-            return `<div style="height:48px;"></div>`;
-          }
-          const disp = transformKana(base, flags);
-          const changed = disp !== base ? "hiraChanged" : "";
-          return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
-                     style="height:48px;font-size:1.2rem;">
-                     ${disp}
-                  </button>`;
-        })
-        .join("");
+    // 通常の 5マス分のボタン
+    const cells = row.items.map(it => {
+      const base = it.k;
+      const hole = !base || base === "・";
+      if (hole) {
+        return `<button class="btn" disabled
+                        style="opacity:0;pointer-events:none;height:48px;"></button>`;
+      }
+      const disp = transformKana(base, flags);
+      const changed = (disp !== base) ? "hiraChanged" : "";
+      return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
+                    style="height:48px;font-size:1.2rem;">${disp}</button>`;
+    }).join("");
 
-      return `
-        <div class="hira-row" style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-          ${speakerBtn}
-          <div class="hira-grid" style="flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
-            ${cells}
-          </div>
+    // 行全体（左に🔉、右に 5マス）
+    return `
+      <div class="hira-row"
+           style="display:flex;align-items:center;gap:6px;">
+        ${speakerHtml}
+        <div class="hira-grid"
+             style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+          ${cells}
         </div>
-      `;
-    })
-    .join("");
+      </div>`;
+  }).join("");
 }
-
-
-
 
 
 function cardHTML(curKana){
@@ -354,8 +349,8 @@ wrap.querySelectorAll(".row-speaker").forEach(btn => {
 }
 
 
-function wireEvents(){
-  // 50音表：ボタンクリック → curKana 更新 → カード差し替え → 読み上げ
+function wireEvents() {
+  // 50音ボタンのクリック（今までのやつ）
   wrap.querySelectorAll("button[data-k]").forEach((b) => {
     b.onclick = () => {
       const k = b.getAttribute("data-k");
@@ -363,8 +358,6 @@ function wireEvents(){
       curKana = k;
       curKana = transformKana(curKana, flags);
 
-
-      // カード差し替え（id="card" を使う）
       const card = wrap.querySelector("#card");
       if (card) card.outerHTML = cardHTML(curKana);
 
@@ -374,8 +367,21 @@ function wireEvents(){
     };
   });
 
-  wireCardEvents(); // 初期カードにもイベント張る
+  // 🔉 行読み上げボタン
+  wrap.querySelectorAll(".row-speaker").forEach((btn) => {
+    const seq = btn.getAttribute("data-row") || "";
+    btn.addEventListener("click", async () => {
+      // 1文字ずつ順番に読み上げ
+      for (const ch of seq) {
+        await speak(ch);
+      }
+    });
+  });
+
+  // カードのイベント
+  wireCardEvents();
 }
+
 
 function wireCardEvents(){
   // もう一回 → かなを読む
