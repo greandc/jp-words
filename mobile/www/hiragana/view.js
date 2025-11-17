@@ -203,24 +203,21 @@ export async function render(el, deps = {}) {
 
 
 // ==== 行のレンダリング：ここだけ差し替え ====
-function gridHTML() {
-  return ROWS.map((row, rowIdx) => {
-    // この行の「かな」だけをつないだ文字列（例: "あいうえお"）
+function gridHTML(){
+  return ROWS.map((row) => {
+    // この行の清音だけをつないだ文字列（小さい行判定用）
     const rowKana = row.items
       .map(it => (it?.k && it.k !== "・") ? it.k : "")
       .join("");
 
-    // 小さい文字だけの行かどうか判定（ゃゅょっ を含む行）
     const isSmallRow = /[ゃゅょっ]/.test(rowKana);
 
-    // 🔉ボタン（小さい文字行はナシ）
+    // 🔊ボタン（小さい文字の行はなし）
     const speakerHtml = isSmallRow
-      ? `<div style="width:24px;"></div>`   // レイアウト用の空き
+      ? `<div style="width:24px;"></div>`
       : `<button class="btn row-speaker"
-                  data-row="${rowKana}"
                   style="padding:0 .3rem;min-width:24px;">🔊</button>`;
 
-    // 通常の 5マス分のボタン
     const cells = row.items.map(it => {
       const base = it.k;
       const hole = !base || base === "・";
@@ -230,14 +227,14 @@ function gridHTML() {
       }
       const disp = transformKana(base, flags);
       const changed = (disp !== base) ? "hiraChanged" : "";
-      return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
-                    style="height:48px;font-size:1.2rem;">${disp}</button>`;
+      return `<button class="btn ${changed}"
+                      data-k="${disp}"
+                      data-base="${base}"
+                      style="height:48px;font-size:1.2rem;">${disp}</button>`;
     }).join("");
 
-    // 行全体（左に🔉、右に 5マス）
     return `
-      <div class="hira-row"
-           style="display:flex;align-items:center;gap:6px;">
+      <div class="hira-row" style="display:flex;align-items:center;gap:6px;">
         ${speakerHtml}
         <div class="hira-grid"
              style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
@@ -246,6 +243,7 @@ function gridHTML() {
       </div>`;
   }).join("");
 }
+
 
 
 function cardHTML(curKana){
@@ -349,8 +347,8 @@ wrap.querySelectorAll(".row-speaker").forEach(btn => {
 }
 
 
-function wireEvents() {
-  // 50音ボタンのクリック（今までのやつ）
+function wireEvents(){
+  // 50音ボタン
   wrap.querySelectorAll("button[data-k]").forEach((b) => {
     b.onclick = () => {
       const k = b.getAttribute("data-k");
@@ -367,20 +365,28 @@ function wireEvents() {
     };
   });
 
-  // 🔉 行読み上げボタン
+  // 🔊 行読み上げ
   wrap.querySelectorAll(".row-speaker").forEach((btn) => {
-    const seq = btn.getAttribute("data-row") || "";
-    btn.addEventListener("click", async () => {
+    btn.onclick = async () => {
+      const grid = btn.parentElement.querySelector(".hira-grid");
+      if (!grid) return;
+
+      const chars = [];
+      grid.querySelectorAll("button[data-base]").forEach((b) => {
+        const base = b.getAttribute("data-base");
+        if (base && base !== "・") chars.push(base);
+      });
+
       // 1文字ずつ順番に読み上げ
-      for (const ch of seq) {
+      for (const ch of chars) {
         await speak(ch);
       }
-    });
+    };
   });
 
-  // カードのイベント
-  wireCardEvents();
+  wireCardEvents(); // カード側のイベント
 }
+
 
 
 function wireCardEvents(){
