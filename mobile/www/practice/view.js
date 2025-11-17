@@ -37,6 +37,11 @@ function cleanup() {
 
   const div = document.createElement("div");
   div.className = "screen";
+  // ★ 追加：縦方向中央寄せ & 左右はそのまま
+div.style.display = "flex";
+div.style.flexDirection = "column";
+div.style.justifyContent = "center";
+div.style.minHeight = "100vh";
   div.innerHTML = `
     <h1>${t("level.label",{n:levelNum})}</h1>
     <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 16px;">
