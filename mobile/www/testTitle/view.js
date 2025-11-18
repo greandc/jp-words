@@ -42,6 +42,23 @@ if (!document.querySelector('style[data-testtitle-style]')) {
     font-size: 17px;
     font-weight: 600;
   }
+  
+  /* menu3 と同じ感じのボタン */
+.testtitle-btnwrap {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 24px;
+}
+
+.bigbtn {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 1rem;
+  border-radius: 12px;
+}
+
   `;
   document.head.appendChild(st);
 }
@@ -57,14 +74,15 @@ if (!document.querySelector('style[data-testtitle-style]')) {
 
 export async function render(el, deps = {}) {
   const wrap = document.createElement("div");
-  wrap.className = "screen screen-testtitle";   // ← ここを変更
+  wrap.className = "screen screen-testtitle";  
   wrap.innerHTML = `
     <h1 id="title"></h1>
      <div id="meta"></div>
-     <div style="display:grid;gap:12px;">
-       <button class="btn" id="start">${t("common.start")}</button>
-       <button class="btn" id="back">${t("common.back")}</button>
+     <div class="testtitle-btnwrap">
+      <button class="btn bigbtn" id="start">${t("common.start")}</button>
+      <button class="btn bigbtn" id="back">${t("common.back")}</button>
      </div>
+
   `;
   el.appendChild(wrap);
 
