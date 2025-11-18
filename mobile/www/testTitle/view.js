@@ -33,31 +33,32 @@ if (!document.querySelector('style[data-testtitle-style]')) {
   }
 
   .screen-testtitle .btn {
-    margin: 6px 0;
-    width: min(320px, 80vw);
-    height: 48px;
-    border-radius: 12px;
-    border: 2px solid #66a3ff;
-    background: #eef6ff;
-    font-size: 17px;
-    font-weight: 600;
-  }
+  margin: 0;              /* 余白はラッパー側で管理 */
+  border-radius: 12px;
+  border: 2px solid #66a3ff;
+  background: #eef6ff;
+  font-size: 17px;
+  font-weight: 600;
+  width: auto;            /* 幅指定は外す */
+  height: auto;           /* 高さも外す */
+ }
+
   
   /* menu3 と同じ感じのボタン */
-.testtitle-btnwrap {
+  .testtitle-btnwrap {
   display: grid;
   gap: 16px;
   width: 100%;
   max-width: 480px;
   margin-top: 24px;
-}
+ }
 
-.bigbtn {
+ .bigbtn {
   width: 100%;
   padding: 14px 0;
   font-size: 1rem;
   border-radius: 12px;
-}
+ }
 
   `;
   document.head.appendChild(st);
