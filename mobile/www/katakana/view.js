@@ -129,22 +129,48 @@ export async function render(el, deps = {}) {
 }
 
 
-  function gridHTML() {
-    return ROWS.map((row) => {
-      const cells = row.items.map(it => {
-        const base = it.k;
-        const hole = !base || base === "・";
-        if (hole) {
-          return `<button class="btn" disabled style="opacity:0;pointer-events:none;height:48px;"></button>`;
-        }
-        const disp = transformKana(base, flags);
-        const changed = disp !== base ? "hiraChanged" : "";
-        return `<button class="btn ${changed}" data-k="${disp}" data-base="${base}"
-                  style="height:48px;font-size:1.2rem;">${disp}</button>`;
-      }).join("");
-      return `<div class="hira-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">${cells}</div>`;
+  function gridHTML(){
+  return ROWS.map((row, rowIdx) => {
+
+    const rowKana = row.items
+      .map(it => (it?.k && it.k !== "・") ? it.k : "")
+      .join("");
+
+    const isSmallRow = /[ャュョッ]/.test(rowKana);  // カタカナ版
+
+    // 🔊（小さい行は非表示）
+    const speakerHtml = isSmallRow
+      ? `<div style="width:24px;"></div>`
+      : `<button class="btn row-speaker"
+                  data-row-idx="${rowIdx}"
+                  style="padding:0 .3rem;min-width:24px;">🔊</button>`;
+
+    const cells = row.items.map(it => {
+      const base = it.k;
+      const hole = !base || base === "・";
+      if (hole) {
+        return `<button class="btn" disabled
+                        style="opacity:0;pointer-events:none;height:48px;"></button>`;
+      }
+      const disp = transformKana(base, flags);
+      const changed = (disp !== base) ? "hiraChanged" : "";
+      return `<button class="btn ${changed}"
+                      data-k="${disp}"
+                      data-base="${base}"
+                      style="height:48px;font-size:1.2rem;">${disp}</button>`;
     }).join("");
-  }
+
+    return `
+      <div class="hira-row" style="display:flex;align-items:center;gap:6px;">
+        ${speakerHtml}
+        <div class="hira-grid"
+             style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+          ${cells}
+        </div>
+      </div>`;
+  }).join("");
+}
+
 
   function cardHTML(curKana){
   const base = normalizeKana(curKana);
@@ -219,6 +245,24 @@ export async function render(el, deps = {}) {
         speak(curKana);
       };
     });
+
+      // 行読み上げ（カタカナ）
+  wrap.querySelectorAll(".row-speaker").forEach((btn) => {
+    btn.onclick = () => {
+      const idx = Number(btn.getAttribute("data-row-idx"));
+      const row = ROWS[idx];
+      if (!row || !row.items) return;
+
+      const chars = row.items
+        .map(it => it.k)
+        .filter(k => k && k !== "・")
+        .map(k => transformKana(k, flags)) // 濁点・小文字モードを反映
+        .join("");
+
+      if (chars) speak(chars);
+    };
+  });
+
 
     // トグル
     const btnD = wrap.querySelector("#btnDaku");
