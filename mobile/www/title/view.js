@@ -9,6 +9,18 @@ function isLangInitDone() {
   catch { return true; }  // 何かあったらとりあえず true 扱い
 }
 
+// ==== ここをタイトルのファイルの上のほうに追加 ====
+const LS_FIRST_RUN = "tango.firstRunDone";
+
+function isFirstRun() {
+  try {
+    return localStorage.getItem(LS_FIRST_RUN) !== "1";
+  } catch {
+    return true;
+  }
+}
+
+
 
 /* -------------------------------------------------------
    タイトル画面（ロゴじわー / Cキラーン / TAPふわっ）
@@ -96,23 +108,23 @@ export async function render(el, deps = {}) {
     opacity:0; animation: tapIn .6s ease-out .9s forwards;
   `;
 
-  // クリック抜け防止 → lang or menu1
+  // クリック抜け防止 → 初回なら lang, 2回目以降は menu1
 let navigated = false;
 const go = (ev) => {
   if (navigated) return;
   navigated = true;
 
   ev.preventDefault();
-  ev.stopPropagation();
+  ev.stopPropagation?.();
   ev.stopImmediatePropagation?.();
 
   const shield = document.createElement("div");
   shield.style.cssText =
-    "position:fixed; inset:0; z-index:10000; background:transparent; pointer-events:none;";
+    "position:fixed; inset:0; z-index:10000; background:transparent; pointer-events:auto;";
   document.body.appendChild(shield);
 
-  // ★ ここで行き先を決める
-  const target = isLangInitDone() ? "menu1" : "lang";
+  // ★ここで分岐★
+  const target = isFirstRun() ? "lang" : "menu1";
 
   setTimeout(() => {
     deps.goto?.(target);
@@ -121,6 +133,7 @@ const go = (ev) => {
 };
 
 wrap.addEventListener("pointerdown", go, { once:true });
+
 
 
   // C の位置/サイズ（ロゴ基準の相対配置）

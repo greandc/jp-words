@@ -47,27 +47,34 @@ function ensureTtsHintModal() {
     z-index:9999;
   `;
 
+    const rawTitle = t("tutorial.ttsTitle");
+  const title =
+    !rawTitle || rawTitle === "tutorial.ttsTitle"
+      ? "About voice reading"
+      : rawTitle;
+
+  const rawHint = t("tutorial.ttsHint");
+  const hint =
+    !rawHint || rawHint === "tutorial.ttsHint"
+      ? "Text-to-Speech (voice reading) seems to be OFF or not installed on this device. "
+        + "This app uses many voice readings."
+      : rawHint;
+
   wrap.innerHTML = `
     <div id="ttsHintBox"
          style="background:#fff;border-radius:16px;padding:18px 20px;
                 max-width:360px;width:88%;box-shadow:0 10px 30px rgba(15,23,42,.25);
                 text-align:left;font-size:.95rem;">
       <h2 style="margin:0 0 8px;font-size:1.05rem;font-weight:700;">
-        ${t("tutorial.ttsTitle") || "About voice reading"}
+        ${title}
       </h2>
       <p id="ttsHintText" style="margin:0 0 14px;line-height:1.5;color:#374151;">
-        ${t("tutorial.ttsHint")
-          || "Text-to-Speech (voice reading) seems to be OFF or not installed on this device."}
+        ${hint}
       </p>
-      <button id="ttsHintOk"
-              style="display:block;margin:0 auto;
-                     padding:.45rem 1.4rem;border-radius:999px;
-                     border:1px solid #3b82f6;background:#eff6ff;
-                     font-weight:600;">
-        OK
-      </button>
+      <button id="ttsHintOk" ...>OK</button>
     </div>
   `;
+
 
   document.body.appendChild(wrap);
 
