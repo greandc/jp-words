@@ -4,6 +4,66 @@ import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS, EXTRA_HIRA_EXAMPLES } from "./data.hira.js";
 import { transformKana } from "./transformKana.js";
 
+// ==== ひらがなチュートリアル（初回だけふきだし表示） ====
+const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
+
+// root…hiragana画面のルート要素（screen div）を渡す
+function showHiraTutorialBubble(root) {
+  // すでに表示済みなら何もしない
+  try {
+    if (localStorage.getItem(HIRA_TUTORIAL_KEY) === "1") return;
+  } catch {
+    // localStorage 触れない環境ではチュートリアル無しでOK
+    return;
+  }
+
+  // ふきだし本体
+  const box = document.createElement("div");
+  box.style.position = "fixed";
+  box.style.inset = "auto 16px 80px 16px"; // 画面下寄せ
+  box.style.zIndex = "9999";
+  box.style.maxWidth = "480px";
+  box.style.margin = "0 auto";
+  box.style.padding = "12px 14px";
+  box.style.borderRadius = "12px";
+  box.style.background = "rgba(15,23,42,0.92)";
+  box.style.color = "#fff";
+  box.style.fontSize = ".9rem";
+  box.style.lineHeight = "1.5";
+  box.style.boxShadow = "0 10px 25px rgba(0,0,0,.35)";
+  box.style.display = "flex";
+  box.style.alignItems = "center";
+  box.style.justifyContent = "space-between";
+  box.style.gap = "8px";
+
+  const msg = document.createElement("div");
+  msg.textContent =
+    t("tutorial.hiraHint") ||
+    "🔊 ボタンや文字をタップすると、読み上げます。";
+
+  const ok = document.createElement("button");
+  ok.textContent = "OK";
+  ok.className = "btn";
+  ok.style.padding = ".2rem .8rem";
+  ok.style.fontSize = ".85rem";
+  ok.style.borderRadius = "999px";
+  ok.style.background = "#facc15";
+  ok.style.border = "none";
+
+  ok.addEventListener("click", () => {
+    try {
+      localStorage.setItem(HIRA_TUTORIAL_KEY, "1");
+    } catch {}
+    box.remove();
+  });
+
+  box.appendChild(msg);
+  box.appendChild(ok);
+
+  // root の外でもいいけど、画面全体に乗せたいので body に付ける
+  document.body.appendChild(box);
+}
+
 
 console.log("HIRAGANA SRC = v1");
 
