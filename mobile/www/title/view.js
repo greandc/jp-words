@@ -1,6 +1,15 @@
 // mobile/www/title/view.js
 import { t } from "../i18n.js";
 
+// 言語初期設定済みフラグ
+const LS_LANG_INIT_DONE = "lang_init_done_v1";
+
+function isLangInitDone() {
+  try { return localStorage.getItem(LS_LANG_INIT_DONE) === "1"; }
+  catch { return true; }  // 何かあったらとりあえず true 扱い
+}
+
+
 /* -------------------------------------------------------
    タイトル画面（ロゴじわー / Cキラーン / TAPふわっ）
    ・下の画面にタップが貫通しない
@@ -87,18 +96,32 @@ export async function render(el, deps = {}) {
     opacity:0; animation: tapIn .6s ease-out .9s forwards;
   `;
 
-  // クリック抜け防止 → menu1
-  let navigated = false;
-  const go = (ev) => {
-    if (navigated) return;
-    navigated = true;
-    ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation?.();
-    const shield = document.createElement("div");
-    shield.style.cssText = `position:fixed; inset:0; z-index:10000; background:transparent; pointer-events:auto;`;
-    document.body.appendChild(shield);
-    setTimeout(() => { deps.goto?.("menu1"); setTimeout(()=>shield.remove(), 300); }, 0);
-  };
-  wrap.addEventListener("pointerdown", go, { once:true });
+  // クリック抜け防止 → lang or menu1
+let navigated = false;
+const go = (ev) => {
+  if (navigated) return;
+  navigated = true;
+
+  ev.preventDefault();
+  ev.stopPropagation();
+  ev.stopImmediatePropagation?.();
+
+  const shield = document.createElement("div");
+  shield.style.cssText =
+    "position:fixed; inset:0; z-index:10000; background:transparent; pointer-events:none;";
+  document.body.appendChild(shield);
+
+  // ★ ここで行き先を決める
+  const target = isLangInitDone() ? "menu1" : "lang";
+
+  setTimeout(() => {
+    deps.goto?.(target);
+    setTimeout(() => shield.remove(), 300);
+  }, 0);
+};
+
+wrap.addEventListener("pointerdown", go, { once:true });
+
 
   // C の位置/サイズ（ロゴ基準の相対配置）
   const placeC = () => {

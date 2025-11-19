@@ -1,6 +1,26 @@
 // app/features/lang/view.js
 import { t, setLang } from "../i18n.js";
 
+// 言語初期設定が終わったかどうか
+const LS_LANG_INIT_DONE = "lang_init_done_v1";
+function setLangInitDone() {
+  try { localStorage.setItem(LS_LANG_INIT_DONE, "1"); } catch {}
+}
+
+btn.addEventListener("click", () => {
+  setLang(opt.code);
+
+  if (!isTtsOnboardDone()) {
+    showTtsOnboardModal(opt.code); // モーダル側の OK でも setLangInitDone()
+    return;
+  }
+
+  setLangInitDone();
+  location.reload();
+});
+
+
+
 // ===== 初回チュートリアル用フラグ =====
 const LS_ONBOARD_TTS = "onboard_tts_v1";
 
