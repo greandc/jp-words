@@ -7,6 +7,7 @@ import { transformKana } from "./transformKana.js";
 // ==== ひらがなチュートリアル（初回だけふきだし表示） ====
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
 
+
 // root…hiragana画面のルート要素（screen div）を渡す
 function showHiraTutorialBubble(root) {
   // すでに表示済みなら何もしない
@@ -66,10 +67,6 @@ function showHiraTutorialBubble(root) {
 
 
 console.log("HIRAGANA SRC = v1");
-
-// 一度だけ「ひらがなチュートリアル」を出したかどうか
-const LS_HIRA_TUTORIAL = "twl.tutorial.hiragana";
-
 
 const BUILD_TAG = "ps-fix-01";
 

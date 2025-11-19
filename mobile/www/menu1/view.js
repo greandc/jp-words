@@ -1,10 +1,8 @@
 // mobile/www/menu1/view.js
 import { t, getLang, setLang } from "../i18n.js";
 
-// 一度だけ「ひらがなチュートリアル」を出したかどうか
-const LS_HIRA_TUTORIAL = "twl.tutorial.hiragana";
-
-
+// 一度だけ「ひらがなチュートリアル」を出したかどうか（ひらがな画面と同じキー）
+const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
 
 // === Stats (日本時間で日付カウント) ===
 const LS_STATS_KEY = "jpVocab.stats.days"; // ["YYYY-MM-DD", ...]
@@ -42,8 +40,6 @@ function calcStreak(days){
   }
   return { total: days.length, streak };
 }
-
-
 
 
 export async function render(el, deps = {}) {
@@ -100,9 +96,17 @@ if (highestCleared > 0 && highestCleared % 20 === 0) {
 unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
 
 // ===== ひらがなチュートリアルの状態 =====
-const hiraTutorialDone =
-  localStorage.getItem("gc.hiraTutorialDone") === "1";
+let hiraTutorialDone = false;
+try {
+  // ひらがな画面で OK を押したら setItem されるキー
+  hiraTutorialDone = localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
+} catch {
+  // localStorage が使えない環境では、チュートリアル無し扱いにしておく
+  hiraTutorialDone = true;
+}
+
 const tutorialHiraOnly = !hiraTutorialDone; // true の間は「ひらがなだけ」モード
+
 
 // ボタン生成ヘルパ
 const mk = (label, onClick, locked = false) => {
