@@ -29,31 +29,26 @@ function ensureStyle() {
     .hira-wrap {
       display:flex;
       flex-direction:column;
-      gap:12px;
+      gap:8px;                 /* ★ 12px → 8px にして上下のスキマを少し詰める */
       max-width:560px;
-      width:100%;              /* 追加：親幅いっぱい */
       margin:0 auto;
-      box-sizing:border-box;
     }
 
     /* 例語ボタン（押せる感） */
     .hira-exbtn {
-      display:inline-flex;
-      align-items:baseline;
-      gap:.5rem;
-      padding:.45rem .7rem;
-      border:1px solid #e5e7eb;
-      border-radius:12px;
-      background:#fff;
-      box-shadow:0 1px 0 rgba(0,0,0,.02);
-      width:100%;              /* 追加：必ず親幅いっぱい */
-      box-sizing:border-box;   /* 追加 */
-      justify-content:flex-start;
+      display:inline-flex; align-items:baseline; gap:.5rem;
+      padding:.45rem .7rem; border:1px solid #e5e7eb; border-radius:12px;
+      background:#fff; box-shadow:0 1px 0 rgba(0,0,0,.02);
+      width:100%; justify-content:flex-start;
     }
     .hira-exbtn:hover { filter:brightness(0.98); }
 
     /* 格子 */
-    .hira-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+    .hira-grid {
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:6px;                 /* ★ 8px → 6px：行と行のスキマを少しだけ圧縮 */
+    }
     .hira-grid .btn { font-weight:700; height:48px; }
 
     /* 行のシマ模様（見やすさ）*/
@@ -71,19 +66,25 @@ function ensureStyle() {
     .hira-toggles .tbtn.on { border-color:#0ea5e9; box-shadow:0 0 0 2px rgba(14,165,233,.15) inset; background:#eaf6ff; }
 
     /* カード */
-    .hira-card {
-      border:1px solid #e5e7eb;
-      border-radius:12px;
-      padding:12px;
-      background:#fafafa;
-      width:100%;              /* 追加：カード自体も100% */
-      max-width:100%;
-      box-sizing:border-box;
-    }
+    .hira-card { border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fafafa; }
     .hira-card .kana { font-size:2.6rem; font-weight:700; line-height:1; }
     .row-full { width:100%; }
 
     .hiraChanged { background:#fee2e2 !important; border-color:#fecaca !important; }
+
+    .hira-row {
+      display:flex;
+      align-items:center;
+      gap:6px;                /* ★ 8px → 6px：スピーカーと列の間も少し詰める */
+    }
+    .hira-row .row-speaker {
+      font-size:1.1rem;
+    }
+
+    /* ★ 画面上部の余白だけ少し減らす用クラス */
+    .screen.hira-tight {
+      padding-top:16px;       /* たぶん元が 24px 前後 → ちょっとだけ上に詰まる */
+    }
   `;
   document.head.appendChild(st);
 }
@@ -99,8 +100,9 @@ export async function render(el, deps = {}) {
   let flags = { daku:false, handaku:false, small:false };
 
   const root = document.createElement("div");
-  root.className = "screen";
+  root.className = "screen hira-tight";   // ★ 追加クラスで上の余白だけ減らす
   el.appendChild(root);
+
 
   const wrap = document.createElement("div");
   wrap.className = "hira-wrap mode-base";
@@ -119,8 +121,9 @@ export async function render(el, deps = {}) {
 
   function togglesHTML(){
   return `
-    <div id="kata-toggles" class="hira-toggles"
-         style="display:flex;gap:8px;margin:10px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
+    <div id="hira-toggles" class="hira-toggles"
+     style="display:flex;gap:8px;margin:4px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
+
       <button class="btn tbtn" id="btnDaku"    title="濁点">゛</button>
       <button class="btn tbtn" id="btnHandaku" title="半濁点">゜</button>
       <button class="btn tbtn" id="btnSmall"   title="小書き">小</button>
