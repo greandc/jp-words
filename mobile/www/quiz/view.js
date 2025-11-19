@@ -125,9 +125,6 @@ function QuizOverlay({ type, goto, onClear }) {
   );
 }
 
-
-
-
 // === Level unlock helpers ===
 function getPlayedLevel() {
   return Number(
@@ -137,11 +134,6 @@ function getPlayedLevel() {
     1
   );
 }
-
-
-
-
-
 
 // ===== スタイル =====
 function ensureStyle(){
@@ -483,9 +475,6 @@ function ensureStyle(){
   flex-shrink: 0;         /* ← 時間が途中で切れないように */
 }
 
-
-
-
   `;
 
   document.head.appendChild(st);
@@ -782,9 +771,6 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
   }
 }
 
-
-
-
   // ===== ゲーム開始 =====
   async function startGame(){
     const lv =
@@ -936,7 +922,6 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
     onClick: () => { cleanupTTS(); props.goto?.("testTitle"); }
   },t("common.back")),
  
-
 
   // ★ クリア時に現在レベルを開放してから menu2 へ
   h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel })

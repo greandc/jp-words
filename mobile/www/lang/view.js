@@ -1,6 +1,85 @@
 // app/features/lang/view.js
 import { t, setLang } from "../i18n.js";
 
+// ===== 初回チュートリアル用フラグ =====
+const LS_ONBOARD_TTS = "onboard_tts_v1";
+
+function isTtsOnboardDone() {
+  try {
+    return localStorage.getItem(LS_ONBOARD_TTS) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function setTtsOnboardDone() {
+  try {
+    localStorage.setItem(LS_ONBOARD_TTS, "1");
+  } catch {}
+}
+
+// ==== TTS チュートリアル用モーダル ====
+function showTtsTutorial({ langCode, langName, ttsOk }) {
+  return new Promise((resolve) => {
+    const wrap = document.createElement("div");
+    wrap.style.position = "fixed";
+    wrap.style.inset = "0";
+    wrap.style.background = "rgba(0,0,0,.35)";
+    wrap.style.display = "flex";
+    wrap.style.alignItems = "center";
+    wrap.style.justifyContent = "center";
+    wrap.style.zIndex = "9999";
+
+    const box = document.createElement("div");
+    box.style.maxWidth = "420px";
+    box.style.width = "90vw";
+    box.style.background = "#fff";
+    box.style.borderRadius = "16px";
+    box.style.padding = "16px 18px 14px";
+    box.style.boxShadow = "0 10px 30px rgba(15,23,42,.25)";
+    box.style.boxSizing = "border-box";
+
+    // ここはあとで i18n に差し替えられるよう、日本語ベタ書き
+    const title = document.createElement("h2");
+    title.textContent = "音声読み上げについて";
+    title.style.margin = "0 0 8px";
+    title.style.fontSize = "18px";
+
+    const p = document.createElement("p");
+    p.style.margin = "0 0 12px";
+    p.style.fontSize = "14px";
+    p.style.lineHeight = "1.6";
+
+    if (ttsOk) {
+      p.textContent =
+        "このアプリでは、単語や文字を選ぶときに、音声読み上げをよく使います。" +
+        "音量やマナーモードの設定を確認してからご利用ください。";
+    } else {
+      p.textContent =
+        `${langName} の音声読み上げ(TTS)が、この端末では使えないか、OFFになっている可能性があります。\n` +
+        "このアプリでは音声があると学習しやすくなります。端末の設定でTTSを有効にしてから使うことをおすすめします。";
+    }
+
+    const btn = document.createElement("button");
+    btn.textContent = "OK";
+    btn.className = "btn";
+    btn.style.width = "100%";
+    btn.style.marginTop = "4px";
+
+    btn.addEventListener("click", () => {
+      document.body.removeChild(wrap);
+      resolve();
+    });
+
+    box.appendChild(title);
+    box.appendChild(p);
+    box.appendChild(btn);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
+  });
+}
+
+
 export async function render(el, deps = {}) {
   const div = document.createElement("div");
   div.className = "screen";
@@ -23,8 +102,20 @@ export async function render(el, deps = {}) {
       <div style="color:#666">${opt.english}</div>
     `;
     btn.addEventListener("click", () => {
-      setLang(opt.code);     // 選択言語を保存
-      location.reload();     // 全画面をその言語で再読込
+
+  // まず言語設定
+  setLang(opt.code);
+
+  // --- 初回のみ、TTSガイドを表示 ---
+  if (!isTtsOnboardDone()) {
+    showTtsOnboardModal(opt.code);
+    return;   // ← 案内を見るまでは reload しない
+  }
+
+  // --- 2回目以降は普通にリロード ---
+  location.reload();
+
+
     });
     grid.appendChild(btn);
   });
