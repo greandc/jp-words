@@ -1,105 +1,105 @@
 // app/features/lang/view.js
 import { t, setLang } from "../i18n.js";
 
-// 言語初期設定が終わったかどうか
-const LS_LANG_INIT_DONE = "lang_init_done_v1";
-function setLangInitDone() {
-  try { localStorage.setItem(LS_LANG_INIT_DONE, "1"); } catch {}
-}
+// =====================
+//  TTS チュートリアル用 フラグ
+// =====================
+const LS_FIRST_RUN   = "tango.firstRunDone";   // 初回起動かどうか
+const LS_TTS_STATUS  = "tango.ttsStatus";      // 別の画面で保存している TTS 状態 (unknown / ok / off / missing)
 
-btn.addEventListener("click", () => {
-  setLang(opt.code);
-
-  if (!isTtsOnboardDone()) {
-    showTtsOnboardModal(opt.code); // モーダル側の OK でも setLangInitDone()
-    return;
-  }
-
-  setLangInitDone();
-  location.reload();
-});
-
-
-
-// ===== 初回チュートリアル用フラグ =====
-const LS_ONBOARD_TTS = "onboard_tts_v1";
-
-function isTtsOnboardDone() {
+function isFirstRun() {
   try {
-    return localStorage.getItem(LS_ONBOARD_TTS) === "1";
+    return localStorage.getItem(LS_FIRST_RUN) !== "1";
   } catch {
-    return false;
+    return true;
   }
 }
 
-function setTtsOnboardDone() {
+function markFirstRunDone() {
   try {
-    localStorage.setItem(LS_ONBOARD_TTS, "1");
+    localStorage.setItem(LS_FIRST_RUN, "1");
   } catch {}
 }
 
-// ==== TTS チュートリアル用モーダル ====
-function showTtsTutorial({ langCode, langName, ttsOk }) {
-  return new Promise((resolve) => {
-    const wrap = document.createElement("div");
-    wrap.style.position = "fixed";
-    wrap.style.inset = "0";
-    wrap.style.background = "rgba(0,0,0,.35)";
-    wrap.style.display = "flex";
-    wrap.style.alignItems = "center";
-    wrap.style.justifyContent = "center";
-    wrap.style.zIndex = "9999";
+function getTtsStatus() {
+  try {
+    return localStorage.getItem(LS_TTS_STATUS) || "unknown";
+  } catch {
+    return "unknown";
+  }
+}
 
-    const box = document.createElement("div");
-    box.style.maxWidth = "420px";
-    box.style.width = "90vw";
-    box.style.background = "#fff";
-    box.style.borderRadius = "16px";
-    box.style.padding = "16px 18px 14px";
-    box.style.boxShadow = "0 10px 30px rgba(15,23,42,.25)";
-    box.style.boxSizing = "border-box";
+// =====================
+//  TTS の案内モーダル
+// =====================
+let modalOkHandler = null;   // OK を押したときに実行する処理をここに入れておく
 
-    // ここはあとで i18n に差し替えられるよう、日本語ベタ書き
-    const title = document.createElement("h2");
-    title.textContent = "音声読み上げについて";
-    title.style.margin = "0 0 8px";
-    title.style.fontSize = "18px";
+function ensureTtsHintModal() {
+  if (document.getElementById("ttsHintModal")) return;
 
-    const p = document.createElement("p");
-    p.style.margin = "0 0 12px";
-    p.style.fontSize = "14px";
-    p.style.lineHeight = "1.6";
+  const wrap = document.createElement("div");
+  wrap.id = "ttsHintModal";
+  wrap.style.cssText = `
+    position:fixed; inset:0;
+    display:none;
+    align-items:center; justify-content:center;
+    background:rgba(0,0,0,.35);
+    z-index:9999;
+  `;
 
-    if (ttsOk) {
-      p.textContent =
-        "このアプリでは、単語や文字を選ぶときに、音声読み上げをよく使います。" +
-        "音量やマナーモードの設定を確認してからご利用ください。";
-    } else {
-      p.textContent =
-        `${langName} の音声読み上げ(TTS)が、この端末では使えないか、OFFになっている可能性があります。\n` +
-        "このアプリでは音声があると学習しやすくなります。端末の設定でTTSを有効にしてから使うことをおすすめします。";
+  wrap.innerHTML = `
+    <div id="ttsHintBox"
+         style="background:#fff;border-radius:16px;padding:18px 20px;
+                max-width:360px;width:88%;box-shadow:0 10px 30px rgba(15,23,42,.25);
+                text-align:left;font-size:.95rem;">
+      <h2 style="margin:0 0 8px;font-size:1.05rem;font-weight:700;">
+        ${t("tutorial.ttsTitle") || "About voice reading"}
+      </h2>
+      <p id="ttsHintText" style="margin:0 0 14px;line-height:1.5;color:#374151;">
+        ${t("tutorial.ttsHint")
+          || "Text-to-Speech (voice reading) seems to be OFF or not installed on this device."}
+      </p>
+      <button id="ttsHintOk"
+              style="display:block;margin:0 auto;
+                     padding:.45rem 1.4rem;border-radius:999px;
+                     border:1px solid #3b82f6;background:#eff6ff;
+                     font-weight:600;">
+        OK
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(wrap);
+
+  const okBtn = wrap.querySelector("#ttsHintOk");
+  okBtn.addEventListener("click", () => {
+    wrap.style.display = "none";
+    if (modalOkHandler) {
+      const fn = modalOkHandler;
+      modalOkHandler = null;
+      fn();
     }
-
-    const btn = document.createElement("button");
-    btn.textContent = "OK";
-    btn.className = "btn";
-    btn.style.width = "100%";
-    btn.style.marginTop = "4px";
-
-    btn.addEventListener("click", () => {
-      document.body.removeChild(wrap);
-      resolve();
-    });
-
-    box.appendChild(title);
-    box.appendChild(p);
-    box.appendChild(btn);
-    wrap.appendChild(box);
-    document.body.appendChild(wrap);
   });
 }
 
+function openTtsHintModal(onOk) {
+  ensureTtsHintModal();
+  modalOkHandler = onOk;
+  const wrap = document.getElementById("ttsHintModal");
+  if (wrap) wrap.style.display = "flex";
 
+  // メッセージは i18n から取り直しておく（言語変更直後でも大丈夫なように）
+  const msg = document.getElementById("ttsHintText");
+  if (msg) {
+    msg.textContent =
+      t("tutorial.ttsHint") ||
+      "Text-to-Speech (voice reading) seems to be OFF or not installed on this device. This app uses many voice readings.";
+  }
+}
+
+// =====================
+//  画面本体
+// =====================
 export async function render(el, deps = {}) {
   const div = document.createElement("div");
   div.className = "screen";
@@ -113,7 +113,9 @@ export async function render(el, deps = {}) {
   `;
   el.appendChild(div);
 
+  // 言語ボタン群
   const grid = div.querySelector("#grid");
+  // OPTIONS は元のコードと同じくグローバルを使用（ここはそのまま）
   OPTIONS.forEach((opt) => {
     const btn = document.createElement("button");
     btn.className = "btn";
@@ -121,26 +123,34 @@ export async function render(el, deps = {}) {
       <div class="lang-strong" lang="${opt.code}">${opt.native}</div>
       <div style="color:#666">${opt.english}</div>
     `;
+
     btn.addEventListener("click", () => {
+      const first  = isFirstRun();
+      const tts    = getTtsStatus();
+      const needHint = (tts === "off" || tts === "missing" || tts === "unknown");
 
-  // まず言語設定
-  setLang(opt.code);
-
-  // --- 初回のみ、TTSガイドを表示 ---
-  if (!isTtsOnboardDone()) {
-    showTtsOnboardModal(opt.code);
-    return;   // ← 案内を見るまでは reload しない
-  }
-
-  // --- 2回目以降は普通にリロード ---
-  location.reload();
-
-
+      // 初回かつ TTS が怪しいときだけ案内を出す
+      if (first && needHint) {
+        openTtsHintModal(() => {
+          setLang(opt.code);
+          markFirstRunDone();
+          // 言語を適用し直す
+          location.reload();
+        });
+      } else {
+        setLang(opt.code);
+        markFirstRunDone();
+        location.reload();
+      }
     });
+
     grid.appendChild(btn);
   });
 
-  div.querySelector("#back").addEventListener("click", () => deps.goto?.("menu1"));
+  // 戻る
+  div.querySelector("#back")?.addEventListener("click", () => {
+    deps.goto?.("menu1");
+  });
 }
 
 
