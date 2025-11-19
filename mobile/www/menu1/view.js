@@ -1,6 +1,10 @@
 // mobile/www/menu1/view.js
 import { t, getLang, setLang } from "../i18n.js";
 
+// 一度だけ「ひらがなチュートリアル」を出したかどうか
+const LS_HIRA_TUTORIAL = "twl.tutorial.hiragana";
+
+
 
 // === Stats (日本時間で日付カウント) ===
 const LS_STATS_KEY = "jpVocab.stats.days"; // ["YYYY-MM-DD", ...]
@@ -66,19 +70,21 @@ export async function render(el, deps = {}) {
 
   const list = div.querySelector("#list");
 
-  // 20 レベル刻みのレンジ定義
-  const ranges = [
-    [1, 20],
-    [21, 40],
-    [41, 60],
-    [61, 80],
-    [81, 100],
-  ];
+// 20 レベル刻みのレンジ定義
+const ranges = [
+  [1, 20],
+  [21, 40],
+  [41, 60],
+  [61, 80],
+  [81, 100],
+];
 
- // === 最高クリアLvを読む ===
+// === 最高クリアLvを読む ===
 let highestCleared = 0;
 try {
-  highestCleared = Number(localStorage.getItem("jpVocab.progress.highestCleared") || "0");
+  highestCleared = Number(
+    localStorage.getItem("jpVocab.progress.highestCleared") || "0"
+  );
 } catch {}
 
 // === ブロックごとの解放ロジック ===
@@ -93,33 +99,63 @@ if (highestCleared > 0 && highestCleared % 20 === 0) {
 // 安全に丸める
 unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
 
+// ===== ひらがなチュートリアルの状態 =====
+const hiraTutorialDone =
+  localStorage.getItem("gc.hiraTutorialDone") === "1";
+const tutorialHiraOnly = !hiraTutorialDone; // true の間は「ひらがなだけ」モード
 
-  // ボタン生成ヘルパ
-  const mk = (label, onClick, locked = false) => {
-    const b = document.createElement("button");
-    b.className = `btn ${locked ? "btn--locked" : ""}`;
-    b.textContent = label;
-    b.disabled = !!locked;          // ← クリック自体を無効化
-    if (!locked) b.addEventListener("click", onClick);
-    return b;
-  };
+// ボタン生成ヘルパ
+const mk = (label, onClick, locked = false) => {
+  const b = document.createElement("button");
+  b.className = `btn ${locked ? "btn--locked" : ""}`;
+  b.textContent = label;
+  b.disabled = !!locked; // ← クリック自体を無効化
+  if (!locked) b.addEventListener("click", onClick);
+  return b;
+};
 
-  // レンジのボタンを並べる（到達済み＝有効、それ以外＝ロック）
-  ranges.forEach(([a, b], idx) => {
-    const locked = idx > unlockedIndex;
-    list.appendChild(
-      mk(`Lv${a}–${b}`, () => {
-        deps.setRange?.([a, b]);
-        deps.goto?.("menu2");
-      }, locked)
-    );
-  });
-  list.appendChild(mk("ひらがな", () => deps.goto?.("hiragana")));
-  list.appendChild(mk("カタカナ", () => deps.goto?.("katakana")));
-  list.appendChild(mk(t("numbers.title"), () => deps.goto?.("numbers")));
+// レンジのボタンを並べる（到達済み＝有効、それ以外＝ロック）
+ranges.forEach(([a, b], idx) => {
+  const lockedByProgress = idx > unlockedIndex;
+  // チュートリアル中はレベル選択は全部ロック
+  const locked = tutorialHiraOnly ? true : lockedByProgress;
 
-  // Back
-  list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));
+  list.appendChild(
+    mk(`Lv${a}–${b}`, () => {
+      if (locked) return;
+      deps.setRange?.([a, b]);
+      deps.goto?.("menu2");
+    }, locked)
+  );
+});
+
+// ひらがなは常に有効（チュートリアル入口）
+list.appendChild(
+  mk("ひらがな", () => deps.goto?.("hiragana"))
+);
+
+// チュートリアル中はカタカナ・数字をロック
+const lockOthers = tutorialHiraOnly;
+
+list.appendChild(
+  mk("カタカナ", () => {
+    if (lockOthers) return;
+    deps.goto?.("katakana");
+  }, lockOthers)
+);
+
+list.appendChild(
+  mk(t("numbers.title"), () => {
+    if (lockOthers) return;
+    deps.goto?.("numbers");
+  }, lockOthers)
+);
+
+// Back
+list.appendChild(
+  mk(t("common.back"), () => deps.goto?.("title"))
+);
+
 
   // 言語名表示
   const LANG_NAME = {

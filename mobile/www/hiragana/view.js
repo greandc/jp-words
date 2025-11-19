@@ -7,6 +7,10 @@ import { transformKana } from "./transformKana.js";
 
 console.log("HIRAGANA SRC = v1");
 
+// 一度だけ「ひらがなチュートリアル」を出したかどうか
+const LS_HIRA_TUTORIAL = "twl.tutorial.hiragana";
+
+
 const BUILD_TAG = "ps-fix-01";
 
 // かな変換ユーティリティ
@@ -293,8 +297,71 @@ function mountGrid(){
 
   console.log("[hiragana] mountGrid()");
 
+function showHiraTutorialBubble() {
+  // もう表示済みなら出さない
+  if (localStorage.getItem(LS_HIRA_TUTORIAL)) return;
+
+  // ここで「チュートリアル完了」とみなす
+  localStorage.setItem(LS_HIRA_TUTORIAL, "1");
+
+  // 画面全体おおう薄いオーバーレイ
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: auto;
+  `;
+
+  // 吹き出しっぽいボックス
+  const box = document.createElement("div");
+  box.style.cssText = `
+    max-width: 520px;
+    width: calc(100% - 32px);
+    margin-bottom: 40px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+    text-align: left;
+    box-sizing: border-box;
+  `;
+  box.innerHTML = `
+    <div style="font-weight:600;margin-bottom:6px;font-size:1rem;">
+      ${t("tutorial.hiraTitle") || "使い方"}
+    </div>
+    <div style="font-size:.9rem;line-height:1.5;margin-bottom:10px;">
+      ${t("tutorial.hiraBody")
+        || "🔊ボタンや文字をタップすると、ひらがなを読み上げます。終わったら「Back」でメニューに戻れます。"}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+      <button class="btn" id="hiraTutOk"
+              style="min-width:84px;padding:.35rem .9rem;">
+        ${t("tutorial.ok") || "OK"}
+      </button>
+    </div>
+  `;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  overlay.querySelector("#hiraTutOk")?.addEventListener("click", () => {
+    overlay.remove();
+  });
+
+  // オーバーレイ外クリックでも閉じたい場合
+  overlay.addEventListener("click", (ev) => {
+    if (ev.target === overlay) overlay.remove();
+  });
+}
+
+
   // Back & モードボタンにイベントを付ける関数
-  function bindHeaderAndToggles(){
+function bindHeaderAndToggles(){
     // Back
     wrap.querySelector("#back")?.addEventListener("click", () => {
       deps.goto?.("menu1");
@@ -405,6 +472,9 @@ function wireCardEvents(){
 
   // 初期描画
   mountGrid();
+
+  // 初回だけ、ひらがなチュートリアル吹き出し
+  showHiraTutorialBubble();
 
   // 画面離脱でTTS停止
   const onHide = () => stop();
