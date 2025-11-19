@@ -159,13 +159,18 @@ for (const { k, ex } of EXTRA_HIRA_EXAMPLES) {
 }
 
 
-// ========== スタイル注入 ==========
 function ensureStyle() {
   if (document.getElementById("hira-style-v2")) return;
   const st = document.createElement("style");
   st.id = "hira-style-v2";
   st.textContent = `
-    .hira-wrap { display:flex; flex-direction:column; gap:12px; max-width:560px; margin:0 auto; }
+    .hira-wrap {
+      display:flex;
+      flex-direction:column;
+      gap:8px;                 /* ★ 12px → 8px にして上下のスキマを少し詰める */
+      max-width:560px;
+      margin:0 auto;
+    }
 
     /* 例語ボタン（押せる感） */
     .hira-exbtn {
@@ -177,7 +182,11 @@ function ensureStyle() {
     .hira-exbtn:hover { filter:brightness(0.98); }
 
     /* 格子 */
-    .hira-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+    .hira-grid {
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:6px;                 /* ★ 8px → 6px：行と行のスキマを少しだけ圧縮 */
+    }
     .hira-grid .btn { font-weight:700; height:48px; }
 
     /* 行のシマ模様（見やすさ）*/
@@ -202,18 +211,22 @@ function ensureStyle() {
     .hiraChanged { background:#fee2e2 !important; border-color:#fecaca !important; }
 
     .hira-row {
-     display:flex;
-     align-items:center;
-     gap:8px;
+      display:flex;
+      align-items:center;
+      gap:6px;                /* ★ 8px → 6px：スピーカーと列の間も少し詰める */
     }
     .hira-row .row-speaker {
-     font-size:1.1rem;
+      font-size:1.1rem;
     }
-    
 
+    /* ★ 画面上部の余白だけ少し減らす用クラス */
+    .screen.hira-tight {
+      padding-top:16px;       /* たぶん元が 24px 前後 → ちょっとだけ上に詰まる */
+    }
   `;
   document.head.appendChild(st);
 }
+
 
 // ==========================================================
 export async function render(el, deps = {}) {
@@ -226,8 +239,9 @@ export async function render(el, deps = {}) {
   let flags = { daku:false, handaku:false, small:false };
 
   const root = document.createElement("div");
-  root.className = "screen";
+  root.className = "screen hira-tight";   // ★ 追加クラスで上の余白だけ減らす
   el.appendChild(root);
+
 
   const wrap = document.createElement("div");
   wrap.className = "hira-wrap";
@@ -244,10 +258,11 @@ export async function render(el, deps = {}) {
   `;
 }
 
- function togglesHTML(){
+function togglesHTML(){
   return `
     <div id="hira-toggles" class="hira-toggles"
-         style="display:flex;gap:8px;margin:10px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
+     style="display:flex;gap:8px;margin:4px 0 6px;align-items:center;border:1px dashed #cbd5e1;padding:6px 8px;border-radius:10px;background:#f8fafc;">
+
 
       <button class="btn tbtn" id="btnDaku"
               title="${t("hira.mode.daku") || "Add dakuten"}">゛</button>
