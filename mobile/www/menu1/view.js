@@ -130,9 +130,13 @@ export async function render(el, deps = {}) {
   unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
 
   // ===== ひらがなチュートリアルの状態 =====
-  const hiraTutorialDone =
-    localStorage.getItem("gc.hiraTutorialDone") === "1";
-  const tutorialHiraOnly = !hiraTutorialDone; // true の間は「ひらがなだけ」モード
+const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";  // ← ひらがな側と合わせる
+
+const hiraTutorialDone =
+  localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
+
+const tutorialHiraOnly = !hiraTutorialDone;  // true のあいだは「ひらがなだけ」モード
+
 
   // ボタン生成ヘルパ
   const mk = (label, onClick, locked = false) => {

@@ -220,5 +220,23 @@ body{
   color: #9aa7b5; letter-spacing: .12em;
   font-weight: 700;
 }
+/* 画面下に固定するバナーの仮スペース */
+.banner-slot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;              /* 画面の一番下にくっつける */
+  height: 52px;           /* 仮の高さ（あとで広告に合わせて調整） */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f4f4f5;
+  color: #4b5563;
+  font-size: 12px;
+
+  z-index: 20;            /* 画面の上に乗せる */
+}
 
 
