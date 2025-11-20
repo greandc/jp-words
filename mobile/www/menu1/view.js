@@ -49,17 +49,17 @@ export async function render(el, deps = {}) {
     // ===== ラッパ（画面全体＋バナー枠） =====
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
-  shell.style.cssText = `
-    position: relative;
-    height: 100svh;          /* ← min-height ではなく固定高さ */
+    shell.style.cssText = `
+    height: 100svh;          /* ← 固定高さにする */
     width: 100vw;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     margin: 0;
     padding: 0;
-    overflow: hidden;        /* ← 画面全体としてはスクロールさせない */
+    overflow: hidden;        /* ← この画面ではスクロールさせない */
   `;
+
 
   // ===== いままでの screen 本体 =====
   const div = document.createElement("div");
@@ -81,6 +81,9 @@ export async function render(el, deps = {}) {
     <p style="margin:.5rem 0 0;">${t("")}</p>
     <div id="list" style="display:grid;gap:12px;"></div>
   `;
+
+  div.style.display = "flex";
+  div.style.flexDirection = "column";
 
   // ===== 下バナー枠（いまはダミー表示）=====
   const banner = document.createElement("div");
@@ -105,8 +108,14 @@ export async function render(el, deps = {}) {
   shell.appendChild(banner);
   el.appendChild(shell);
 
-  // ===== ここから下は今までと同じ =====
-  const list = div.querySelector("#list");
+    const list = div.querySelector("#list");
+  // ★ 追加：リスト部分が残りの縦をぜんぶ受け持つ
+  list.style.flex = "1 1 auto";
+  list.style.display = "flex";
+  list.style.flexDirection = "column";
+  list.style.justifyContent = "space-evenly"; // ボタン間を自動で均等配置
+  list.style.gap = "8px";  // ちょっとだけ詰める
+
 
   // 20 レベル刻みのレンジ定義
   const ranges = [
