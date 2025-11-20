@@ -71,22 +71,32 @@ export async function render(el, deps = {}) {
     </div>
 
     <!-- 一番下のバナー（左右いっぱい） -->
-    <div id="menu1-banner"
-         style="
-           flex:0 0 auto;
-           margin-top:12px;
-           width:100%;
-           box-sizing:border-box;
-           padding:8px 12px;
-           border-radius:8px;
-           border:1px dashed #cbd5f5;
-           background:#f9fafb;
-           color:#64748b;
-           font-size:.8rem;
-           text-align:center;
-         ">
-      [ バナー広告スペース（仮） ]
-    </div>
+      <!-- 一番下のバナー（左右いっぱい）  -->
+  <div id="menu1-banner"
+       style="
+         /* 上のボタンとのスキマをちょっとだけに */
+         margin:4px 0 0;
+
+         /* 横幅は画面いっぱい */
+         width:100%;
+         box-sizing:border-box;
+
+         /* バナー自体の高さと見た目 */
+         padding:6px 0;
+         background:#f3f4f6;
+         color:#64748b;
+         font-size:.8rem;
+         text-align:center;
+
+         /* バナーっぽく見えるように、上だけ線を入れる */
+         border-top:1px solid #e5e7eb;
+         border-left:none;
+         border-right:none;
+         border-bottom:none;
+       ">
+    [ バナー広告スペース（仮） ]
+  </div>
+
   `;
 
   el.appendChild(div);
