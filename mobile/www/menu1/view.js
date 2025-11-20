@@ -189,7 +189,7 @@ export async function render(el, deps = {}) {
     background: #f4f4f5;
     border-top: 1px solid #d4d4d8;
   `;
-  bannerRow.textContent = "［ バナー広告スペース（仮kari） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
   // 最後に、一番下に追いやられるべきバナーを画面に追加
   shell.appendChild(bannerRow);
