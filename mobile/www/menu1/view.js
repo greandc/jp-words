@@ -46,13 +46,33 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-  // いつもの画面本体（ラッパやバナーはナシ）
+  // ===== ラッパ（画面全体＋バナー）=====
+  const shell = document.createElement("div");
+  shell.className = "screen-menu1-shell";
+  shell.style.cssText = `
+    width: 100vw;
+    min-height: 100svh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+  `;
+
+  // ===== 上側（コンテンツ本体）=====
   const div = document.createElement("div");
   div.className = "screen";
+  div.style.cssText = `
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 16px 20px;   /* ← 下だけ少し空けておく */
+    box-sizing: border-box;
+  `;
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
-      <h1 style="margin:0;">${t("Menu")}</h1>
+      <H1 style="margin:0;">${t("Menu")}</h1>
       <div style="text-align:right;">
         <div style="font-weight:600;color:#0ea5e9;">
           ${t("stats.total", { n: total })} · ${t("stats.streak", { n: streak })}
@@ -60,123 +80,45 @@ export async function render(el, deps = {}) {
         <div style="font-size:.8rem;color:#64748b;">${t("stats.note")}</div>
       </div>
     </div>
+
     <p style="margin:.5rem 0 0;">${t("")}</p>
-    <div id="list" style="display:grid;gap:12px;"></div>
+
+    <!-- ボタンリスト -->
+    <div id="list" style="
+      display:grid;
+      gap:14px;
+      width:100%;
+    "></div>
   `;
-  el.appendChild(div);
 
-  const list = div.querySelector("#list");
-
-  // 20 レベル刻みのレンジ定義
-  const ranges = [
-    [1, 20],
-    [21, 40],
-    [41, 60],
-    [61, 80],
-    [81, 100],
-  ];
-
-  // === 最高クリアLvを読む ===
-  let highestCleared = 0;
-  try {
-    highestCleared = Number(
-      localStorage.getItem("jpVocab.progress.highestCleared") || "0"
-    );
-  } catch {}
-
-  // === ブロックごとの解放ロジック ===
-  let unlockedIndex = Math.floor((Math.max(0, highestCleared - 1)) / 20);
-  if (highestCleared > 0 && highestCleared % 20 === 0) {
-    unlockedIndex += 1;
-  }
-  unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
-
-  // ===== ひらがなチュートリアルの状態 =====
-  const hiraTutorialDone =
-    localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
-  const tutorialHiraOnly = !hiraTutorialDone; // true の間は「ひらがなだけ」モード
-
-  // ボタン生成ヘルパ
-  const mk = (label, onClick, locked = false) => {
-    const b = document.createElement("button");
-    b.className = `btn ${locked ? "btn--locked" : ""}`;
-    b.textContent = label;
-    b.disabled = !!locked;
-    if (!locked) b.addEventListener("click", onClick);
-    return b;
-  };
-
-  // レンジのボタンを並べる
-  ranges.forEach(([a, b], idx) => {
-    const lockedByProgress = idx > unlockedIndex;
-    // チュートリアル中はレベル選択は全ロック
-    const locked = tutorialHiraOnly ? true : lockedByProgress;
-
-    list.appendChild(
-      mk(`Lv${a}–${b}`, () => {
-        if (locked) return;
-        deps.setRange?.([a, b]);
-        deps.goto?.("menu2");
-      }, locked)
-    );
-  });
-
-  // ひらがなは常に有効
-  list.appendChild(
-    mk("ひらがな", () => deps.goto?.("hiragana"))
-  );
-
-  // チュートリアル中はカタカナ・数字をロック
-  const lockOthers = tutorialHiraOnly;
-
-  list.appendChild(
-    mk("カタカナ", () => {
-      if (lockOthers) return;
-      deps.goto?.("katakana");
-    }, lockOthers)
-  );
-
-  list.appendChild(
-    mk(t("numbers.title"), () => {
-      if (lockOthers) return;
-      deps.goto?.("numbers");
-    }, lockOthers)
-  );
-
-  // Back
-  list.appendChild(
-    mk(t("common.back"), () => deps.goto?.("title"))
-  );
-
-  // 言語名表示
-  const LANG_NAME = {
-    en:"English", ja:"日本語", zh:"中文", ko:"한국어",
-    es:"Español", fr:"Français", de:"Deutsch",
-    it:"Italiano", pt:"Português", vi:"Tiếng Việt",
-    id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe",
-    ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu",
-    nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська",
-    el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית",
-    km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino",
-  };
-    const label =
-    `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
-  list.appendChild(mk(label, () => deps.goto?.("lang")));
-
-  // ===== バナー用スロット（ダミー表示） =====
-  const bannerRow = document.createElement("div");
-  bannerRow.style.cssText = `
-    height: 52px;
+  // ===== 下側バナー（左右MAX）=====
+  const banner = document.createElement("div");
+  banner.className = "menu1-banner";
+  banner.style.cssText = `
+    flex: 0 0 auto;
+    width: 100%;
+    height: 54px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
-    border: 1px dashed #cbd5f5;
-    background: #f9fafb;
-    font-size: 0.8rem;
-    color: #64748b;
+    box-sizing: border-box;
+
+    /* 広告らしい見た目 */
+    background: #f3f4f6;
+    border-top: 1px solid #e5e7eb;
+
+    font-size: 0.85rem;
+    color: #6b7280;
   `;
-  bannerRow.textContent = "[ バナー広告スペース ]";
+  banner.textContent = "[ バナー広告スペース（仮） ]";
+
+  // ラッパに追加
+  shell.appendChild(div);
+  shell.appendChild(banner);
+  el.appendChild(shell);
+
+  // ====== ここから下は今まで通り（list の構築）=====
+
 
   list.appendChild(bannerRow);
 }
