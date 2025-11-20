@@ -46,29 +46,16 @@ export async function render(el, deps = {}) {
   const { total, streak } = calcStreak(days);
 
   // ===== ラッパ（画面全体＋バナー枠） =====
+  // base.cssのルールで画面全体のレイアウトは作られるので、class指定のみ
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
-  shell.style.cssText = `
-    /* 原因①：base.cssの強制的な高さ指定を上書きしてリセット！ */
-    min-height: auto !important;
-
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-  `;
 
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
-
-  /* 原因②：base.cssのpadding-bottom:16pxを強制的に0にする！ */
-  div.style.paddingBottom = "0px !important";
   
-  // 元々のflex指定は、コンテンツが伸びないようにするため不要です
-  // div.style.flex = "1 0 auto"; 
+  // base.cssで指定される .screen の下の余白(padding)だけを上書きして消す
+  div.style.paddingBottom = "0px";
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -84,7 +71,7 @@ export async function render(el, deps = {}) {
     <div id="list" style="display:grid;gap:10px;"></div>
   `;
 
-  // ラッパに本体を入れる
+  // ラッパに本体(ボタンなど)を入れる
   shell.appendChild(div);
   el.appendChild(shell);
 
@@ -183,13 +170,21 @@ export async function render(el, deps = {}) {
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-  // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
+
+  // ===== ここからが解決策のキモです =====
+
+  // 1. 透明なスペーサーを作る
+  const spacer = document.createElement("div");
+  // 2. 「お前が余った空間を全部埋めろ！」と命令する
+  spacer.style.flex = "1 0 auto"; 
+  // 3. ボタンリストの下にスペーサーを入れる
+  shell.appendChild(spacer);
+
+  // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");
   bannerRow.id = "menu1-banner";
   bannerRow.style.cssText = `
-    flex: 0 0 auto;
-    /* ボタンリストとの最終的な隙間。0pxにすれば完全にくっつきます */
-    margin-top: 0px; 
+    flex: 0 0 auto; /* 自分は伸びない */
     width: 100%;
     padding: 8px 12px;
     box-sizing: border-box;
@@ -199,7 +194,9 @@ export async function render(el, deps = {}) {
     background: #f4f4f5;
     border-top: 1px solid #d4d4d8;
   `;
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
-  // バナーだけは shell の一番下に追加
+  // 最後にバナーを一番下に入れる
   shell.appendChild(bannerRow);
 }
+
