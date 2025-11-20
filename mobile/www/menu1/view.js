@@ -75,14 +75,14 @@ export async function render(el, deps = {}) {
   <div id="menu1-banner"
        style="
          /* 上のボタンとのスキマをちょっとだけに */
-         margin:4px 0 0;
+         margin:-4px 0 0;
 
          /* 横幅は画面いっぱい */
          width:100%;
          box-sizing:border-box;
 
          /* バナー自体の高さと見た目 */
-         padding:6px 0;
+         padding:10px 0;
          background:#f3f4f6;
          color:#64748b;
          font-size:.8rem;
