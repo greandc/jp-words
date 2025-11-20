@@ -46,27 +46,9 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-    // ===== ラッパ（画面全体＋バナー枠） =====
-  const shell = document.createElement("div");
-  shell.className = "screen-menu1-shell";
-    shell.style.cssText = `
-    height: 100svh;          /* ← 固定高さにする */
-    width: 100vw;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;        /* ← この画面ではスクロールさせない */
-  `;
-
-
-  // ===== いままでの screen 本体 =====
+  // いつもの画面本体（ラッパやバナーはナシ）
   const div = document.createElement("div");
   div.className = "screen";
-  div.style.flex = "1 1 auto";   // 空き高さを全部ここに
-  div.style.overflowY = "auto";  // コンテンツが入りきらない時だけ中身がスクロール
-
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -81,41 +63,9 @@ export async function render(el, deps = {}) {
     <p style="margin:.5rem 0 0;">${t("")}</p>
     <div id="list" style="display:grid;gap:12px;"></div>
   `;
+  el.appendChild(div);
 
-  div.style.display = "flex";
-  div.style.flexDirection = "column";
-
-  // ===== 下バナー枠（いまはダミー表示）=====
-  const banner = document.createElement("div");
-  banner.className = "menu1-banner";
-  banner.style.cssText = `
-    flex: 0 0 auto;
-    height: 52px;
-    box-sizing: border-box;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    color: #64748b;
-    background: #f3f4f6;
-    border-top: 1px solid #e5e7eb;
-  `;
-  banner.textContent = "[ バナー広告スペース（仮） ]";
-
-  // ラッパに詰めてから画面に追加
-  shell.appendChild(div);
-  shell.appendChild(banner);
-  el.appendChild(shell);
-
-    const list = div.querySelector("#list");
-  // ★ 追加：リスト部分が残りの縦をぜんぶ受け持つ
-  list.style.flex = "1 1 auto";
-  list.style.display = "flex";
-  list.style.flexDirection = "column";
-  list.style.justifyContent = "space-evenly"; // ボタン間を自動で均等配置
-  list.style.gap = "8px";  // ちょっとだけ詰める
-
+  const list = div.querySelector("#list");
 
   // 20 レベル刻みのレンジ定義
   const ranges = [
@@ -142,13 +92,9 @@ export async function render(el, deps = {}) {
   unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
 
   // ===== ひらがなチュートリアルの状態 =====
-const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";  // ← ひらがな側と合わせる
-
-const hiraTutorialDone =
-  localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
-
-const tutorialHiraOnly = !hiraTutorialDone;  // true のあいだは「ひらがなだけ」モード
-
+  const hiraTutorialDone =
+    localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
+  const tutorialHiraOnly = !hiraTutorialDone; // true の間は「ひらがなだけ」モード
 
   // ボタン生成ヘルパ
   const mk = (label, onClick, locked = false) => {
@@ -163,6 +109,7 @@ const tutorialHiraOnly = !hiraTutorialDone;  // true のあいだは「ひらが
   // レンジのボタンを並べる
   ranges.forEach(([a, b], idx) => {
     const lockedByProgress = idx > unlockedIndex;
+    // チュートリアル中はレベル選択は全ロック
     const locked = tutorialHiraOnly ? true : lockedByProgress;
 
     list.appendChild(
@@ -179,6 +126,7 @@ const tutorialHiraOnly = !hiraTutorialDone;  // true のあいだは「ひらが
     mk("ひらがな", () => deps.goto?.("hiragana"))
   );
 
+  // チュートリアル中はカタカナ・数字をロック
   const lockOthers = tutorialHiraOnly;
 
   list.appendChild(
