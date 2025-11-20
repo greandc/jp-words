@@ -184,7 +184,7 @@ export async function render(el, deps = {}) {
   
     bannerRow.style.cssText = `
     flex: 0 0 auto;
-    margin-top: 8px;      /* ← ボタンとバナーの間の最終的な隙間 */
+    margin-top: 0px;      /* ← ボタンとバナーの間の最終的な隙間 */
     width: 100%;
     padding: 8px 12px;
 
@@ -196,7 +196,7 @@ export async function render(el, deps = {}) {
     border-top: 1px solid #d4d4d8;
   `;
 
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮kari） ］";
 
   // バナーだけは shell の一番下に追加
   shell.appendChild(bannerRow);
