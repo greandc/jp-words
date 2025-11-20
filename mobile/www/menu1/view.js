@@ -46,18 +46,20 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-  // ===== ラッパ（画面全体＋バナー枠） =====
+    // ===== ラッパ（画面全体＋バナー枠） =====
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
   shell.style.cssText = `
     width: 100%;
-    min-height: 100%;          /* ← 100svh をやめて親に合わせる */
+    min-height: 0;             /* ← この行を追加して、親から継承した高さをリセット */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     margin: 0;
     padding: 0;
   `;
+
+  
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
@@ -196,7 +198,7 @@ export async function render(el, deps = {}) {
     border-top: 1px solid #d4d4d8;
   `;
 
-  bannerRow.textContent = "［ バナー広告スペース（仮kari） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
   // バナーだけは shell の一番下に追加
   shell.appendChild(bannerRow);
