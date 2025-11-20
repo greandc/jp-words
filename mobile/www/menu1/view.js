@@ -175,22 +175,23 @@ export async function render(el, deps = {}) {
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-  // ===== 一番下のバナー（左右いっぱい） =====
-  const bannerRow = document.createElement("div");
-  bannerRow.id = "menu1-banner";
-  bannerRow.style.cssText = `
-    margin-top: 6px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px 12px 10px;
-    border-top: 1px solid #e5e7eb;   /* 上だけ線 */
-    background: #f9fafb;
-    color: #64748b;
-    font-size: .8rem;
-    text-align: center;
-  `;
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  // --- 一番下のバナー行（左右いっぱい） ---
+const bannerRow = document.createElement("div");
+bannerRow.id = "menu1-banner";
+bannerRow.style.cssText = `
+  display: block;
+  width: 100%;
+  margin-top: -4px;        /* ← ボタンとの隙間を詰める */
+  text-align: center;
+  font-size: .8rem;
+  color: #64748b;
+  padding: 6px 0;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;   /* ← 上線でバナー感を出す */
+`;
+bannerRow.textContent = "[ バナー広告スペース（仮） ]";
 
-  // バナーだけは list の外ではなく、下に追加
-  shell.appendChild(bannerRow);
+// ←←← ここが重要
+list.appendChild(bannerRow);
+
 }
