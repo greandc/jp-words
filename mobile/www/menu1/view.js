@@ -159,7 +159,25 @@ export async function render(el, deps = {}) {
     el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית",
     km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino",
   };
-  const label =
+    const label =
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
+
+  // ===== バナー用スロット（ダミー表示） =====
+  const bannerRow = document.createElement("div");
+  bannerRow.style.cssText = `
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px dashed #cbd5f5;
+    background: #f9fafb;
+    font-size: 0.8rem;
+    color: #64748b;
+  `;
+  bannerRow.textContent = "[ バナー広告スペース ]";
+
+  list.appendChild(bannerRow);
 }
+
