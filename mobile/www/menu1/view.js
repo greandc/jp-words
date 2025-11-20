@@ -117,9 +117,5 @@ export async function render(el, deps = {}) {
   shell.appendChild(banner);
   el.appendChild(shell);
 
-  // ====== ここから下は今まで通り（list の構築）=====
-
-
-  list.appendChild(bannerRow);
 }
 
