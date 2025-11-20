@@ -70,7 +70,6 @@ export async function render(el, deps = {}) {
       <div id="list" style="display:grid;gap:12px;margin-top:12px;"></div>
     </div>
 
-    <!-- 一番下のバナー（左右いっぱい） -->
       <!-- 一番下のバナー（左右いっぱい）  -->
   <div id="menu1-banner"
        style="
@@ -94,7 +93,7 @@ export async function render(el, deps = {}) {
          border-right:none;
          border-bottom:none;
        ">
-    [ バナー広告スペース（仮） ]
+    [ バナー広告スペース（仮kari） ]
   </div>
 
   `;
