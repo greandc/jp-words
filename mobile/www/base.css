@@ -4,7 +4,7 @@
 html,body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; }
 #app { min-height: 100svh; }
 
-.screen { max-width: 860px; margin: 0 auto; padding: 16px; }
+.screen { max-width: 860px; margin: 0 auto; padding: 8px; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
