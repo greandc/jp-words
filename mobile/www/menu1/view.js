@@ -41,17 +41,18 @@ function calcStreak(days){
   return { total: days.length, streak };
 }
 
-
 export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-    // ===== ラッパ（画面全体＋バナー枠） =====
+  // ===== ラッパ（画面全体＋バナー枠） =====
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
   shell.style.cssText = `
+    /* 原因①：base.cssの強制的な高さ指定を上書きしてリセット！ */
+    min-height: auto !important;
+
     width: 100%;
-    min-height: 0;             /* ← この行を追加して、親から継承した高さをリセット */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -59,13 +60,15 @@ export async function render(el, deps = {}) {
     padding: 0;
   `;
 
-  
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
+
+  /* 原因②：base.cssのpadding-bottom:16pxを強制的に0にする！ */
+  div.style.paddingBottom = "0px !important";
   
-    // flexを削除し、下の余白指定だけ残す（!importantも不要）
-  div.style.paddingBottom = "0px";
+  // 元々のflex指定は、コンテンツが伸びないようにするため不要です
+  // div.style.flex = "1 0 auto"; 
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -180,16 +183,15 @@ export async function render(el, deps = {}) {
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-    // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
+  // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
   const bannerRow = document.createElement("div");
   bannerRow.id = "menu1-banner";
-  
-    bannerRow.style.cssText = `
+  bannerRow.style.cssText = `
     flex: 0 0 auto;
-    margin-top: 0px;      /* ← ボタンとバナーの間の最終的な隙間 */
+    /* ボタンリストとの最終的な隙間。0pxにすれば完全にくっつきます */
+    margin-top: 0px; 
     width: 100%;
     padding: 8px 12px;
-
     box-sizing: border-box;
     text-align: center;
     font-size: 0.8rem;
@@ -197,8 +199,6 @@ export async function render(el, deps = {}) {
     background: #f4f4f5;
     border-top: 1px solid #d4d4d8;
   `;
-
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
   // バナーだけは shell の一番下に追加
   shell.appendChild(bannerRow);
