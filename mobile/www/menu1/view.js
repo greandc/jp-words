@@ -46,24 +46,27 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-  // ===== ラッパ（画面全体＋バナー枠） =====
+    // ===== ラッパ（画面全体＋バナー枠） =====
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
   shell.style.cssText = `
-    min-height: 100svh;
+    position: relative;
+    height: 100svh;          /* ← min-height ではなく固定高さ */
     width: 100vw;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     margin: 0;
     padding: 0;
+    overflow: hidden;        /* ← 画面全体としてはスクロールさせない */
   `;
 
   // ===== いままでの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
-  // 上は普通に伸ばして、下バナー分だけ余白少なめにしてもOK
-  div.style.flex = "1 0 auto";
+  div.style.flex = "1 1 auto";   // 空き高さを全部ここに
+  div.style.overflowY = "auto";  // コンテンツが入りきらない時だけ中身がスクロール
+
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
