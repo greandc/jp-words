@@ -67,7 +67,7 @@ export async function render(el, deps = {}) {
         </div>
       </div>
       <p style="margin:.5rem 0 0;">${t("")}</p>
-      <div id="list" style="display:grid;gap:12px;margin-top:12px;"></div>
+      <div id="list" style="display:grid;gap:8px;margin-top:8px;"></div>
     </div>
 
       <!-- 一番下のバナー（左右いっぱい）  -->
