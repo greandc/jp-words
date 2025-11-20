@@ -47,25 +47,24 @@ export async function render(el, deps = {}) {
   const { total, streak } = calcStreak(days);
 
   // ===== ラッパ（画面全体＋バナー枠） =====
-const shell = document.createElement("div");
-shell.className = "screen-menu1-shell";
-shell.style.cssText = `
-  /* ★ここだけ変更 */
-  min-height: calc(100svh - 52px);
-  width: 100vw;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-`;
-
-
+  const shell = document.createElement("div");
+  shell.className = "screen-menu1-shell";
+  shell.style.cssText = `
+    width: 100%;
+    min-height: 100%;          /* ← 100svh をやめて親に合わせる */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+  `;
 
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
   div.style.flex = "1 0 auto";
+  // 下だけ少し詰めて、バナーとのスキマを縮める
+  div.style.paddingBottom = "4px";
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -81,12 +80,13 @@ shell.style.cssText = `
     <div id="list" style="display:grid;gap:10px;"></div>
   `;
 
+  // ラッパに本体を入れる
   shell.appendChild(div);
   el.appendChild(shell);
 
+  // ====== レベルボタン周り ======
   const list = div.querySelector("#list");
 
-  // ====== レベルボタン周り ======
   const ranges = [
     [1, 20],
     [21, 40],
@@ -108,7 +108,7 @@ shell.style.cssText = `
   }
   unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
 
-  // ひらがなチュートリアル状態（※ファイル先頭の定数を使う）
+  // ひらがなチュートリアル状態
   const hiraTutorialDone =
     localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
   const tutorialHiraOnly = !hiraTutorialDone;
@@ -179,28 +179,24 @@ shell.style.cssText = `
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-  // --- 一番下のバナー行（左右いっぱい） ---
+  // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
   const bannerRow = document.createElement("div");
   bannerRow.id = "menu1-banner";
   bannerRow.style.cssText = `
     flex: 0 0 auto;
-    /* 上だけ少しあけて、左右は #app の 8px パディングを打ち消してフル幅に */
-    margin: 12px -8px 0 -8px;
+    margin-top: 4px;
+    width: 100%;
     padding: 8px 12px;
-    width: auto;
 
     box-sizing: border-box;
     text-align: center;
     font-size: 0.8rem;
     color: #4b5563;
     background: #f4f4f5;
-
-    /* バナーっぽく見えるように上だけ線 */
     border-top: 1px solid #d4d4d8;
   `;
-  bannerRow.textContent = "［ バナー広告スペース（仮かり） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
-  // バナーだけは list の外、画面の一番下に追加
+  // バナーだけは shell の一番下に追加
   shell.appendChild(bannerRow);
-
 }
