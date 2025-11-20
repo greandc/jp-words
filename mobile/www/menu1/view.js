@@ -61,9 +61,9 @@ export async function render(el, deps = {}) {
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
-  // flexの指定と、下の余白を!importantで強制的に0にする
-  div.style.cssText = "flex: 1 0 auto; padding-bottom: 0px !important;";
   
+    // flexを削除し、下の余白指定だけ残す（!importantも不要）
+  div.style.paddingBottom = "0px";
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -181,19 +181,18 @@ export async function render(el, deps = {}) {
     // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
   const bannerRow = document.createElement("div");
   bannerRow.id = "menu1-banner";
-  bannerRow.style.cssText = `
+  
+    bannerRow.style.cssText = `
     flex: 0 0 auto;
+    margin-top: 8px;      /* ← ボタンとバナーの間の最終的な隙間 */
     width: 100%;
-    margin-top: 0px !important;      /* 上の隙間を強制的に0 */
-    padding-top: 0px !important;     /* 内側の上の隙間も強制的に0 */
-    padding-bottom: 8px;             /* 内側の下の隙間は維持（お好みで調整） */
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 8px 12px;
+
     box-sizing: border-box;
     text-align: center;
     font-size: 0.8rem;
     color: #4b5563;
-    background: #f4f4f5;             /* 背景色を元に戻す */
+    background: #f4f4f5;
     border-top: 1px solid #d4d4d8;
   `;
 
