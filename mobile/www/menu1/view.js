@@ -47,16 +47,18 @@ export async function render(el, deps = {}) {
   const { total, streak } = calcStreak(days);
 
   // ===== ラッパ（画面全体） =====
-  const shell = document.createElement("div");
+    const shell = document.createElement("div");
+  shell.className = "screen-menu1-shell";
   shell.style.cssText = `
-    min-height: 100svh;
-    width: 100vw;
+    /* #app 側ですでに高さ管理しているので、ここでは伸ばしすぎない */
+    width: 100%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     margin: 0;
     padding: 0;
   `;
+
 
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
@@ -176,22 +178,27 @@ export async function render(el, deps = {}) {
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
   // --- 一番下のバナー行（左右いっぱい） ---
-const bannerRow = document.createElement("div");
-bannerRow.id = "menu1-banner";
-bannerRow.style.cssText = `
-  display: block;
-  width: 100%;
-  margin-top: -4px;        /* ← ボタンとの隙間を詰める */
-  text-align: center;
-  font-size: .8rem;
-  color: #64748b;
-  padding: 6px 0;
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;   /* ← 上線でバナー感を出す */
-`;
-bannerRow.textContent = "[ バナー広告スペース（仮） ]";
+  const bannerRow = document.createElement("div");
+  bannerRow.id = "menu1-banner";
+  bannerRow.style.cssText = `
+    flex: 0 0 auto;
+    /* 上だけ少しあけて、左右は #app の 8px パディングを打ち消してフル幅に */
+    margin: 12px -8px 0 -8px;
+    padding: 8px 12px;
+    width: auto;
 
-// ←←← ここが重要
-list.appendChild(bannerRow);
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #4b5563;
+    background: #f4f4f5;
+
+    /* バナーっぽく見えるように上だけ線 */
+    border-top: 1px solid #d4d4d8;
+  `;
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+
+  // バナーだけは list の外、画面の一番下に追加
+  shell.appendChild(bannerRow);
 
 }
