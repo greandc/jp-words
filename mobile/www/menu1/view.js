@@ -64,7 +64,7 @@ export async function render(el, deps = {}) {
   div.className = "screen";
   div.style.flex = "1 0 auto";
   // 下だけ少し詰めて、バナーとのスキマを縮める
-  div.style.paddingBottom = "4px";
+  div.style.paddingBottom = "0px";
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -184,7 +184,7 @@ export async function render(el, deps = {}) {
   bannerRow.id = "menu1-banner";
   bannerRow.style.cssText = `
     flex: 0 0 auto;
-    margin-top: 4px;
+    margin-top: 0px;
     width: 100%;
     padding: 8px 12px;
 
