@@ -523,6 +523,25 @@ function ensureQuizLayoutStyle() {
     .quiz-banner span {
       opacity: 0.8;
     }
+    .quiz-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    height: 60px;      /* バナー高さ。後で調整OK */
+    background: #ececec;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+    border-top: 1px solid #ccc;
+    }
+    .quiz-main {
+    padding-bottom: 70px; /* バナー高さ + 少し余裕 */
+    }
+
   `;
   document.head.appendChild(st);
 }
