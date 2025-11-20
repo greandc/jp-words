@@ -109,6 +109,8 @@ export async function render(el, deps = {}) {
   const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
   const label = `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
+  // =================================================================
+  // ▲▲▲ ここまで元のコードのまま ▲▲▲
 
 
   // --- 一番下のバナー行 ---
