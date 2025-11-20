@@ -195,7 +195,7 @@ export async function render(el, deps = {}) {
     background: #f4f4f5;
     border-top: 1px solid #d4d4d8;
   `;
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮kari） ］";
 
   // バナーだけは shell の一番下に追加
   shell.appendChild(bannerRow);
