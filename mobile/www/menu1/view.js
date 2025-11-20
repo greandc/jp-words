@@ -58,13 +58,12 @@ export async function render(el, deps = {}) {
     margin: 0;
     padding: 0;
   `;
-
   // ===== もともとの screen 本体 =====
   const div = document.createElement("div");
   div.className = "screen";
-  div.style.flex = "1 0 auto";
-  // 下だけ少し詰めて、バナーとのスキマを縮める
-  div.style.paddingBottom = "0px";
+  // flexの指定と、下の余白を!importantで強制的に0にする
+  div.style.cssText = "flex: 1 0 auto; padding-bottom: 0px !important;";
+  
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -179,23 +178,26 @@ export async function render(el, deps = {}) {
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-  // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
+    // --- 一番下のバナー行（左右いっぱい＋ちょい詰め） ---
   const bannerRow = document.createElement("div");
   bannerRow.id = "menu1-banner";
   bannerRow.style.cssText = `
     flex: 0 0 auto;
-    margin-top: 0px;
     width: 100%;
-    padding: 8px 12px;
-
+    margin-top: 0px !important;      /* 上の隙間を強制的に0 */
+    padding-top: 0px !important;     /* 内側の上の隙間も強制的に0 */
+    padding-bottom: 8px;             /* 内側の下の隙間は維持（お好みで調整） */
+    padding-left: 12px;
+    padding-right: 12px;
     box-sizing: border-box;
     text-align: center;
     font-size: 0.8rem;
     color: #4b5563;
-    background: #f4f4f5;
+    background: #f4f4f5;             /* 背景色を元に戻す */
     border-top: 1px solid #d4d4d8;
   `;
-  bannerRow.textContent = "［ バナー広告スペース（仮kari） ］";
+
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
   // バナーだけは shell の一番下に追加
   shell.appendChild(bannerRow);
