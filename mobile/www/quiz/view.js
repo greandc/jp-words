@@ -142,9 +142,12 @@ function ensureStyle(){
 
 /* ==== Quiz 全画面レイアウト：余白ゼロでフルブリード ==== */
 .screen-quiz{
-  /* 画面幅いっぱい・高さいっぱい（iOSでも安定のsvh） */
+  /* 画面にピッタリ貼り付けて、ページ全体のスクロールを止める */
+  position: fixed;
+  inset: 0;             /* 上下左右ぜんぶ 0 */
+  height: 100svh;       /* 高さ固定 */
   width: 100vw;
-  min-height: 100svh;
+  overflow: hidden;     /* 画面の外にはみ出してもページはスクロールさせない */
 
   /* 上下左右の安全域だけ残す（ノッチ対応）。余計な余白は作らない */
   padding: env(safe-area-inset-top)
