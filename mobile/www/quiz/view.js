@@ -89,8 +89,6 @@ function renderHearts(n){
   return R.createElement(R.Fragment, null, ...kids);
 }
 
-
-
 function QuizOverlay({ type, goto, onClear }) {
   if (!type) return null;
 
@@ -225,7 +223,6 @@ function ensureStyle(){
   height: clamp(44px, 6vh, 56px);
   border:2px solid #66a3ff; border-radius:14px; background:#fff; font-size:18px;
 }
-
   
   /* 選択中の強調 */
   .screen-quiz .qbtn.active{
@@ -474,11 +471,62 @@ function ensureStyle(){
   font-size: 0.9rem;      /* ← 少しだけ小さく */
   flex-shrink: 0;         /* ← 時間が途中で切れないように */
 }
-
-  `;
+ `;
 
   document.head.appendChild(st);
 }
+
+// ===== Quiz 用レイアウト調整 & バナー領域 =====
+function ensureQuizLayoutStyle() {
+  if (document.getElementById("quiz-layout-style")) return;
+
+  const st = document.createElement("style");
+  st.id = "quiz-layout-style";
+  st.textContent = `
+    /* 画面全体を上下フレックスに */
+    .quiz-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 上側（ヘッダー + カード + Back）をまとめるコンテナ */
+    .quiz-main {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* カード部分を伸び縮みさせるためのラッパー（既存の cards が中に入る想定） */
+    .quiz-main-body {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* 下固定バナー（今はプレースホルダーとして常に表示） */
+    .quiz-banner {
+      flex: 0 0 auto;
+      height: 56px;
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    /* 実際に広告ONのときは高さそのままで中身を差し替える想定 */
+    .quiz-banner span {
+      opacity: 0.8;
+    }
+  `;
+  document.head.appendChild(st);
+}
+
 
 // ふりがな対応ラベル
 function JpLabel({ jp, kana, showFuri }){
@@ -908,31 +956,74 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
     ) : null)
   );
  }
-  return h("div", { className:`quiz screen-quiz ${overlay ? "overlay-on":""}` },
-  Header(), // ← 引数なし
+      // ★★★ ここから下の return 部分を差し替え ★★★
+    return h(
+      "div",
+      {
+        // 既存クラスに quiz-screen を足す
+        className: `quiz screen-quiz quiz-screen ${overlay ? "overlay-on" : ""}`,
+      },
+      // 上側：クイズ本体
+      h(
+        "div",
+        { className: "quiz-main" },
+        Header(),
 
-  // 2段目：左=ハート 右=残り問題数・時間
-  h("div", { className:"status" },
-    h("div", { className:"hearts" }, renderHearts(hearts)),
-    h("div", { className:"meta" }, `${remain} questions · ${fmtTime(secs)}`)
-  ),
-  h("div", { className:"board" }, ...cells),
-  h("button",
-  { className:"backbtn",
-    onClick: () => { cleanupTTS(); props.goto?.("testTitle"); }
-  },t("common.back")),
- 
+        // 2段目：左=ハート 右=残り問題数・時間
+        h(
+          "div",
+          { className: "status" },
+          h("div", { className: "hearts" }, renderHearts(hearts)),
+          h(
+            "div",
+            { className: "meta" },
+            `${remain} questions · ${fmtTime(secs)}`
+          )
+        ),
 
-  // ★ クリア時に現在レベルを開放してから menu2 へ
-  h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel })
-);
+        // ボード＋Back ボタン
+        h(
+          "div",
+          { className: "quiz-main-body" },
+          h("div", { className: "board" }, ...cells),
+          h(
+            "button",
+            {
+              className: "backbtn",
+              onClick: () => {
+                cleanupTTS();
+                props.goto?.("testTitle");
+              },
+            },
+            t("common.back")
+          )
+        ),
 
+        // オーバーレイ（クリア / 失敗 / タイムアップ）
+        h(QuizOverlay, {
+          type: overlay?.type,
+          goto: props.goto,
+          onClear: unlockNextLevel,
+        })
+      ),
+
+      // 下固定バナー（今はプレースホルダー表示）
+      h(
+        "div",
+        { id: "quizBanner", className: "quiz-banner" },
+        h("span", null, "［バナー広告スペース（仮）］")
+      )
+    );
+    // ★★★ 差し替えここまで ★★★
+
+  
   }
   return null;
 }
 
  // ===== 外から呼ばれる render =====
  export async function render(el, deps = {}){
+  ensureQuizLayoutStyle();
   const comp = R.createElement(QuizScreen, { goto: deps.goto });
   if (RD.createRoot){
     const root = RD.createRoot(el);
