@@ -46,18 +46,20 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-  // ===== ラッパ（画面全体） =====
-    const shell = document.createElement("div");
-  shell.className = "screen-menu1-shell";
-  shell.style.cssText = `
-    /* #app 側ですでに高さ管理しているので、ここでは伸ばしすぎない */
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-  `;
+  // ===== ラッパ（画面全体＋バナー枠） =====
+const shell = document.createElement("div");
+shell.className = "screen-menu1-shell";
+shell.style.cssText = `
+  /* ★ここだけ変更 */
+  min-height: calc(100svh - 52px);
+  width: 100vw;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+`;
+
 
 
   // ===== もともとの screen 本体 =====
