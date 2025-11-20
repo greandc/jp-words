@@ -45,17 +45,19 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-  // ===== ラッパ（画面全体＋バナー枠） =====
-  // この shell は base.css のルールによって、画面全体に広がる「縦並びの箱」になっている
+  // ===== ラッパ（画面全体）=====
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
+  
+  // ★ 変更点①
+  // 画面下に固定表示されるバナー(高さ52px)に最後のボタンが
+  // 隠れてしまわないよう、画面全体を包むこの要素の下に、あらかじめ隙間を空けておきます。
+  shell.style.paddingBottom = "52px";
 
-  // ===== もともとの screen 本体 =====
-  // ここには、ボタンやタイトルなど、画面の上半分が入る
+  // ===== もともとの screen 本体（ボタンなどが表示されるエリア） =====
   const div = document.createElement("div");
   div.className = "screen";
-  // base.css でつく余白が邪魔をすることがあったので、念のためリセット
-  div.style.paddingBottom = "0px";
+  // これまで私が追加をお願いした style 指定はすべて間違いでした。すべて消し、クラス名のみに戻します。
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -71,39 +73,21 @@ export async function render(el, deps = {}) {
     <div id="list" style="display:grid;gap:10px;"></div>
   `;
 
-  // まず、ボタンなどが入った上半分のパーツを画面に追加
   shell.appendChild(div);
   el.appendChild(shell);
 
-  // ====== レベルボタン周り ======
+  // ここから下の「ボタンを作成するロジック」は、ユーザーさんの元のコードのままで大丈夫です。
+  // (mk関数や、list.appendChild がたくさん並んでいる部分です)
+  // =================================================================
   const list = div.querySelector("#list");
-
-  const ranges = [
-    [1, 20],
-    [21, 40],
-    [41, 60],
-    [61, 80],
-    [81, 100],
-  ];
-
+  const ranges = [[1, 20], [21, 40], [41, 60], [61, 80], [81, 100],];
   let highestCleared = 0;
-  try {
-    highestCleared = Number(
-      localStorage.getItem("jpVocab.progress.highestCleared") || "0"
-    );
-  } catch {}
-
+  try { highestCleared = Number(localStorage.getItem("jpVocab.progress.highestCleared") || "0"); } catch {}
   let unlockedIndex = Math.floor((Math.max(0, highestCleared - 1)) / 20);
-  if (highestCleared > 0 && highestCleared % 20 === 0) {
-    unlockedIndex += 1;
-  }
+  if (highestCleared > 0 && highestCleared % 20 === 0) { unlockedIndex += 1; }
   unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
-
-  // ひらがなチュートリアル状態
-  const hiraTutorialDone =
-    localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
+  const hiraTutorialDone = localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
   const tutorialHiraOnly = !hiraTutorialDone;
-
   const mk = (label, onClick, locked = false) => {
     const b = document.createElement("button");
     b.className = `btn ${locked ? "btn--locked" : ""}`;
@@ -112,86 +96,33 @@ export async function render(el, deps = {}) {
     if (!locked) b.addEventListener("click", onClick);
     return b;
   };
-
-  // レベル範囲ボタン
   ranges.forEach(([a, b], idx) => {
     const lockedByProgress = idx > unlockedIndex;
     const locked = tutorialHiraOnly ? true : lockedByProgress;
-
-    list.appendChild(
-      mk(`Lv${a}–${b}`, () => {
-        if (locked) return;
-        deps.setRange?.([a, b]);
-        deps.goto?.("menu2");
-      }, locked)
-    );
+    list.appendChild(mk(`Lv${a}–${b}`, () => { if (locked) return; deps.setRange?.([a, b]); deps.goto?.("menu2"); }, locked));
   });
-
-  // ひらがな
-  list.appendChild(
-    mk("ひらがな", () => deps.goto?.("hiragana"))
-  );
-
+  list.appendChild(mk("ひらがな", () => deps.goto?.("hiragana")));
   const lockOthers = tutorialHiraOnly;
-
-  // カタカナ
-  list.appendChild(
-    mk("カタカナ", () => {
-      if (lockOthers) return;
-      deps.goto?.("katakana");
-    }, lockOthers)
-  );
-
-  // Numbers
-  list.appendChild(
-    mk(t("numbers.title"), () => {
-      if (lockOthers) return;
-      deps.goto?.("numbers");
-    }, lockOthers)
-  );
-
-  // Back
-  list.appendChild(
-    mk(t("common.back"), () => deps.goto?.("title"))
-  );
-
-  // 言語ボタン
-  const LANG_NAME = {
-    en:"English", ja:"日本語", zh:"中文", ko:"한국어",
-    es:"Español", fr:"Français", de:"Deutsch",
-    it:"Italiano", pt:"Português", vi:"Tiếng Việt",
-    id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe",
-    ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu",
-    nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська",
-    el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית",
-    km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino",
-  };
-  const label =
-    `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
+  list.appendChild(mk("カタカナ", () => { if (lockOthers) return; deps.goto?.("katakana"); }, lockOthers));
+  list.appendChild(mk(t("numbers.title"), () => { if (lockOthers) return; deps.goto?.("numbers"); }, lockOthers));
+  list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));
+  const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
+  const label = `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
+
 
   // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");
-  bannerRow.id = "menu1-banner";
-  bannerRow.style.cssText = `
-    /* ★★★ これが今回の最終兵器 ★★★ */
-    /* 自分より上の余白を「自動」にして、余った空間をすべて埋めさせる */
-    margin-top: auto;
 
-    /* 以下は見た目のスタイル */
-    flex-shrink: 0; /* コンテンツが多くなっても縮まないようにするお守り */
-    width: 100%;
-    padding: 8px 12px;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 0.8rem;
-    color: #4b5563;
-    background: #f4f4f5;
-    border-top: 1px solid #d4d4d8;
-  `;
+  // ★ 変更点②
+  // 私が考えた複雑なスタイルはすべて捨て、base.cssに用意されていた
+  // 「画面下固定・左右MAX」用のクラスを、ただ指定します。
+  bannerRow.className = "banner-slot";
   bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
-  // 最後に、一番下に追いやられるべきバナーを画面に追加
+  // バナーを画面に追加します。
+  // 'position:fixed' のおかげで、ここに追加するだけで魔法のように画面最下部に固定されます。
   shell.appendChild(bannerRow);
 }
+
 
