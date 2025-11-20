@@ -46,64 +46,43 @@ export async function render(el, deps = {}) {
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
-  // 画面全体のコンテナ（中身＋バナーを縦に並べる）
-  const div = document.createElement("div");
-  div.className = "screen";
-  div.style.display = "flex";
-  div.style.flexDirection = "column";
-  div.style.minHeight = "100vh";   // 画面の高さにフィット
-  div.style.boxSizing = "border-box";
-
-  // 中身エリア（ヘッダー＋ボタンリスト）
-  div.innerHTML = `
-    <div id="content" style="flex:1 1 auto; display:flex; flex-direction:column;">
-      <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
-        <h1 style="margin:0;">${t("Menu")}</h1>
-        <div style="text-align:right;">
-          <div style="font-weight:600;color:#0ea5e9;">
-            ${t("stats.total", { n: total })} · ${t("stats.streak", { n: streak })}
-          </div>
-          <div style="font-size:.8rem;color:#64748b;">${t("stats.note")}</div>
-        </div>
-      </div>
-      <p style="margin:.5rem 0 0;">${t("")}</p>
-      <div id="list" style="display:grid;gap:8px;margin-top:8px;"></div>
-    </div>
-
-      <!-- 一番下のバナー（左右いっぱい）  -->
-  <div id="menu1-banner"
-       style="
-         /* 上のボタンとのスキマをちょっとだけに */
-         margin:-4px 0 0;
-
-         /* 横幅は画面いっぱい */
-         width:100%;
-         box-sizing:border-box;
-
-         /* バナー自体の高さと見た目 */
-         padding:10px 0;
-         background:#f3f4f6;
-         color:#64748b;
-         font-size:.8rem;
-         text-align:center;
-
-         /* バナーっぽく見えるように、上だけ線を入れる */
-         border-top:1px solid #e5e7eb;
-         border-left:none;
-         border-right:none;
-         border-bottom:none;
-       ">
-    [ バナー広告スペース（仮kari） ]
-  </div>
-
+  // ===== ラッパ（画面全体） =====
+  const shell = document.createElement("div");
+  shell.style.cssText = `
+    min-height: 100svh;
+    width: 100vw;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
   `;
 
-  el.appendChild(div);
+  // ===== もともとの screen 本体 =====
+  const div = document.createElement("div");
+  div.className = "screen";
+  div.style.flex = "1 0 auto";
 
-  // ここから下はボタン生成ロジック（前と同じ思想）
+  div.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
+      <h1 style="margin:0;">${t("Menu")}</h1>
+      <div style="text-align:right;">
+        <div style="font-weight:600;color:#0ea5e9;">
+          ${t("stats.total", { n: total })} · ${t("stats.streak", { n: streak })}
+        </div>
+        <div style="font-size:.8rem;color:#64748b;">${t("stats.note")}</div>
+      </div>
+    </div>
+    <p style="margin:.5rem 0 0;">${t("")}</p>
+    <div id="list" style="display:grid;gap:10px;"></div>
+  `;
+
+  shell.appendChild(div);
+  el.appendChild(shell);
+
   const list = div.querySelector("#list");
 
-  // 20 レベル刻みのレンジ定義
+  // ====== レベルボタン周り ======
   const ranges = [
     [1, 20],
     [21, 40],
@@ -112,7 +91,6 @@ export async function render(el, deps = {}) {
     [81, 100],
   ];
 
-  // === 最高クリアLvを読む ===
   let highestCleared = 0;
   try {
     highestCleared = Number(
@@ -120,19 +98,17 @@ export async function render(el, deps = {}) {
     );
   } catch {}
 
-  // === ブロックごとの解放ロジック ===
   let unlockedIndex = Math.floor((Math.max(0, highestCleared - 1)) / 20);
   if (highestCleared > 0 && highestCleared % 20 === 0) {
     unlockedIndex += 1;
   }
   unlockedIndex = Math.max(0, Math.min(ranges.length - 1, unlockedIndex));
 
-  // ===== ひらがなチュートリアルの状態 =====
+  // ひらがなチュートリアル状態（※ファイル先頭の定数を使う）
   const hiraTutorialDone =
     localStorage.getItem(HIRA_TUTORIAL_KEY) === "1";
-  const tutorialHiraOnly = !hiraTutorialDone; // true のあいだは「ひらがなだけ」モード
+  const tutorialHiraOnly = !hiraTutorialDone;
 
-  // ボタン生成ヘルパ
   const mk = (label, onClick, locked = false) => {
     const b = document.createElement("button");
     b.className = `btn ${locked ? "btn--locked" : ""}`;
@@ -142,7 +118,7 @@ export async function render(el, deps = {}) {
     return b;
   };
 
-  // レンジのボタンを並べる
+  // レベル範囲ボタン
   ranges.forEach(([a, b], idx) => {
     const lockedByProgress = idx > unlockedIndex;
     const locked = tutorialHiraOnly ? true : lockedByProgress;
@@ -156,13 +132,14 @@ export async function render(el, deps = {}) {
     );
   });
 
-  // ひらがなは常に有効
+  // ひらがな
   list.appendChild(
     mk("ひらがな", () => deps.goto?.("hiragana"))
   );
 
   const lockOthers = tutorialHiraOnly;
 
+  // カタカナ
   list.appendChild(
     mk("カタカナ", () => {
       if (lockOthers) return;
@@ -170,6 +147,7 @@ export async function render(el, deps = {}) {
     }, lockOthers)
   );
 
+  // Numbers
   list.appendChild(
     mk(t("numbers.title"), () => {
       if (lockOthers) return;
@@ -182,7 +160,7 @@ export async function render(el, deps = {}) {
     mk(t("common.back"), () => deps.goto?.("title"))
   );
 
-  // 言語名表示
+  // 言語ボタン
   const LANG_NAME = {
     en:"English", ja:"日本語", zh:"中文", ko:"한국어",
     es:"Español", fr:"Français", de:"Deutsch",
@@ -196,4 +174,23 @@ export async function render(el, deps = {}) {
   const label =
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
+
+  // ===== 一番下のバナー（左右いっぱい） =====
+  const bannerRow = document.createElement("div");
+  bannerRow.id = "menu1-banner";
+  bannerRow.style.cssText = `
+    margin-top: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 12px 10px;
+    border-top: 1px solid #e5e7eb;   /* 上だけ線 */
+    background: #f9fafb;
+    color: #64748b;
+    font-size: .8rem;
+    text-align: center;
+  `;
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+
+  // バナーだけは list の外ではなく、下に追加
+  shell.appendChild(bannerRow);
 }
