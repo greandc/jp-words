@@ -198,7 +198,7 @@ shell.style.cssText = `
     /* バナーっぽく見えるように上だけ線 */
     border-top: 1px solid #d4d4d8;
   `;
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮かり） ］";
 
   // バナーだけは list の外、画面の一番下に追加
   shell.appendChild(bannerRow);
