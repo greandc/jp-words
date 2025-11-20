@@ -46,15 +46,15 @@ export async function render(el, deps = {}) {
   const { total, streak } = calcStreak(days);
 
   // ===== ラッパ（画面全体＋バナー枠） =====
-  // base.cssのルールで画面全体のレイアウトは作られるので、class指定のみ
+  // この shell は base.css のルールによって、画面全体に広がる「縦並びの箱」になっている
   const shell = document.createElement("div");
   shell.className = "screen-menu1-shell";
 
   // ===== もともとの screen 本体 =====
+  // ここには、ボタンやタイトルなど、画面の上半分が入る
   const div = document.createElement("div");
   div.className = "screen";
-  
-  // base.cssで指定される .screen の下の余白(padding)だけを上書きして消す
+  // base.css でつく余白が邪魔をすることがあったので、念のためリセット
   div.style.paddingBottom = "0px";
 
   div.innerHTML = `
@@ -71,7 +71,7 @@ export async function render(el, deps = {}) {
     <div id="list" style="display:grid;gap:10px;"></div>
   `;
 
-  // ラッパに本体(ボタンなど)を入れる
+  // まず、ボタンなどが入った上半分のパーツを画面に追加
   shell.appendChild(div);
   el.appendChild(shell);
 
@@ -170,21 +170,16 @@ export async function render(el, deps = {}) {
     `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-
-  // ===== ここからが解決策のキモです =====
-
-  // 1. 透明なスペーサーを作る
-  const spacer = document.createElement("div");
-  // 2. 「お前が余った空間を全部埋めろ！」と命令する
-  spacer.style.flex = "1 0 auto"; 
-  // 3. ボタンリストの下にスペーサーを入れる
-  shell.appendChild(spacer);
-
   // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");
   bannerRow.id = "menu1-banner";
   bannerRow.style.cssText = `
-    flex: 0 0 auto; /* 自分は伸びない */
+    /* ★★★ これが今回の最終兵器 ★★★ */
+    /* 自分より上の余白を「自動」にして、余った空間をすべて埋めさせる */
+    margin-top: auto;
+
+    /* 以下は見た目のスタイル */
+    flex-shrink: 0; /* コンテンツが多くなっても縮まないようにするお守り */
     width: 100%;
     padding: 8px 12px;
     box-sizing: border-box;
@@ -196,7 +191,7 @@ export async function render(el, deps = {}) {
   `;
   bannerRow.textContent = "［ バナー広告スペース（仮） ］";
 
-  // 最後にバナーを一番下に入れる
+  // 最後に、一番下に追いやられるべきバナーを画面に追加
   shell.appendChild(bannerRow);
 }
 
