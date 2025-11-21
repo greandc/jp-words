@@ -120,7 +120,7 @@ export async function render(el, deps = {}) {
   // 私が考えた複雑なスタイルはすべて捨て、base.cssに用意されていた
   // 「画面下固定・左右MAX」用のクラスを、ただ指定します。
   bannerRow.className = "banner-slot";
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "［ バナー広告スペース（仮kari） ］";
 
   // バナーを画面に追加します。
   // 'position:fixed' のおかげで、ここに追加するだけで魔法のように画面最下部に固定されます。
