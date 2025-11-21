@@ -23,7 +23,6 @@ html, body { background:#fff !important; color:#0f172a; }
 
 .screen { 
   background:#fff !important; 
-  min-height: 100svh; 
   color:#0f172a;
 }
 
@@ -146,23 +145,6 @@ body{
   min-height: 100dvh;   /* さらに新しめ */
 }
 
-/* アプリ全体のパディング（セーフエリア込み） */
-#app{
-  min-height: 100svh;
-  min-height: 100dvh;
-  padding:
-    calc(8px + var(--safe-top))
-    calc(8px + var(--safe-right))
-    calc(8px + var(--safe-bottom))
-    calc(8px + var(--safe-left));
-}
-
-/* どの画面でも “縦に” 構成：上=ツール類、中=スクロール、下=フッター */
-#app > *{
-  min-height: calc(100svh - var(--safe-top) - var(--safe-bottom) - 16px);
-  display: flex;
-  flex-direction: column;
-}
 
 /* カードの並びは可変グリッドで横幅に追従 */
 .cards{
@@ -242,5 +224,23 @@ body{
 .screen-menu1-shell .screen {
   padding-bottom: 0;
 }
+.screen {
+  padding: 8px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+/* Menu1（メインメニュー）はスクロール禁止 */
+.screen-menu1-shell {
+  overflow: hidden;
+  min-height: 100dvh;
+  padding-bottom: 52px; /* バナー分の空き */
+}
+/* 言語リスト画面だけスクロールOK */
+.screen-lang {
+  max-height: 100dvh;
+  overflow-y: auto;
+  padding-bottom: 16px;
+}
+
 
 

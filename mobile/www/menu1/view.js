@@ -47,17 +47,14 @@ export async function render(el, deps = {}) {
 
   // ===== ラッパ（画面全体）=====
   const shell = document.createElement("div");
-  shell.className = "screen-menu1-shell";
+  shell.className = "screen screen-menu1-shell";
+
   
-  // ★ 変更点①
-  // 画面下に固定表示されるバナー(高さ52px)に最後のボタンが
   // 隠れてしまわないよう、画面全体を包むこの要素の下に、あらかじめ隙間を空けておきます。
   shell.style.paddingBottom = "52px";
 
-  // ===== もともとの screen 本体（ボタンなどが表示されるエリア） =====
   const div = document.createElement("div");
   div.className = "screen";
-  // これまで私が追加をお願いした style 指定はすべて間違いでした。すべて消し、クラス名のみに戻します。
 
   div.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;">
@@ -76,9 +73,6 @@ export async function render(el, deps = {}) {
   shell.appendChild(div);
   el.appendChild(shell);
 
-  // ここから下の「ボタンを作成するロジック」は、ユーザーさんの元のコードのままで大丈夫です。
-  // (mk関数や、list.appendChild がたくさん並んでいる部分です)
-  // =================================================================
   const list = div.querySelector("#list");
   const ranges = [[1, 20], [21, 40], [41, 60], [61, 80], [81, 100],];
   let highestCleared = 0;
@@ -109,21 +103,14 @@ export async function render(el, deps = {}) {
   const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
   const label = `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
-  // =================================================================
-  // ▲▲▲ ここまで元のコードのまま ▲▲▲
-
 
   // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");
 
-  // ★ 変更点②
-  // 私が考えた複雑なスタイルはすべて捨て、base.cssに用意されていた
-  // 「画面下固定・左右MAX」用のクラスを、ただ指定します。
   bannerRow.className = "banner-slot";
   bannerRow.textContent = "［ バナー広告スペース（仮かり） ］";
 
-  // バナーを画面に追加します。
-  // 'position:fixed' のおかげで、ここに追加するだけで魔法のように画面最下部に固定されます。
+  
   shell.appendChild(bannerRow);
 }
 

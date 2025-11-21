@@ -109,7 +109,7 @@ function openTtsHintModal(onOk) {
 // =====================
 export async function render(el, deps = {}) {
   const div = document.createElement("div");
-  div.className = "screen";
+  div.className = "screen screen-lang";
   div.innerHTML = `
     <h1>${t("Language")}</h1>
     <div id="grid" class="lang-vert" style="margin-top:8px;"></div>
