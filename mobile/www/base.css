@@ -238,5 +238,9 @@ body{
 
   z-index: 20;            /* 画面の上に乗せる */
 }
+/* menu1 専用の調整用CSS に追加 */
+.screen-menu1-shell .screen {
+  padding-bottom: 0;
+}
 
 
