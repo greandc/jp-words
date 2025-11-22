@@ -212,38 +212,40 @@ function ensureStyle() {
     .hiraChanged { background:#fee2e2 !important; border-color:#fecaca !important; }
 
     .hira-row {
-      display:flex;
-      align-items:center;
-      gap:6px;                /* ★ 8px → 6px：スピーカーと列の間も少し詰める */
+     display:flex;
+     align-items:center;
+     justify-content:center;  
+     gap:6px;
     }
+
     .hira-row .row-speaker {
       font-size:1.1rem;
     }
 
     /* ★ 画面上部の余白だけ少し減らす用クラス */
     .screen.hira-tight {
-      padding-top:32px;       /* たぶん元が 24px 前後 → ちょっとだけ上に詰まる */
+      padding-top:44px;       /* たぶん元が 24px 前後 → ちょっとだけ上に詰まる */
     }
     /* 画面が低い端末では、ボタンを少しだけ小さくして縦を詰める */
-@media (max-height: 640px){
-  .hira-grid .btn {
-    height:42px;
-    font-size:1.05rem;
-  }
-  .hira-card .kana {
-    font-size:2.3rem;
-  }
-}
+    @media (max-height: 640px){
+     .hira-grid .btn {
+      height:42px;
+      font-size:1.05rem;
+     }
+    .hira-card .kana {
+     font-size:2.3rem;
+     }
+    }
 
-@media (max-height: 580px){
-  .hira-grid .btn {
-    height:38px;
-    font-size:1rem;
-  }
-  .hira-wrap {
-    gap:6px;
-  }
-}
+    @media (max-height: 580px){
+     .hira-grid .btn {
+      height:38px;
+      font-size:1rem;
+     }
+     .hira-wrap {
+      gap:6px;
+     }
+    }
 
   `;
   document.head.appendChild(st);
