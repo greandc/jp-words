@@ -4,96 +4,90 @@ import { t, getLang, setLang } from "../i18n.js";
 // 一度だけ「ひらがなチュートリアル」を出したかどうか（ひらがな画面と同じキー）
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
 
-// Menu1 専用チュートリアルスタイル
+const LS_MENU1_HINT = "jpVocab.tutorial.menu1HintShown";
+
 function ensureMenu1HintStyle() {
   if (document.getElementById("menu1-hint-style")) return;
   const st = document.createElement("style");
   st.id = "menu1-hint-style";
   st.textContent = `
+    .menu1-hint {
+      background:#0f172a;
+      color:#f9fafb;
+      border-radius:12px;
+      padding:10px 12px;
+      margin:8px 0 4px;
+      box-shadow:0 10px 25px rgba(15,23,42,.25);
+      font-size:.9rem;
+      line-height:1.5;
+    }
+    .menu1-hint-title {
+      font-weight:600;
+      margin-bottom:4px;
+      font-size:.95rem;
+    }
+    .menu1-hint-body {
+      opacity:.95;
+    }
     .menu1-hira-highlight {
-      position: relative;
-      z-index: 1;
-      transform: scale(1.02);
-      box-shadow: 0 0 0 3px rgba(14,165,233,.40);
-    }
-
-    .menu1-hint-overlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      background: rgba(15,23,42,0.35);
-      z-index: 9998;
-      pointer-events: none;               /* 画面のタップは通す */
-    }
-
-    .menu1-hint-box {
-      pointer-events: auto;               /* 吹き出しだけ反応させる */
-      max-width: 520px;
-      width: calc(100% - 32px);
-      margin-bottom: 40px;
-      background: #0f172a;
-      color: #e5e7eb;
-      border-radius: 18px;
-      padding: 14px 16px 12px;
-      box-shadow: 0 12px 30px rgba(15,23,42,0.55);
-      font-size: .9rem;
-      line-height: 1.5;
-      box-sizing: border-box;
+      background:#fffbeb !important;
+      border-color:#facc15 !important;
+      box-shadow:0 0 0 2px rgba(250,204,21,.55);
     }
   `;
   document.head.appendChild(st);
 }
-function setupMenu1HiraHint(hiraBtn) {
-  if (!hiraBtn) return;
 
-  // すでに「ひらがなチュートリアル」が完了していたら何もしない
+function showMenu1Hint(root) {
+  // 既に表示済みなら何もしない
   try {
-    if (localStorage.getItem(HIRA_TUTORIAL_KEY) === "1") return;
+    if (localStorage.getItem(LS_MENU1_HINT) === "1") return;
   } catch {}
 
   ensureMenu1HintStyle();
 
-  // ボタンをハイライト
+  // 「ひらがな」ボタンを探す（テキストで判定）
+  const buttons = root.querySelectorAll("button, .btn");
+  let hiraBtn = null;
+  for (const b of buttons) {
+    if (b.textContent.trim() === "ひらがな") {
+      hiraBtn = b;
+      break;
+    }
+  }
+  if (!hiraBtn) return;
+
+  // 「ひらがな」より少し上に入れたいので、その直前に挿入する
+  const bubble = document.createElement("div");
+  bubble.className = "menu1-hint";
+  const title =
+    t("tutorial.menu1Title") || "Start from Hiragana";
+  const body =
+    t("tutorial.menu1Hint") ||
+    "First, tap this 「ひらがな」 button to begin. Other menus will unlock after this step.";
+
+  bubble.innerHTML = `
+    <div class="menu1-hint-title">${title}</div>
+    <div class="menu1-hint-body">${body}</div>
+  `;
+
+  // 「ひらがな」ボタンを目立たせる
   hiraBtn.classList.add("menu1-hira-highlight");
 
-  // もうオーバーレイがあれば再利用
-  let overlay = document.getElementById("menu1-hint-overlay");
-  if (!overlay) {
-    overlay = document.createElement("div");
-    overlay.id = "menu1-hint-overlay";
-    overlay.className = "menu1-hint-overlay";
+  // ボタンのすぐ上に吹き出しを挿入
+  const parent = hiraBtn.parentElement || root;
+  parent.insertBefore(bubble, hiraBtn);
 
-    const box = document.createElement("div");
-    box.className = "menu1-hint-box";
-
-    const title =
-      t("tutorial.menu1Title") || "Start from Hiragana";
-    const body =
-      t("tutorial.menu1Body") ||
-      "First, tap this 『ひらがな』 button to begin. Other menus will unlock after this step.";
-
-    box.innerHTML = `
-      <div style="font-weight:600;margin-bottom:6px;font-size:1rem;">
-        ${title}
-      </div>
-      <div>${body}</div>
-    `;
-
-    overlay.appendChild(box);
-    document.body.appendChild(overlay);
-  }
-
-  const clearHint = () => {
+  // 「ひらがな」を押したらヒント終了
+  const finish = () => {
+    try { localStorage.setItem(LS_MENU1_HINT, "1"); } catch {}
+    bubble.remove();
     hiraBtn.classList.remove("menu1-hira-highlight");
-    const ov = document.getElementById("menu1-hint-overlay");
-    if (ov) ov.remove();
+    hiraBtn.removeEventListener("click", finish);
   };
-
-  // 「ひらがな」をタップしたらハイライト＆吹き出しを消す
-  hiraBtn.addEventListener("click", clearHint, { once: true });
+  hiraBtn.addEventListener("click", finish);
 }
+
 
 
 // === Stats (日本時間で日付カウント) ===
@@ -211,7 +205,7 @@ export async function render(el, deps = {}) {
   const label = `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
 
-  setupMenu1HiraHint(hiraBtn);
+  showMenu1Hint(div);
 
   // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");
