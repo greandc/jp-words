@@ -239,7 +239,8 @@ export async function render(el, deps = {}) {
   let flags = { daku:false, handaku:false, small:false };
 
   const root = document.createElement("div");
-  root.className = "screen hira-tight";   // ★ 追加クラスで上の余白だけ減らす
+  root.className = "screen screen-sub hira-tight";
+
   el.appendChild(root);
 
 

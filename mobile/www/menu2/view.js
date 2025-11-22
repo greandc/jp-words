@@ -6,7 +6,7 @@ export async function render(el, deps = {}) {
   const [a, b] = deps.getRange?.() || [1, 20];
 
   const div = document.createElement("div");
-  div.className = "screen";
+  div.className = "screen screen-sub";
   div.innerHTML = `
     <h1>${t("menu2.title")}</h1>
     <p>${t("menu2.subtitle")}</p>
