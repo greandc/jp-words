@@ -268,11 +268,13 @@ body{
   /* justify-content は消して、デフォルトの flex-start（上寄せ）にする */
 }
 
-/* 中身を少しだけ下に落とす（5 の列あたりが真ん中に近づくイメージ） */
+/* Numbers の中身を上へ寄せる */
 .numbers-inner {
   width: 100%;
   max-width: 460px;
-  margin-top: 10vh;          /* ここを 8vh〜12vh くらいで微調整してOK */
+
+  position: relative;
+  top: -10vh;   /* ← これで上へ10% 引き上げ。調整ポイント */
 }
 
 
