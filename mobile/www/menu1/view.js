@@ -4,6 +4,98 @@ import { t, getLang, setLang } from "../i18n.js";
 // 一度だけ「ひらがなチュートリアル」を出したかどうか（ひらがな画面と同じキー）
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
 
+// Menu1 専用チュートリアルスタイル
+function ensureMenu1HintStyle() {
+  if (document.getElementById("menu1-hint-style")) return;
+  const st = document.createElement("style");
+  st.id = "menu1-hint-style";
+  st.textContent = `
+    .menu1-hira-highlight {
+      position: relative;
+      z-index: 1;
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3px rgba(14,165,233,.40);
+    }
+
+    .menu1-hint-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(15,23,42,0.35);
+      z-index: 9998;
+      pointer-events: none;               /* 画面のタップは通す */
+    }
+
+    .menu1-hint-box {
+      pointer-events: auto;               /* 吹き出しだけ反応させる */
+      max-width: 520px;
+      width: calc(100% - 32px);
+      margin-bottom: 40px;
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 18px;
+      padding: 14px 16px 12px;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.55);
+      font-size: .9rem;
+      line-height: 1.5;
+      box-sizing: border-box;
+    }
+  `;
+  document.head.appendChild(st);
+}
+function setupMenu1HiraHint(hiraBtn) {
+  if (!hiraBtn) return;
+
+  // すでに「ひらがなチュートリアル」が完了していたら何もしない
+  try {
+    if (localStorage.getItem(HIRA_TUTORIAL_KEY) === "1") return;
+  } catch {}
+
+  ensureMenu1HintStyle();
+
+  // ボタンをハイライト
+  hiraBtn.classList.add("menu1-hira-highlight");
+
+  // もうオーバーレイがあれば再利用
+  let overlay = document.getElementById("menu1-hint-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "menu1-hint-overlay";
+    overlay.className = "menu1-hint-overlay";
+
+    const box = document.createElement("div");
+    box.className = "menu1-hint-box";
+
+    const title =
+      t("tutorial.menu1Title") || "Start from Hiragana";
+    const body =
+      t("tutorial.menu1Body") ||
+      "First, tap this 『ひらがな』 button to begin. Other menus will unlock after this step.";
+
+    box.innerHTML = `
+      <div style="font-weight:600;margin-bottom:6px;font-size:1rem;">
+        ${title}
+      </div>
+      <div>${body}</div>
+    `;
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }
+
+  const clearHint = () => {
+    hiraBtn.classList.remove("menu1-hira-highlight");
+    const ov = document.getElementById("menu1-hint-overlay");
+    if (ov) ov.remove();
+  };
+
+  // 「ひらがな」をタップしたらハイライト＆吹き出しを消す
+  hiraBtn.addEventListener("click", clearHint, { once: true });
+}
+
+
 // === Stats (日本時間で日付カウント) ===
 const LS_STATS_KEY = "jpVocab.stats.days"; // ["YYYY-MM-DD", ...]
 
@@ -42,6 +134,7 @@ function calcStreak(days){
 }
 
 export async function render(el, deps = {}) {
+  ensureMenu1HintStyle();
   const days = touchToday();
   const { total, streak } = calcStreak(days);
 
@@ -93,16 +186,32 @@ export async function render(el, deps = {}) {
   ranges.forEach(([a, b], idx) => {
     const lockedByProgress = idx > unlockedIndex;
     const locked = tutorialHiraOnly ? true : lockedByProgress;
-    list.appendChild(mk(`Lv${a}–${b}`, () => { if (locked) return; deps.setRange?.([a, b]); deps.goto?.("menu2"); }, locked));
+    list.appendChild(
+      mk(`Lv${a}–${b}`, () => {
+        if (locked) return;
+        deps.setRange?.([a, b]);
+        deps.goto?.("menu2");
+      }, locked)
+    );
   });
-  list.appendChild(mk("ひらがな", () => deps.goto?.("hiragana")));
+
+  // ひらがなボタンは変数に保持
+  const hiraBtn = mk("ひらがな", () => deps.goto?.("hiragana"));
+  list.appendChild(hiraBtn);
+
   const lockOthers = tutorialHiraOnly;
-  list.appendChild(mk("カタカナ", () => { if (lockOthers) return; deps.goto?.("katakana"); }, lockOthers));
-  list.appendChild(mk(t("numbers.title"), () => { if (lockOthers) return; deps.goto?.("numbers"); }, lockOthers));
+  list.appendChild(
+    mk("カタカナ", () => { if (lockOthers) return; deps.goto?.("katakana"); }, lockOthers)
+  );
+  list.appendChild(
+    mk(t("numbers.title"), () => { if (lockOthers) return; deps.goto?.("numbers"); }, lockOthers)
+  );
   list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));
   const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
   const label = `${t("settings.language")}: ${LANG_NAME[getLang()] || getLang()}`;
   list.appendChild(mk(label, () => deps.goto?.("lang")));
+
+  setupMenu1HiraHint(hiraBtn);
 
   // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");

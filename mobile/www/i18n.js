@@ -46,6 +46,8 @@ export const MESSAGES = {
   "hira.again": "Play again",
   "tutorial.ttsHint":"This app reads Japanese words aloud.\n"
   + "If you do not hear any sound, please check the volume, silent mode, and the Text-to-Speech settings on your device.",
+  "tutorial.menu1Title": "Start from Hiragana",
+  "tutorial.menu1Body": "First, tap this 『ひらがな』 button to begin. Other menus will unlock after this step.",
   "tutorial.menu1Hint":"First, tap “Hiragana”. Other menus will unlock after you finish this step.",
   "tutorial.hiraHint":"Tap the 🔊 button or a hiragana character to hear the sound.",
   "tutorial.hiraBody":"Tap the 🔊 button or any hiragana to hear the sound. "
