@@ -60,7 +60,7 @@ export async function render(el, deps = {}){
 
   root.innerHTML = `
   <div class="numbers-inner">
-    <h1 style="margin:0 0 12px;">${t("numbers.title")}</h1>
+    <h1 style="margin:0 0 12px;">${t("numbers.title")} v2</h1>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;">
       <div style="font-size:.9rem;color:#64748b">
