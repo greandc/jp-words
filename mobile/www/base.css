@@ -258,21 +258,23 @@ body{
 .numbers-inner {
   width: 100%;
 }
-/* Numbers: 全画面を縦中央に */
+/* Numbers: ちょい上寄り＋下はバナー分広め */
 .screen-numbers {
   min-height: 100dvh;
-  padding: 24px 12px 24px; /* 好みで調整OK */
+  padding: 24px 12px 76px;   /* 下を 52px（バナー高さ）分多めにしておく */
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* ← 縦中央揃え */
-  align-items: center;       /* ← 横中央揃え */
+  align-items: center;       /* 横だけ真ん中 */
+  /* justify-content は消して、デフォルトの flex-start（上寄せ）にする */
 }
 
-/* 中身は幅を制御 */
+/* 中身を少しだけ下に落とす（5 の列あたりが真ん中に近づくイメージ） */
 .numbers-inner {
   width: 100%;
-  max-width: 460px;  /* 好みで調整 */
+  max-width: 460px;
+  margin-top: 10vh;          /* ここを 8vh〜12vh くらいで微調整してOK */
 }
+
 
 
 

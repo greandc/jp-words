@@ -146,5 +146,12 @@ export async function render(el, deps = {}){
   $auto.addEventListener("change", ()=> auto = $auto.checked);
   root.querySelector("#back").addEventListener("click", ()=> deps.goto?.("menu1"));
 
-  updateView();
+    updateView();
+
+  // === Numbers 画面用のバナー（画面下に固定） ===
+  const bannerRow = document.createElement("div");
+  bannerRow.className = "banner-slot";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  el.appendChild(bannerRow);
 }
+
