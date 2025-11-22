@@ -81,10 +81,15 @@ body, button {
 }
 
 /* 特定言語フォント補強 */
-[lang="km"] {
-  font-family: "Noto Sans Khmer", system-ui, sans-serif !important;
-  font-weight: 500; /* 400〜600の間で好みで */
+[lang="km"],
+.lang-vert [lang="km"],
+.btn [lang="km"] {
+  font-family: "Noto Sans Khmer", "Noto Sans", system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  -webkit-font-smoothing: antialiased;
 }
+
 [lang="lo"] {   /* ラオス語 */
   font-family: "Noto Sans Lao", system-ui, sans-serif !important;
 }
