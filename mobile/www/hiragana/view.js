@@ -8,62 +8,72 @@ import { transformKana } from "./transformKana.js";
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
 
 
-// root…hiragana画面のルート要素（screen div）を渡す
-function showHiraTutorialBubble(root) {
+// ひらがなチュートリアル（初回だけ・中央ポップアップ）
+function showHiraTutorialBubble() {
   // すでに表示済みなら何もしない
   try {
     if (localStorage.getItem(HIRA_TUTORIAL_KEY) === "1") return;
   } catch {
-    // localStorage 触れない環境ではチュートリアル無しでOK
     return;
   }
 
-  // ふきだし本体
+  const overlay = document.createElement("div");
+  overlay.id = "hiraHintOverlay";
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;        /* ★ 画面の縦方向センター */
+    justify-content: center;    /* ★ 横方向もセンター */
+    background: rgba(15,23,42,0.35);
+    z-index: 9999;
+    pointer-events: auto;
+  `;
+
   const box = document.createElement("div");
-  box.style.position = "fixed";
-  box.style.inset = "auto 16px 80px 16px"; // 画面下寄せ
-  box.style.zIndex = "9999";
-  box.style.maxWidth = "480px";
-  box.style.margin = "0 auto";
-  box.style.padding = "12px 14px";
-  box.style.borderRadius = "12px";
-  box.style.background = "rgba(15,23,42,0.92)";
-  box.style.color = "#fff";
-  box.style.fontSize = ".9rem";
-  box.style.lineHeight = "1.5";
-  box.style.boxShadow = "0 10px 25px rgba(0,0,0,.35)";
-  box.style.display = "flex";
-  box.style.alignItems = "center";
-  box.style.justifyContent = "space-between";
-  box.style.gap = "8px";
+  box.style.cssText = `
+    max-width: 520px;
+    width: calc(100% - 32px);
+    background: #111827;
+    color: #f9fafb;
+    border-radius: 18px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 10px 25px rgba(15,23,42,0.35);
+    box-sizing: border-box;
+  `;
 
-  const msg = document.createElement("div");
-  msg.textContent =
-    t("tutorial.hiraHint") ||
-    "🔊 ボタンや文字をタップすると、読み上げます。";
+  box.innerHTML = `
+    <div style="font-weight:600;margin-bottom:6px;font-size:1rem;">
+      ${t("tutorial.hiraTitle") || "How to use"}
+    </div>
+    <div style="font-size:.9rem;line-height:1.5;margin-bottom:10px;">
+      ${t("tutorial.hiraBody")
+        || "Tap the 🔊 button or a hiragana character to hear the sound. After closing this message you can use the Back button to return to the menu."}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+      <button class="btn" id="hiraTutOk"
+              style="min-width:84px;padding:.35rem .9rem;">
+        ${t("tutorial.ok") || "OK"}
+      </button>
+    </div>
+  `;
 
-  const ok = document.createElement("button");
-  ok.textContent = "OK";
-  ok.className = "btn";
-  ok.style.padding = ".2rem .8rem";
-  ok.style.fontSize = ".85rem";
-  ok.style.borderRadius = "999px";
-  ok.style.background = "#facc15";
-  ok.style.border = "none";
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
 
-  ok.addEventListener("click", () => {
-    try {
-      localStorage.setItem(HIRA_TUTORIAL_KEY, "1");
-    } catch {}
-    box.remove();
+  function close() {
+    try { localStorage.setItem(HIRA_TUTORIAL_KEY, "1"); } catch {}
+    overlay.remove();
+  }
+
+  overlay.querySelector("#hiraTutOk")?.addEventListener("click", close);
+
+  // 黒い部分をタップしても閉じる
+  overlay.addEventListener("click", (ev) => {
+    if (ev.target === overlay) close();
   });
-
-  box.appendChild(msg);
-  box.appendChild(ok);
-
-  // root の外でもいいけど、画面全体に乗せたいので body に付ける
-  document.body.appendChild(box);
 }
+
 
 
 console.log("HIRAGANA SRC = v1");
