@@ -5,20 +5,26 @@ import { t, getLang, setLang } from "../i18n.js";
 export async function render(el, deps = {}) {
   const [a, b] = deps.getRange?.() || [1, 20];
 
-  const div = document.createElement("div");
-  div.className = "screen screen-sub";
-  div.innerHTML = `
-    <h1>${t("menu2.title")}</h1>
-    <p>${t("menu2.subtitle")}</p>
-    <div id="grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;"></div>
-    <div style="display:grid;gap:12px;margin-top:16px;">
-      <button class="btn" id="back">${t("common.back")}</button>
+  // 画面全体
+  const root = document.createElement("div");
+  root.className = "screen screen-sub screen-menu2";
+
+  // 中身用のラッパ（位置調整用）
+  root.innerHTML = `
+    <div class="menu2-inner">
+      <h1>${t("menu2.title")}</h1>
+      <p>${t("menu2.subtitle")}</p>
+      <div id="grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;"></div>
+      <div style="display:grid;gap:12px;margin-top:16px;">
+        <button class="btn" id="back">${t("common.back")}</button>
+      </div>
     </div>
   `;
-  el.appendChild(div);
+  el.appendChild(root);
 
-  // ===== ボタン生成（絶対番号表示 & ロック制御）=====
-const grid = div.querySelector("#grid");
+  // ===== ボタン生成（以下はそのまま）=====
+  const grid = root.querySelector("#grid");
+
 
 // どのキーを見ていても解放になるように、最大値を総合判定
 let maxUnlocked = 1;
@@ -68,6 +74,12 @@ for (let i = a; i <= b; i++) {
   grid.appendChild(btn);
 }
 
+    root.querySelector("#back").addEventListener("click", () => deps.goto?.("menu1"));
 
-  div.querySelector("#back").addEventListener("click", () => deps.goto?.("menu1"));
+  // === Menu2 画面用の下固定バナー ===
+  const bannerRow = document.createElement("div");
+  bannerRow.className = "banner-slot";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  el.appendChild(bannerRow);
 }
+

@@ -276,6 +276,18 @@ body{
   position: relative;
   top: -10vh;   /* ← これで上へ10% 引き上げ。調整ポイント */
 }
+/* Menu2 全体：下にバナー分の余白を確保 */
+.screen-menu2 {
+  min-height: 100dvh;
+  padding: 24px 12px 76px;  /* 下は 52px(バナー)＋余白 */
+  box-sizing: border-box;
+}
+
+/* Menu2 の中身を少し下げる（Numbers と似たバランスに） */
+.menu2-inner {
+  max-width: 460px;
+  margin: 8vh auto 0;  /* 上から 8vh 下げる。多い／少ないならここだけ調整 */
+}
 
 
 
