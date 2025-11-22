@@ -3,10 +3,6 @@ import { MAX_Q, SECS_PER_Q } from "../config.js";
 import { loadLevel } from "../data/loader.js";
 import { speak, stop, ttsAvailable, setLang as ttsSetLang, setRate as ttsSetRate, setPitch as ttsSetPitch } from "../tts.v2.js?v=v2-20251109d";
 
-
-
-
-
 export async function render(el, deps = {}) {
   // レベルを復元（deps → localStorage）
   let levelNum = deps.level?.();
@@ -34,6 +30,13 @@ function cleanup() {
 }
 
   if (!levelNum) { alert("Select a set first."); return deps.goto?.("menu2"); }
+
+  // 画面全体を包むラッパ（バナー分の余白もここで確保）
+  const shell = document.createElement("div");
+  shell.className = "screen-practice-shell";
+  shell.style.minHeight = "100vh";
+  shell.style.position = "relative";
+  shell.style.paddingBottom = "52px";  // ← 下のバナー高さぶん空ける
 
   const div = document.createElement("div");
   div.className = "screen";
@@ -125,7 +128,10 @@ div.style.minHeight = "100vh";
       <button class="btn" id="next">${t("practice.next")}</button>
     </div>
   `;
-  el.appendChild(div);
+
+  shell.appendChild(div);   // まず shell の中に画面本体を入れる
+  el.appendChild(shell);    // その shell を画面に追加
+
 
 // ===== Google Form: 自動送信用 =====
 const FORM_ACTION = "https://docs.google.com/forms/d/e/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/formResponse"; 
@@ -195,8 +201,6 @@ if (!items || items.length === 0) {
 
 console.log('[chk]', !!window.Capacitor, window.Capacitor?.getPlatform?.(), 'native?', (window.Capacitor?.isNativePlatform?.()), 'plugin?', !!(window.Capacitor?.Plugins?.TextToSpeech));
 
-
-
   // ===== TTS（統一ラッパ使用）=====
 const speakBtn   = div.querySelector("#speakBtn");
 const autoTtsChk = div.querySelector("#autoTts");
@@ -212,8 +216,6 @@ function enableTtsUI() {
 }
 enableTtsUI();
 
-
-
 autoTtsChk.addEventListener("change", () => {
   try { localStorage.setItem(LS_AUTO, autoTtsChk.checked ? "1" : "0"); } catch {}
 });
@@ -222,9 +224,6 @@ autoTtsChk.addEventListener("change", () => {
 if (div.querySelector("#speakBtn")) div.querySelector("#speakBtn").disabled = false;
 if (div.querySelector("#autoTts"))  div.querySelector("#autoTts").disabled  = false;
 const _m = div.querySelector("#msg"); if (_m) { _m.textContent = ""; _m.style.display = "none"; }
-
-
-
 
   // ===== レンダリング =====
   let idx = 1; // 1..10
@@ -256,7 +255,19 @@ const _m = div.querySelector("#msg"); if (_m) { _m.textContent = ""; _m.style.di
 
    if (autoTtsChk.checked) speak(reading);
 
-  }
+     speakBtn.addEventListener("click", () => {
+    const it = items[idx - 1];
+    speak(it?.jp?.reading || it?.jp?.orth || "");
+  });
+
+  // ===== ここからバナー枠を追加 =====
+  const bannerRow = document.createElement("div");
+  bannerRow.className = "banner-slot";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  shell.appendChild(bannerRow);
+  // ===== ここまで追加 =====
+}
+
 
   renderCard();
 
