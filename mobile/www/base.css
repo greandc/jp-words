@@ -4,7 +4,13 @@
 html,body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; }
 #app { min-height: 100svh; }
 
-.screen { max-width: 860px; margin: 0 auto; padding: 8px; }
+.screen {
+  max-width: 860px;
+  margin: 0 auto;
+  /* 上 24px / 左右 8px / 下 8px */
+  padding: 24px 8px 8px;
+}
+
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -224,11 +230,7 @@ body{
 .screen-menu1-shell .screen {
   padding-bottom: 0;
 }
-.screen {
-  padding: 8px;
-  max-width: 860px;
-  margin: 0 auto;
-}
+
 /* Menu1（メインメニュー）はスクロール禁止 */
 .screen-menu1-shell {
   overflow: hidden;
