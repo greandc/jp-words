@@ -247,6 +247,17 @@ body{
 .screen-sub {
   padding-top: 24px;
 }
+/* Numbers 画面を縦方向に中央寄せする */
+.screen-numbers {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;   /* 縦方向のセンター寄せ（flex の主軸が縦） */
+}
+
+/* 中身は横いっぱいで普通にレイアウト */
+.numbers-inner {
+  width: 100%;
+}
 
 
 

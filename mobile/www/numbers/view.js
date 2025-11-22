@@ -56,9 +56,10 @@ export async function render(el, deps = {}){
   let auto = true;        // 自動読み上げ
 
   const root = document.createElement("div");
-  root.className = "screen screen-sub";
+  root.className = "screen screen-sub screen-numbers";
 
   root.innerHTML = `
+  <div class="numbers-inner">
     <h1 style="margin:0 0 12px;">${t("numbers.title")}</h1>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;">
@@ -76,13 +77,14 @@ export async function render(el, deps = {}){
       <div id="reading" style="margin-top:6px;color:#374151;font-size:1.1rem">ゼロ</div>
     </div>
 
-    <div id="pad" style="
-      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+    <div id="pad" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       ${[1,2,3,4,5,6,7,8,9,"⌫",0,"C"].map(v => `
         <button class="btn" data-k="${v}" style="height:56px;font-size:1.2rem;">${v}</button>
       `).join("")}
     </div>
-  `;
+  </div>
+`;
+
   el.appendChild(root);
 
   const $disp = root.querySelector("#disp");
