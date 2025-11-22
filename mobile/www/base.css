@@ -44,19 +44,22 @@ html, body { background:#fff !important; color:#0f172a; }
   margin: 0 auto;
 }
 .lang-col .btn{ width:100%; }
-/* === Language: 縦一列で中央寄せ === */
+/* === Language: 縦一列だけど、カードを少し細くして余白を出す === */
 .lang-vert{
   display: flex !important;
   flex-direction: column !important;
   gap: 12px;
-  max-width: 560px;            /* お好みで調整 */
-  margin: 8px auto 0;
+  margin: 8px auto 16px;
+  align-items: center;          /* 子要素（ボタン）を中央寄せ */
 }
+
+/* Language のボタンだけ少し細め＆中央寄せ */
 .lang-vert .btn{
-  display: block;               /* 横幅いっぱいに */
-  width: 100%;
-  justify-content: center;      /* ボタン内の文字を中央 */
+  display: block;
+  width: min(420px, 92vw);      /* 画面の 92% か 420px のどちらか小さい方 */
+  justify-content: center;
 }
+
 /* === 共通フォント・サイズ === */
 body, button {
   font-family:
