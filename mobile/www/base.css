@@ -243,6 +243,10 @@ body{
   overflow-y: auto;
   padding-bottom: 16px;
 }
+/* 全サブ画面（ひらがな・カタカナ・numbers・menu2）に上余白を付ける */
+.screen-sub {
+  padding-top: 24px;
+}
 
 
 
