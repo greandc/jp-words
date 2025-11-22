@@ -56,7 +56,7 @@ export async function render(el, deps = {}){
   let auto = true;        // 自動読み上げ
 
   const root = document.createElement("div");
-  root.className = "screen screen-sub screen-numbers";
+ root.className = "screen-numbers";
 
   root.innerHTML = `
   <div class="numbers-inner">

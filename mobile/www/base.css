@@ -258,6 +258,21 @@ body{
 .numbers-inner {
   width: 100%;
 }
+/* Numbers: 全画面を縦中央に */
+.screen-numbers {
+  min-height: 100dvh;
+  padding: 24px 12px 24px; /* 好みで調整OK */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* ← 縦中央揃え */
+  align-items: center;       /* ← 横中央揃え */
+}
+
+/* 中身は幅を制御 */
+.numbers-inner {
+  width: 100%;
+  max-width: 460px;  /* 好みで調整 */
+}
 
 
 
