@@ -98,8 +98,17 @@ export async function render(el, deps = {}){
     $reading.textContent = numberToJa(n);
   }
 
-  async function speakStep(lastDigit){
+    async function speakStep(lastDigit){
     const n = digits.length ? Number(digits) : 0;
+    if (!digits.length) return;
+
+    // ✅ 1桁のときは「全体」だけ読む（例：1 → 「いち」1回だけ）
+    if (digits.length === 1){
+      await speak(numberToJa(n));
+      return;
+    }
+
+    // ✅ 2桁以上のときは、今まで通り
     // 1) 押した桁
     if (lastDigit !== undefined){
       await speak(KANA[lastDigit]);
