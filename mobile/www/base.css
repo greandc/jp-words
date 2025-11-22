@@ -85,7 +85,7 @@ body, button {
 .lang-vert [lang="km"],
 .btn [lang="km"] {
   font-family: "Noto Sans Khmer", "Noto Sans", system-ui, sans-serif !important;
-  font-weight: 600 !important;
+  font-weight: 550 !important;
   letter-spacing: 0 !important;
   -webkit-font-smoothing: antialiased;
 }

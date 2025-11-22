@@ -144,7 +144,6 @@ function normalizeKana(k){
   return k;
 }
 
-
 // ========== 例語ルックアップ（仮名→{kanji,yomi}） ==========
 const KANA_MAP = new Map();
 for (const row of ROWS) {
@@ -165,12 +164,14 @@ function ensureStyle() {
   st.id = "hira-style-v2";
   st.textContent = `
     .hira-wrap {
-      display:flex;
-      flex-direction:column;
-      gap:8px;                 /* ★ 12px → 8px にして上下のスキマを少し詰める */
-      max-width:560px;
-      margin:0 auto;
-    }
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-width:560px;
+  margin:0 auto;
+  padding-bottom:72px;   /* ← 下にバナーぶんの余白を確保 */
+}
+
 
     /* 例語ボタン（押せる感） */
     .hira-exbtn {
@@ -221,12 +222,32 @@ function ensureStyle() {
 
     /* ★ 画面上部の余白だけ少し減らす用クラス */
     .screen.hira-tight {
-      padding-top:16px;       /* たぶん元が 24px 前後 → ちょっとだけ上に詰まる */
+      padding-top:32px;       /* たぶん元が 24px 前後 → ちょっとだけ上に詰まる */
     }
+    /* 画面が低い端末では、ボタンを少しだけ小さくして縦を詰める */
+@media (max-height: 640px){
+  .hira-grid .btn {
+    height:42px;
+    font-size:1.05rem;
+  }
+  .hira-card .kana {
+    font-size:2.3rem;
+  }
+}
+
+@media (max-height: 580px){
+  .hira-grid .btn {
+    height:38px;
+    font-size:1rem;
+  }
+  .hira-wrap {
+    gap:6px;
+  }
+}
+
   `;
   document.head.appendChild(st);
 }
-
 
 // ==========================================================
 export async function render(el, deps = {}) {
@@ -279,7 +300,6 @@ function togglesHTML(){
     </div>`;
 }
 
-
 // ==== 行のレンダリング：ここだけ差し替え ====
 function gridHTML(){
   return ROWS.map((row) => {
@@ -322,8 +342,6 @@ function gridHTML(){
   }).join("");
 }
 
-
-
 function cardHTML(curKana){
   const base = normalizeKana(curKana);
   const ex =
@@ -351,8 +369,6 @@ function cardHTML(curKana){
       </button>
     </div>`;
 }
-
-
 
 // 追加：描画後にi18nラベルを確定させる
 function applyI18nLabels() {
@@ -432,7 +448,6 @@ function showHiraTutorialBubble() {
   });
 }
 
-
   // Back & モードボタンにイベントを付ける関数
 function bindHeaderAndToggles(){
     // Back
@@ -481,7 +496,6 @@ function bindHeaderAndToggles(){
   bindHeaderAndToggles();
 }
 
-
 function wireEvents(){
   // 50音ボタン
   wrap.querySelectorAll("button[data-k]").forEach((b) => {
@@ -523,12 +537,8 @@ function wireEvents(){
     };
   });
 
-
   wireCardEvents();  // カード側のイベント
 }
-
-
-
 
 function wireCardEvents(){
   // もう一回 → かなを読む
@@ -542,14 +552,20 @@ function wireCardEvents(){
   });
 }
 
-
-  // 初期描画
+   // 初期描画
   mountGrid();
 
   // 初回だけ、ひらがなチュートリアル吹き出し
   showHiraTutorialBubble();
 
+  // === ひらがな画面用の下固定バナー ===
+  const bannerRow = document.createElement("div");
+  bannerRow.className = "banner-slot";
+  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  el.appendChild(bannerRow);
+
   // 画面離脱でTTS停止
   const onHide = () => stop();
   window.addEventListener("pagehide", onHide, { once:true });
 }
+
