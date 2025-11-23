@@ -74,6 +74,7 @@ function ensureTtsHintModal() {
 }
 
 
+
 function openTtsHintModal(onOk) {
   ensureTtsHintModal();
   modalOkHandler = onOk;
@@ -115,6 +116,7 @@ function openTtsHintModal(onOk) {
       !rawOk || rawOk === "tutorial.ok" ? "OK" : rawOk;
   }
 }
+
 
 
 // =====================
