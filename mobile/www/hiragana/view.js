@@ -526,7 +526,7 @@ function wireEvents(){
     };
   });
 
-    // 🔊 行読み上げ（濁点・小書きも反映）
+      // 🔊 行読み上げ（濁点・小書きも反映）
   wrap.querySelectorAll(".row-speaker").forEach((btn) => {
     btn.onclick = () => {
       const rowDiv = btn.closest(".hira-row");
@@ -535,19 +535,23 @@ function wireEvents(){
       const grid = rowDiv.querySelector(".hira-grid");
       if (!grid) return;
 
-      // base から現在の flags を使って変換した文字列を作る
-      const text = Array.from(
+      // base から現在の flags を使って変換した文字の配列を作る
+      const kanaList = Array.from(
         grid.querySelectorAll("button[data-base]")
-      ).map((b) => b.getAttribute("data-base"))
-       .filter((base) => base && base !== "・")
-       .map((base) => transformKana(base, flags))   // ← ここで濁点/小を反映
-       .join("");
+      )
+        .map((b) => b.getAttribute("data-base"))
+        .filter((base) => base && base !== "・")
+        .map((base) => transformKana(base, flags)); // ← 濁点・小書き反映
+
+      // 「あ、い、う、え、お」のように読点で区切る
+      const text = kanaList.join("、");
 
       if (text) {
-        speak(text);   // 「がぎぐげご」「ざじずぜぞ」などまとめて読む
+        speak(text);
       }
     };
   });
+
 
   wireCardEvents();  // カード側のイベント
 }
