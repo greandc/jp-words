@@ -20,8 +20,6 @@ function isFirstRun() {
   }
 }
 
-
-
 /* -------------------------------------------------------
    タイトル画面（ロゴじわー / Cキラーン / TAPふわっ）
    ・下の画面にタップが貫通しない
@@ -134,8 +132,6 @@ const go = (ev) => {
 
 wrap.addEventListener("pointerdown", go, { once:true });
 
-
-
   // C の位置/サイズ（ロゴ基準の相対配置）
   const placeC = () => {
     const w = img.clientWidth;
@@ -191,8 +187,6 @@ if (old) old.remove();            // ←ここが効く（古い定義を消す�
    }
  `;
   document.head.appendChild(st);
-
-  
 
   // DOM 反映
   box.appendChild(img);

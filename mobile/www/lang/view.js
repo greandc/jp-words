@@ -135,24 +135,27 @@ export async function render(el, deps = {}) {
     `;
 
     btn.addEventListener("click", () => {
-      const first  = isFirstRun();
-      const tts    = getTtsStatus();
-      const needHint = (tts === "off" || tts === "missing" || tts === "unknown");
+  const first  = isFirstRun();
+  const tts    = getTtsStatus();
+  const needHint = (tts === "off" || tts === "missing" || tts === "unknown");
 
-      // 初回かつ TTS が怪しいときだけ案内を出す
-      if (first && needHint) {
-        openTtsHintModal(() => {
-          setLang(opt.code);
-          markFirstRunDone();
-          // 言語を適用し直す
-          location.reload();
-        });
-      } else {
-        setLang(opt.code);
-        markFirstRunDone();
-        location.reload();
-      }
+  // ✅ ここで先に UI 言語を切り替える
+  setLang(opt.code);
+
+  if (first && needHint) {
+    // 初回＋TTS怪しいときだけ案内を出す
+    openTtsHintModal(() => {
+      markFirstRunDone();
+      // 言語はもう setLang 済みなので、ここはリロードだけでOK
+      location.reload();
     });
+  } else {
+    // 2回目以降や TTS OK のときはそのまま進む
+    markFirstRunDone();
+    location.reload();
+  }
+});
+
 
     grid.appendChild(btn);
   });
