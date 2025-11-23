@@ -82,30 +82,18 @@ function openTtsHintModal(onOk) {
   const wrap = document.getElementById("ttsHintModal");
   if (wrap) wrap.style.display = "flex";
 
-  // タイトル
-  const titleEl = document.getElementById("ttsHintTitle");
-  if (titleEl) {
-    const rawTitle = t("tutorial.ttsTitle");
-    const title =
-      !rawTitle || rawTitle === "tutorial.ttsTitle"
-        ? "About voice reading"
-        : rawTitle;
-    titleEl.textContent = title;
-  }
-
-  // 本文
+  // ★ 本文を i18n から再取得
   const msg = document.getElementById("ttsHintText");
   if (msg) {
-    const rawHint = t("tutorial.ttsHint");
-    const hint =
-      !rawHint || rawHint === "tutorial.ttsHint"
-        ? "This app reads Japanese words aloud.\n"
-          + "If you do not hear any sound, please check the volume, "
-          + "silent mode, and the Text-to-Speech settings on your device."
-        : rawHint;
+    msg.textContent = t("tutorial.ttsHint") ||
+      "Text-to-Speech (voice reading) seems to be OFF...";
+  }
 
-    // i18n の中で \n を使っているので <br> に変換
-    msg.innerHTML = hint.replace(/\n/g, "<br>");
+  // ★ タイトルも i18n から再取得 ←これが抜けてた！
+  const titleEl = document.querySelector("#ttsHintBox h2");
+  if (titleEl) {
+    titleEl.textContent =
+      t("tutorial.ttsTitle") || "About voice reading";
   }
 
   // OK ボタンテキスト
