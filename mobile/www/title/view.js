@@ -97,14 +97,22 @@ export async function render(el, deps = {}) {
      opacity:0; pointer-events:none; transform-origin:center;
   `;
 
-  // TAP（ふわっ）
+    // TAP（じわー → そのあと点滅）
   const tap = document.createElement("div");
   tap.textContent = "—  TAP TO START  —";
   tap.style.cssText = `
-    margin-top: 12px; color:#94a3b8; letter-spacing:.12em; font-weight:600;
+    margin-top: 12px;
+    color:#1e293b;                 /* ★ 少し濃い色に変更（#94a3b8 → #1e293b） */
+    letter-spacing:.12em;
+    font-weight:600;
     font-size: clamp(14px, 2.9vw, 16px);
-    opacity:0; animation: tapIn .6s ease-out .9s forwards;
+    opacity:0;
+    /* 1つ目: じわっと出る / 2つ目: 少し待ってから点滅し続ける */
+    animation:
+      tapIn .6s ease-out .9s forwards,
+      tapBlink 1.1s ease-in-out 1.6s infinite alternate;
   `;
+
 
   // クリック抜け防止 → 初回なら lang, 2回目以降は menu1
 let navigated = false;
@@ -174,18 +182,34 @@ const styleId = "title-anim-css";
 const old = document.getElementById(styleId);
 if (old) old.remove();            // ←ここが効く（古い定義を消す）
 
-  const st = document.createElement("style");
+    const st = document.createElement("style");
   st.id = styleId;
   st.textContent = `
-    @keyframes logoIn { from{opacity:0; transform:translateY(6px) scale(.98);} to{opacity:1; transform:none;} }
-    @keyframes tapIn  { from{opacity:0; transform:translateY(4px);}       to{opacity:1; transform:none;} }
+    @keyframes logoIn {
+      from { opacity:0; transform:translateY(6px) scale(.98); }
+      to   { opacity:1; transform:none; }
+    }
+
+    @keyframes tapIn {
+      from { opacity:0; transform:translateY(4px); }
+      to   { opacity:1; transform:none; }
+    }
+
+    /* ★ TAP TO START の点滅用アニメーション */
+    @keyframes tapBlink {
+      0%   { opacity:1;   }
+      50%  { opacity:0.30; }
+      100% { opacity:1;   }
+    }
+
     @keyframes cFlash{
-     0%   { opacity:0; transform:scale(.92); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
-     30%  { opacity:1; transform:scale(1.10); filter:brightness(2.2) drop-shadow(0 0 14px rgba(255,215,0,.95)); }
-     55%  { opacity:1; transform:scale(1.04); filter:brightness(1.6) drop-shadow(0 0 7px rgba(255,215,0,.6)); }
-     100% { opacity:1; transform:scale(1.00); filter:brightness(1)   drop-shadow(0 0 0 rgba(255,215,0,0)); }
-   }
- `;
+      0%   { opacity:0; transform:scale(.92); filter:brightness(1) drop-shadow(0 0 0 rgba(255,215,0,0)); }
+      30%  { opacity:1; transform:scale(1.10); filter:brightness(2.2) drop-shadow(0 0 14px rgba(255,215,0,.95)); }
+      55%  { opacity:1; transform:scale(1.04); filter:brightness(1.6) drop-shadow(0 0 7px rgba(255,215,0,.6)); }
+      100% { opacity:1; transform:scale(1.00); filter:brightness(1)   drop-shadow(0 0 0 rgba(255,215,0,0)); }
+    }
+  `;
+
   document.head.appendChild(st);
 
   // DOM 反映
