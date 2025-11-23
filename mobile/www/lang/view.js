@@ -47,34 +47,18 @@ function ensureTtsHintModal() {
     z-index:9999;
   `;
 
-    const rawTitle = t("tutorial.ttsTitle");
-  const title =
-    !rawTitle || rawTitle === "tutorial.ttsTitle"
-      ? "About voice reading"
-      : rawTitle;
-
-  const rawHint = t("tutorial.ttsHint");
-  const hint =
-    !rawHint || rawHint === "tutorial.ttsHint"
-      ? "Text-to-Speech (voice reading) seems to be OFF or not installed on this device. "
-        + "This app uses many voice readings."
-      : rawHint;
-
   wrap.innerHTML = `
     <div id="ttsHintBox"
          style="background:#fff;border-radius:16px;padding:18px 20px;
                 max-width:360px;width:88%;box-shadow:0 10px 30px rgba(15,23,42,.25);
                 text-align:left;font-size:.95rem;">
-      <h2 style="margin:0 0 8px;font-size:1.05rem;font-weight:700;">
-        ${title}
-      </h2>
-      <p id="ttsHintText" style="margin:0 0 14px;line-height:1.5;color:#374151;">
-        ${hint}
-      </p>
-      <button id="ttsHintOk" ...>OK</button>
+      <h2 id="ttsHintTitle"
+          style="margin:0 0 8px;font-size:1.05rem;font-weight:700;"></h2>
+      <p id="ttsHintText"
+         style="margin:0 0 14px;line-height:1.5;color:#374151;"></p>
+      <button id="ttsHintOk" class="btn">OK</button>
     </div>
   `;
-
 
   document.body.appendChild(wrap);
 
@@ -89,20 +73,49 @@ function ensureTtsHintModal() {
   });
 }
 
+
 function openTtsHintModal(onOk) {
   ensureTtsHintModal();
   modalOkHandler = onOk;
+
   const wrap = document.getElementById("ttsHintModal");
   if (wrap) wrap.style.display = "flex";
 
-  // メッセージは i18n から取り直しておく（言語変更直後でも大丈夫なように）
+  // タイトル
+  const titleEl = document.getElementById("ttsHintTitle");
+  if (titleEl) {
+    const rawTitle = t("tutorial.ttsTitle");
+    const title =
+      !rawTitle || rawTitle === "tutorial.ttsTitle"
+        ? "About voice reading"
+        : rawTitle;
+    titleEl.textContent = title;
+  }
+
+  // 本文
   const msg = document.getElementById("ttsHintText");
   if (msg) {
-    msg.textContent =
-      t("tutorial.ttsHint") ||
-      "Text-to-Speech (voice reading) seems to be OFF or not installed on this device. This app uses many voice readings.";
+    const rawHint = t("tutorial.ttsHint");
+    const hint =
+      !rawHint || rawHint === "tutorial.ttsHint"
+        ? "This app reads Japanese words aloud.\n"
+          + "If you do not hear any sound, please check the volume, "
+          + "silent mode, and the Text-to-Speech settings on your device."
+        : rawHint;
+
+    // i18n の中で \n を使っているので <br> に変換
+    msg.innerHTML = hint.replace(/\n/g, "<br>");
+  }
+
+  // OK ボタンテキスト
+  const okBtn = document.getElementById("ttsHintOk");
+  if (okBtn) {
+    const rawOk = t("tutorial.ok");
+    okBtn.textContent =
+      !rawOk || rawOk === "tutorial.ok" ? "OK" : rawOk;
   }
 }
+
 
 // =====================
 //  画面本体

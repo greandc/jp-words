@@ -110,9 +110,9 @@ export const MESSAGES = {
     "まず「ひらがな」をタップしてください。終わると他のメニューが使えます。",
   "tutorial.hiraHint":
     "🔊 ボタン、またはひらがなをタップすると読み上げます。",
-  "tutorial.hiraBody":
-    "🔊 ボタン、またはひらがなをタップすると発音を聞くことができます。" +
-    "読み終わったら「OK」を押し、「Back」で戻ってください。",
+ "tutorial.ttsTitle": "音声読み上げについて",
+"tutorial.hiraBody": "🔊 ボタン、または任意のひらがなをタップすると音声が再生されます。ガイドを読み終えたら「OK」を押し、「戻る」でメニューに戻れます。",
+
   "tutorial.hiraTitle": "このページの使い方",
   "tutorial.ok": "OK",
   "locked": "ロック中"
@@ -164,7 +164,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "请先点击『ひらがな』按钮。完成此步骤后，其他菜单将会解锁。",
     "tutorial.menu1Hint": "请先点击“ひらがな”。完成之后将解锁其他菜单。",
     "tutorial.hiraHint": "点击 🔊 按钮或任意平假名即可听到发音。",
-    "tutorial.hiraBody": "点击 🔊 按钮或任意平假名即可听到发音。阅读完此说明后，请点击“OK”，然后按“Back”返回菜单。",
+    "tutorial.ttsTitle": "关于语音朗读",
+    "tutorial.hiraBody": "点击 🔊 按钮或任意平假名即可听到发音。阅读完说明后，点击“OK”，然后使用“返回”回到菜单。",
     "tutorial.hiraTitle": "页面使用方法",
     "tutorial.ok": "OK",
     "locked": "已锁定"
@@ -215,7 +216,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "먼저 『ひらがな』 버튼을 눌러 시작하세요. 이 단계를 완료하면 다른 메뉴가 열립니다.",
     "tutorial.menu1Hint": "먼저 “ひらがな”를 눌러 주세요. 완료하면 다른 메뉴가 열립니다.",
     "tutorial.hiraHint": "🔊 버튼이나 아무 평소문자(ひらがな)를 탭하면 소리가 재생됩니다.",
-    "tutorial.hiraBody": "🔊 버튼 또는 아무 ひらがな를 탭하면 발음을 들을 수 있습니다. 안내를 읽은 후 “OK”를 누르고, “Back”으로 돌아가세요.",
+    "tutorial.ttsTitle": "음성 읽기 안내",
+    "tutorial.hiraBody": "🔊 버튼 또는 아무 히라가나를 눌러 소리를 들을 수 있습니다. 안내를 모두 읽은 후 “OK”를 탭하고, “뒤로”를 눌러 메뉴로 돌아가세요.",
     "tutorial.hiraTitle": "이 페이지 사용 방법",
     "tutorial.ok": "OK",
     "locked": "잠김"
@@ -266,7 +268,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Hãy nhấn nút 『ひらがな』 để bắt đầu. Sau bước này, các menu khác sẽ được mở khóa.",
     "tutorial.menu1Hint": "Trước tiên hãy nhấn “ひらがな”. Sau khi hoàn tất, các menu khác sẽ được mở khóa.",
     "tutorial.hiraHint": "Nhấn nút 🔊 hoặc ký tự hiragana để nghe phát âm.",
-    "tutorial.hiraBody": "Nhấn nút 🔊 hoặc bất kỳ hiragana nào để nghe âm thanh. Khi đọc xong hướng dẫn, hãy nhấn “OK”, rồi nhấn “Back” để quay lại menu.",
+    "tutorial.ttsTitle": "Giới thiệu về đọc âm thanh",
+    "tutorial.hiraBody": "Nhấn nút 🔊 hoặc bất kỳ ký tự hiragana nào để nghe âm thanh. Sau khi đọc xong hướng dẫn, hãy nhấn “OK”, rồi nhấn “Quay lại” để trở về menu.",
     "tutorial.hiraTitle": "Cách sử dụng trang này",
     "tutorial.ok": "OK",
     "locked": "Đã khóa"
@@ -318,7 +321,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Primero toca el botón 『ひらがな』. Después de este paso, se desbloquearán los demás menús.",
     "tutorial.menu1Hint": "Primero toca “ひらがな”. Los otros menús se desbloquearán después de este paso.",
     "tutorial.hiraHint": "Toca el botón 🔊 o cualquier carácter hiragana para escuchar el sonido.",
-    "tutorial.hiraBody": "Toca el botón 🔊 o cualquier hiragana para escuchar la pronunciación. Cuando termines de leer esta guía, toca “OK” y luego “Back” para volver al menú.",
+    "tutorial.ttsTitle": "Acerca de la lectura en voz",
+    "tutorial.hiraBody": "Toca el botón 🔊 o cualquier carácter hiragana para escuchar el sonido. Cuando termines de leer esta guía, toca “OK” y luego “Atrás” para volver al menú.",
     "tutorial.hiraTitle": "Cómo usar esta página",
     "tutorial.ok": "OK",
     "locked": "Bloqueado"
@@ -369,7 +373,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Touchez d’abord le bouton 『ひらがな』 pour commencer. Les autres menus seront déverrouillés après cette étape.",
     "tutorial.menu1Hint": "Touchez d’abord “ひらがな”. Les autres menus se déverrouilleront une fois cette étape terminée.",
     "tutorial.hiraHint": "Touchez le bouton 🔊 ou un caractère hiragana pour écouter la prononciation.",
-    "tutorial.hiraBody": "Touchez le bouton 🔊 ou un hiragana pour écouter le son. Une fois ce guide lu, touchez “OK”, puis utilisez “Back” pour revenir au menu.",
+    "tutorial.ttsTitle": "À propos de la lecture vocale",
+    "tutorial.hiraBody": "Touchez le bouton 🔊 ou n’importe quel hiragana pour entendre le son. Après avoir lu ce guide, touchez « OK », puis « Retour » pour revenir au menu.",
     "tutorial.hiraTitle": "Comment utiliser cette page",
     "tutorial.ok": "OK",
     "locked": "Verrouillé"
@@ -420,7 +425,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Tippe zuerst auf die Taste 『ひらがな』. Danach werden weitere Menüs freigeschaltet.",
     "tutorial.menu1Hint": "Tippe zuerst auf “ひらがな”. Danach werden andere Menüs freigeschaltet.",
     "tutorial.hiraHint": "Tippe auf die 🔊-Taste oder ein Hiragana-Zeichen, um den Klang zu hören.",
-    "tutorial.hiraBody": "Tippe auf die 🔊-Taste oder ein Hiragana, um die Aussprache zu hören. Wenn du fertig bist, tippe auf “OK” und benutze dann “Back”, um zum Menü zurückzukehren.",
+    "tutorial.ttsTitle": "Über Sprachausgabe",
+    "tutorial.hiraBody": "Tippe auf die 🔊-Taste oder ein beliebiges Hiragana, um den Ton zu hören. Wenn du fertig bist, tippe auf „OK“ und dann auf „Zurück“, um zum Menü zu gelangen.",
     "tutorial.hiraTitle": "So benutzt du diese Seite",
     "tutorial.ok": "OK",
     "locked": "Gesperrt"
@@ -471,7 +477,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Prima tocca il pulsante 『ひらがな』. Dopo questo passaggio si sbloccheranno gli altri menu.",
     "tutorial.menu1Hint": "Tocca prima “ひらがな”. Dopo aver completato questo passaggio, verranno sbloccati gli altri menu.",
     "tutorial.hiraHint": "Tocca il pulsante 🔊 o un carattere hiragana per ascoltare il suono.",
-    "tutorial.hiraBody": "Tocca il pulsante 🔊 o un hiragana per ascoltare la pronuncia. Quando hai finito di leggere la guida, tocca “OK”, poi “Back” per tornare al menu.",
+    "tutorial.ttsTitle": "Informazioni sulla lettura vocale",
+    "tutorial.hiraBody": "Tocca il pulsante 🔊 o qualsiasi hiragana per ascoltare il suono. Dopo aver letto la guida, tocca “OK” e poi “Indietro” per tornare al menu.",
     "tutorial.hiraTitle": "Come usare questa pagina",
     "tutorial.ok": "OK",
     "locked": "Bloccato"
@@ -522,7 +529,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Primeiro, toque no botão 『ひらがな』. Depois desta etapa, outros menus serão desbloqueados.",
     "tutorial.menu1Hint": "Primeiro toque em “ひらがな”. Após finalizar esta etapa, outros menus serão desbloqueados.",
     "tutorial.hiraHint": "Toque no botão 🔊 ou em um caractere hiragana para ouvir o som.",
-    "tutorial.hiraBody": "Toque no botão 🔊 ou em qualquer hiragana para ouvir a pronúncia. Quando terminar de ler a explicação, toque em “OK” e depois em “Back” para retornar ao menu.",
+    "tutorial.ttsTitle": "Sobre a leitura em voz",
+    "tutorial.hiraBody": "Toque no botão 🔊 ou em qualquer hiragana para ouvir o som. Ao terminar de ler este guia, toque em “OK” e depois em “Voltar” para retornar ao menu.",
     "tutorial.hiraTitle": "Como usar esta página",
     "tutorial.ok": "OK",
     "locked": "Bloqueado"
@@ -574,7 +582,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Pertama, ketuk tombol 『ひらがな』. Setelah langkah ini selesai, menu lainnya akan terbuka.",
     "tutorial.menu1Hint": "Pertama ketuk “ひらがな”. Setelah selesai, menu lain akan terbuka.",
     "tutorial.hiraHint": "Ketuk tombol 🔊 atau huruf hiragana untuk mendengar suaranya.",
-    "tutorial.hiraBody": "Ketuk tombol 🔊 atau huruf hiragana apa saja untuk mendengar cara pengucapannya. Setelah selesai membaca panduan, ketuk “OK” lalu “Back” untuk kembali ke menu.",
+    "tutorial.ttsTitle": "Tentang pembacaan suara",
+    "tutorial.hiraBody": "Ketuk tombol 🔊 atau huruf hiragana apa pun untuk mendengar suara. Setelah selesai membaca panduan, ketuk “OK”, lalu ketuk “Kembali” untuk kembali ke menu.",
     "tutorial.hiraTitle": "Cara menggunakan halaman ini",
     "tutorial.ok": "OK",
     "locked": "Terkunci"
@@ -625,7 +634,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Una, pindutin ang 『ひらがな』 na button. Pagkatapos nito, maa-unlock ang ibang mga menu.",
     "tutorial.menu1Hint": "Pindutin muna ang “ひらがな”. Pagkatapos nito maa-unlock ang ibang menu.",
     "tutorial.hiraHint": "Pindutin ang 🔊 na button o anumang hiragana para marinig ang tunog.",
-    "tutorial.hiraBody": "Pindutin ang 🔊 o anumang hiragana para marinig ang bigkas. Kapag tapos ka nang magbasa, pindutin ang “OK”, saka “Back” para bumalik sa menu.",
+    "tutorial.ttsTitle": "Tungkol sa voice reading",
+    "tutorial.hiraBody": "Pindutin ang 🔊 na button o anumang hiragana para marinig ang tunog. Pagkatapos basahin ang gabay, pindutin ang “OK”, saka ang “Back” para bumalik sa menu.",
     "tutorial.hiraTitle": "Paano gamitin ang pahinang ito",
     "tutorial.ok": "OK",
     "locked": "Naka-lock"
@@ -676,7 +686,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "ก่อนอื่นให้แตะปุ่ม 『ひらがな』 เมื่อตั้งค่านี้เสร็จ เมนูอื่น ๆ จะปลดล็อก",
     "tutorial.menu1Hint": "ให้แตะ “ひらがな” ก่อน เมื่อตั้งค่านี้เสร็จแล้ว เมนูอื่นจะปลดล็อก",
     "tutorial.hiraHint": "แตะปุ่ม 🔊 หรืออักขระฮิรางานะเพื่อฟังเสียงอ่าน",
-    "tutorial.hiraBody": "แตะปุ่ม 🔊 หรือฮิรางานะใด ๆ เพื่อฟังการออกเสียง เมื่ออ่านคู่มือนี้เสร็จแล้ว ให้แตะ “OK” จากนั้นแตะ “Back” เพื่อกลับไปเมนู",
+    "tutorial.ttsTitle": "เกี่ยวกับการอ่านออกเสียง",
+    "tutorial.hiraBody": "แตะปุ่ม 🔊 หรือฮิรางานะใด ๆ เพื่อฟังเสียง หลังจากอ่านคู่มือนี้เสร็จ ให้แตะ “OK” แล้วกด “ย้อนกลับ” เพื่อกลับไปที่เมนู",
     "tutorial.hiraTitle": "วิธีใช้หน้านี้",
     "tutorial.ok": "OK",
     "locked": "ถูกล็อก"
@@ -727,7 +738,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "Сначала нажмите кнопку 『ひらがな』. После этого остальные меню станут доступны.",
     "tutorial.menu1Hint": "Сначала нажмите “ひらがな”. После завершения этого шага откроются другие меню.",
     "tutorial.hiraHint": "Нажмите кнопку 🔊 или любой знак хираганы, чтобы услышать звук.",
-    "tutorial.hiraBody": "Нажмите 🔊 или любой символ хираганы, чтобы услышать произношение. После прочтения нажмите “OK”, затем используйте “Back”, чтобы вернуться в меню.",
+    "tutorial.ttsTitle": "О голосовом чтении",
+    "tutorial.hiraBody": "Нажмите кнопку 🔊 или любой символ хираганы, чтобы услышать звук. После прочтения инструкции нажмите «OK», затем «Назад», чтобы вернуться в меню.",
     "tutorial.hiraTitle": "Как пользоваться этой страницей",
     "tutorial.ok": "OK",
     "locked": "Заблокировано"
@@ -778,7 +790,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "सबसे पहले 『ひらがな』 बटन दबाएँ। इस चरण के बाद अन्य मेनू खुल जाएँगे।",
     "tutorial.menu1Hint": "पहले “ひらがな” दबाएँ। इस चरण के बाद अन्य मेनू खुल जाएँगे।",
     "tutorial.hiraHint": "🔊 बटन या किसी भी हिरागाना अक्षर को टैप करें ताकि आवाज़ सुनी जा सके।",
-    "tutorial.hiraBody": "🔊 बटन या किसी भी हिरागाना पर टैप करके उच्चारण सुनें। पढ़ने के बाद “OK” दबाएँ, और फिर “Back” दबाकर मेनू पर लौटें।",
+    "tutorial.ttsTitle": "आवाज़ पढ़ने के बारे में",
+    "tutorial.hiraBody": "ध्वनि सुनने के लिए 🔊 बटन या किसी भी हिरागाना को टैप करें। इस गाइड को पढ़ने के बाद “OK” दबाएँ, और फिर “वापस” दबाकर मेनू में लौटें।",
     "tutorial.hiraTitle": "इस पेज का उपयोग कैसे करें",
     "tutorial.ok": "OK",
     "locked": "लॉक किया गया"
@@ -829,7 +842,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "ដំបូង ចុចប៊ូតុង 『ひらがな』។ បន្ទាប់មក មែន៊ូផ្សេងៗនឹងបើកឡើង។",
     "tutorial.menu1Hint": "សូមចុច “ひらがな” ជាមុន។ បន្ទាប់ពីបញ្ចប់ ដំណាក់កាលនេះ មែន៊ូផ្សេងៗនឹងបើកឡើង។",
     "tutorial.hiraHint": "ចុចប៊ូតុង 🔊 ឬអក្សរ hiragana ដើម្បីស្ដាប់សម្លេង។",
-    "tutorial.hiraBody": "ចុចប៊ូតុង 🔊 ឬ hiragana មួយណាមួយ ដើម្បីស្ដាប់សំឡេង។ អានរួច សូមចុច “OK” ហើយចុច “Back” ដើម្បីត្រលប់ទៅមែន៊ូ។",
+    "tutorial.ttsTitle": "អំពីការអានសំឡេង",
+    "tutorial.hiraBody": "ចុចប៊ូតុង 🔊 ឬអក្សរហ៊ីរ៉ាហ្គានាណាមួយ ដើម្បីលឺសំឡេង។ បន្ទាប់ពីអានរួច សូមចុច “OK” ហើយចុច “ថយក្រោយ” ដើម្បីត្រឡប់ទៅម៉ឺនុយ។",
     "tutorial.hiraTitle": "របៀបប្រើទំព័រនេះ",
     "tutorial.ok": "OK",
     "locked": "បានចាក់សោ"
@@ -880,7 +894,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "ກະລຸນາແຕະປຸ່ມ 『ひらがな』 ເພື່ອເລີ່ມ. ຫຼັງຈາກນັ້ນ ເມນູອື່ນໆຈະເປີດ.",
     "tutorial.menu1Hint": "ແຕະ “ひらがな” ກ່ອນ. ເມື່ອສໍາເລັດແລ້ວ ເມນູອື່ນໆຈະເປີດ.",
     "tutorial.hiraHint": "ແຕະປຸ່ມ 🔊 ຫຼືຕົວອັກສອນ hiragana ເພື່ອຟັງສຽງ.",
-    "tutorial.hiraBody": "ແຕະ 🔊 ຫຼື hiragana ເພື່ອຟັງການອ່ານ. ເມື່ອອ່ານຈົບແລ້ວ ແຕະ “OK” ແລະ “Back” ເພື່ອກັບໄປເມນູ.",
+    "tutorial.ttsTitle": "ກ່ຽວກັບການອ່ານສຽງ",
+    "tutorial.hiraBody": "ແຕະປຸ່ມ 🔊 ຫຼືຕົວອັກສອນຮິຣາການາໃດໆ ເພື່ອຟັງສຽງ. ຫຼັງຈາກອ່ານຄູ່ມືນີ້ແລ້ວ ແຕະ “OK” ແລ້ວ “ກັບຄືນ” ເພື່ອກັບໄປເມນູ.",
     "tutorial.hiraTitle": "ວິທີໃຊ້ໜ້ານີ້",
     "tutorial.ok": "OK",
     "locked": "ຖືກລັອກ"
@@ -931,7 +946,8 @@ export const MESSAGES = {
     "tutorial.menu1Body": "पहिले 『ひらがな』 बटन थिच्नुहोस्। यो चरणपछि अरू मेनुहरू खुल्नेछन्।",
     "tutorial.menu1Hint": "पहिले “ひらがな” थिच्नुहोस्। पूरा भएपछि अरू मेनुहरू खुल्नेछन्।",
     "tutorial.hiraHint": "🔊 बटन वा कुनै पनि हिरागाना ट्याप गर्नुहोस् आवाज सुन्न।",
-    "tutorial.hiraBody": "🔊 बटन वा कुनै पनि हिरागाना ट्याप गरी उच्चारण सुन्नुहोस्। पढिसकेपछि “OK” थिच्नुहोस्, अनि “Back” ले मेनुमा फर्किनुहोस्।",
+    "tutorial.ttsTitle": "स्वर पढाइको बारेमा",
+    "tutorial.hiraBody": "ध्वनि सुन्नका लागि 🔊 बटन वा कुनै पनि हिरागाना ट्याप गर्नुहोस्। यो मार्गदर्शन पढिसकेपछि “OK” ट्याप गर्नुहोस्, अनि “पछाडि” ट्याप गरेर मेनुमा फर्कनुहोस्।",
     "tutorial.hiraTitle": "यस पृष्ठको प्रयोग विधि",
     "tutorial.ok": "OK",
     "locked": "लक गरिएको"
