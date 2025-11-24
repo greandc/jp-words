@@ -533,7 +533,7 @@ function wireEvents(){
     };
   });
 
-        // 🔊 行読み上げ（濁点・小書きも反映）
+          // 🔊 行読み上げ（濁点・小書きも反映）
   wrap.querySelectorAll(".row-speaker").forEach((btn) => {
     btn.onclick = () => {
       const rowDiv = btn.closest(".hira-row");
@@ -547,15 +547,23 @@ function wireEvents(){
       )
         .map((b) => b.getAttribute("data-base"))
         .filter((base) => base && base !== "・")
-        .map((base) => transformKana(base, flags)); // 濁点・小文字反映
+        .map((base) => transformKana(base, flags));   // 濁点・小文字反映
 
       if (!kanaList.length) return;
 
-      // 表示はひらがなだけど、読み上げ用はカタカナ＋読点区切り
-      const speakText = hiraToKata(kanaList.join("、"));
+      // もともとのテキスト
+      let speakText = hiraToKata(kanaList.join("、"));
+
+      // ★ざ行だけが変になる対策：
+      // 「ザ、ジ、ズ、ゼ、ゾ」のときだけスペース区切りに差し替える
+      if (speakText === "ザ、ジ、ズ、ゼ、ゾ") {
+        speakText = "ザ ジ ズ ゼ ゾ";
+      }
+
       speak(speakText);
     };
   });
+
 
 
 
