@@ -533,7 +533,7 @@ function wireEvents(){
     };
   });
 
-          // 🔊 行読み上げ（濁点・小書きも反映）
+            // 🔊 行読み上げ（1文字ずつ順番に再生）
   wrap.querySelectorAll(".row-speaker").forEach((btn) => {
     btn.onclick = () => {
       const rowDiv = btn.closest(".hira-row");
@@ -542,27 +542,29 @@ function wireEvents(){
       const grid = rowDiv.querySelector(".hira-grid");
       if (!grid) return;
 
+      // ベースかな → 現在の flags で変換 → カタカナに
       const kanaList = Array.from(
         grid.querySelectorAll("button[data-base]")
       )
         .map((b) => b.getAttribute("data-base"))
         .filter((base) => base && base !== "・")
-        .map((base) => transformKana(base, flags));   // 濁点・小文字反映
+        .map((base) => transformKana(base, flags)); // 濁点・小書き反映
 
       if (!kanaList.length) return;
 
-      // もともとのテキスト
-      let speakText = hiraToKata(kanaList.join("、"));
+      const seq = kanaList.map((k) => hiraToKata(k)); // 「あ→ア」
 
-      // ★ざ行だけが変になる対策：
-      // 「ザ、ジ、ズ、ゼ、ゾ」のときだけスペース区切りに差し替える
-      if (speakText === "ザ、ジ、ズ、ゼ、ゾ") {
-        speakText = "ザ ジ ズ ゼ ゾ";
-      }
+      let i = 0;
+      const playNext = () => {
+        if (i >= seq.length) return;
+        speak(seq[i++]);          // 1文字だけ読み上げ
+        setTimeout(playNext, 450); // 0.45秒ごとに次へ（好みで調整OK）
+      };
 
-      speak(speakText);
+      playNext();
     };
   });
+
 
 
 
