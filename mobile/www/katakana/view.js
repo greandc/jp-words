@@ -199,7 +199,6 @@ export async function render(el, deps = {}) {
   }).join("");
 }
 
-
   function cardHTML(curKana){
   const base = normalizeKana(curKana);
   const ex =
@@ -227,9 +226,6 @@ export async function render(el, deps = {}) {
       </button>
     </div>`;
 }
-
-
-
 
   function applyI18nLabels() {
     const backBtn  = wrap.querySelector("#back");
@@ -274,22 +270,32 @@ export async function render(el, deps = {}) {
       };
     });
 
-      // 行読み上げ（カタカナ）
-  wrap.querySelectorAll(".row-speaker").forEach((btn) => {
-    btn.onclick = () => {
-      const idx = Number(btn.getAttribute("data-row-idx"));
-      const row = ROWS[idx];
-      if (!row || !row.items) return;
+      // 行読み上げ（カタカナ：1文字ずつ）
+wrap.querySelectorAll(".row-speaker").forEach((btn) => {
+  btn.onclick = () => {
+    const idx = Number(btn.getAttribute("data-row-idx"));
+    const row = ROWS[idx];
+    if (!row || !row.items) return;
 
-      const chars = row.items
-        .map(it => it.k)
-        .filter(k => k && k !== "・")
-        .map(k => transformKana(k, flags)) // 濁点・小文字モードを反映
-        .join("");
+    // 1文字ずつ取り出す
+    const seq = row.items
+      .map(it => it.k)
+      .filter(k => k && k !== "・")
+      .map(k => transformKana(k, flags));  // 濁点・小文字を反映
 
-      if (chars) speak(chars);
+    let i = 0;
+
+    const playNext = () => {
+      if (i >= seq.length) return;
+      speak(seq[i]);
+      i++;
+      setTimeout(playNext, 450); // 0.45秒間隔（同じにした）
     };
-  });
+
+    playNext();
+  };
+});
+
 
 
     // トグル
@@ -342,7 +348,6 @@ export async function render(el, deps = {}) {
     if (ex?.yomi) speak(ex.yomi);
   });
 }
-
 
   // 初期描画
   mountGrid();
