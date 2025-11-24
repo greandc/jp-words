@@ -602,8 +602,24 @@ function speakJPFromItem(it, preferReading = true){
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
   const [ui, setUI]       = R.useState("title");   // title / playing
   const [furi, setFuri]   = R.useState(localStorage.getItem("prefs.furi") !== "0");
-  const [tts,  setTTS]    = R.useState(localStorage.getItem("prefs.tts")  === "1");
-  const [hearts, setHearts] = R.useState(HEARTS);
+
+  // ★ ここを「初回は ON」にする
+  const [tts,  setTTS]    = R.useState(() => {
+    try {
+      const v = localStorage.getItem("prefs.tts");
+      if (v === null) {
+      // まだ一度も保存されていない → 初回なので ON でスタート
+        return true;
+      }
+      return v === "1";
+    } catch {
+      // 何かあったらとりあえず ON
+      return true;
+    }
+  });
+
+const [hearts, setHearts] = R.useState(HEARTS);
+
 
   const [left,  setLeft ] = R.useState(Array(ROWS).fill(null));
   const [right, setRight] = R.useState(Array(ROWS).fill(null));

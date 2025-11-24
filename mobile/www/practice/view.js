@@ -205,8 +205,21 @@ console.log('[chk]', !!window.Capacitor, window.Capacitor?.getPlatform?.(), 'nat
 const speakBtn   = div.querySelector("#speakBtn");
 const autoTtsChk = div.querySelector("#autoTts");
 const msgEl      = div.querySelector("#msg");
-const LS_AUTO    = "jpVocab.practice.autoTTS";
-try { autoTtsChk.checked = localStorage.getItem(LS_AUTO) === "1"; } catch {}
+const LS_AUTO = "jpVocab.practice.autoTTS";
+
+// ★ ここを差し替え
+let savedAuto = null;
+try {
+  savedAuto = localStorage.getItem(LS_AUTO);
+} catch {}
+
+// 保存がなければ「ON」でスタート
+if (savedAuto === null) {
+  autoTtsChk.checked = true;
+} else {
+  autoTtsChk.checked = (savedAuto === "1");
+}
+
 
 // いったん “必ず有効化” に寄せる（環境はOKなのでUIだけ直す）
 function enableTtsUI() {
