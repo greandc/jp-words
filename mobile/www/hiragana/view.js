@@ -74,8 +74,6 @@ function showHiraTutorialBubble() {
   });
 }
 
-
-
 console.log("HIRAGANA SRC = v1");
 
 const BUILD_TAG = "ps-fix-01";
@@ -153,6 +151,15 @@ function normalizeKana(k){
   if (idxH !== -1) return ROW_K.ha[idxH];
   return k;
 }
+
+// ひらがな → カタカナ（読み上げ用）変換
+function hiraToKata(str) {
+  // ぁ(3041)〜ゖ(3096) をカタカナにずらす
+  return str.replace(/[\u3041-\u3096]/g, (ch) =>
+    String.fromCharCode(ch.charCodeAt(0) + 0x60)
+  );
+}
+
 
 // ========== 例語ルックアップ（仮名→{kanji,yomi}） ==========
 const KANA_MAP = new Map();
@@ -526,7 +533,7 @@ function wireEvents(){
     };
   });
 
-      // 🔊 行読み上げ（濁点・小書きも反映）
+        // 🔊 行読み上げ（濁点・小書きも反映）
   wrap.querySelectorAll(".row-speaker").forEach((btn) => {
     btn.onclick = () => {
       const rowDiv = btn.closest(".hira-row");
@@ -535,22 +542,21 @@ function wireEvents(){
       const grid = rowDiv.querySelector(".hira-grid");
       if (!grid) return;
 
-      // base から現在の flags を使って変換した文字の配列を作る
       const kanaList = Array.from(
         grid.querySelectorAll("button[data-base]")
       )
         .map((b) => b.getAttribute("data-base"))
         .filter((base) => base && base !== "・")
-        .map((base) => transformKana(base, flags)); // ← 濁点・小書き反映
+        .map((base) => transformKana(base, flags)); // 濁点・小文字反映
 
-      // 「あ、い、う、え、お」のように読点で区切る
-      const text = kanaList.join("、");
+      if (!kanaList.length) return;
 
-      if (text) {
-        speak(text);
-      }
+      // 表示はひらがなだけど、読み上げ用はカタカナ＋読点区切り
+      const speakText = hiraToKata(kanaList.join("、"));
+      speak(speakText);
     };
   });
+
 
 
   wireCardEvents();  // カード側のイベント
