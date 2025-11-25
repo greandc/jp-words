@@ -1049,7 +1049,7 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
       h(
         "div",
         { id: "quizBanner", className: "quiz-banner" },
-        h("span", null, "［バナー広告スペース（仮）］")
+        h("span", null, "")
       )
     );
     // ★★★ 差し替えここまで ★★★

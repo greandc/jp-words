@@ -79,7 +79,7 @@ for (let i = a; i <= b; i++) {
   // === Menu2 画面用の下固定バナー ===
   const bannerRow = document.createElement("div");
   bannerRow.className = "banner-slot";
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "";
   el.appendChild(bannerRow);
 }
 

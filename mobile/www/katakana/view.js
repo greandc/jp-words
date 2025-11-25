@@ -355,7 +355,7 @@ wrap.querySelectorAll(".row-speaker").forEach((btn) => {
   // === ひらがな画面用の下固定バナー ===
   const bannerRow = document.createElement("div");
   bannerRow.className = "banner-slot";
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "";
   el.appendChild(bannerRow);
 
   // 画面離脱でTTS停止

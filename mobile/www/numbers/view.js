@@ -160,7 +160,7 @@ export async function render(el, deps = {}){
   // === Numbers 画面用のバナー（画面下に固定） ===
   const bannerRow = document.createElement("div");
   bannerRow.className = "banner-slot";
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "";
   el.appendChild(bannerRow);
 }
 

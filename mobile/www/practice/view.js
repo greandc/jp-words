@@ -276,7 +276,7 @@ const _m = div.querySelector("#msg"); if (_m) { _m.textContent = ""; _m.style.di
   // ===== ここからバナー枠を追加 =====
   const bannerRow = document.createElement("div");
   bannerRow.className = "banner-slot";
-  bannerRow.textContent = "［ バナー広告スペース（仮） ］";
+  bannerRow.textContent = "";
   shell.appendChild(bannerRow);
   // ===== ここまで追加 =====
 }
