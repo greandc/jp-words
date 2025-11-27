@@ -588,6 +588,19 @@ function cleanupTTS(){
   stop();
 }
 
+// 変な読みをする単語を補正する
+function normalizeJPReading(yomi) {
+  if (!yomi) return yomi;
+
+  // 「のむ」が「はち」と読まれる端末対策
+  if (yomi === "のむ") {
+    return "の む";   // スペースを入れて TTS に渡す
+  }
+
+  return yomi;
+}
+
+
 // 右（日本語）を押した時だけ読む
 function speakJPFromItem(it, preferReading = true) {
   if (!tts) return;
@@ -601,6 +614,9 @@ function speakJPFromItem(it, preferReading = true) {
   console.log("[tts] speak", it?.id, yomi);
 
   if (!yomi) return;
+
+  // ★ 読み補正をここでかける
+  yomi = normalizeJPReading(yomi);
 
   // 念のため前の発声を止めてから
   stop();
