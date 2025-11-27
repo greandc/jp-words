@@ -209,11 +209,8 @@ export async function render(el, deps = {}) {
 
   // --- 一番下のバナー行 ---
   const bannerRow = document.createElement("div");
-
   bannerRow.className = "banner-slot";
   bannerRow.textContent = "";
-
-  
   shell.appendChild(bannerRow);
 }
 

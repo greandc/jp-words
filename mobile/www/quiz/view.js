@@ -17,6 +17,7 @@ import {
   setRate as ttsSetRate,
   setPitch as ttsSetPitch
 } from "../tts.v2.js?v=v2-20251109d";
+import { maybeShowTestInterstitial } from "../../ads.js";
 
 
 // ===== 定数（レイアウト固定）=====
@@ -679,6 +680,20 @@ R.useEffect(() => {
 R.useEffect(() => {
   if (overlay) stopTimer();
 }, [overlay]);
+
+// === クリア時にインタースティシャル広告（Lv5 以降・2回に1回） ===
+R.useEffect(() => {
+  if (!overlay) return;
+  if (overlay.type !== "clear") return;
+
+  try {
+    // savedLevel はそのテストのレベル番号
+    maybeShowTestInterstitial(savedLevel);
+  } catch (e) {
+    console.error("[ads] interstitial from quiz error", e);
+  }
+}, [overlay, savedLevel]);
+
 
 
 // QuizScreen 内

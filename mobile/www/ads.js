@@ -13,6 +13,100 @@ function isNative() {
 let admob = null;
 let initialized = false;
 
+// ======== インタースティシャル用 ========
+
+// AdMob のインタースティシャル広告ユニット ID
+const INTERSTITIAL_AD_ID = "ca-app-pub-3807814255813325/9462103809";
+
+let interstitialReady   = false;
+let interstitialLoading = false;
+
+// AdMob プラグインを取得（initBannerAds の中で一度だけ呼ばれている想定）
+function ensureAdmobPlugin() {
+  if (admob) return admob;
+  try {
+    admob = window.Capacitor?.Plugins?.AdMob || null;
+  } catch (_) {
+    admob = null;
+  }
+  return admob;
+}
+
+// インタースティシャルを事前ロード
+async function loadInterstitialIfNeeded() {
+  if (!isNative()) return;
+  if (interstitialLoading || interstitialReady) return;
+
+  const p = ensureAdmobPlugin();
+  if (!p || !initialized) return;
+
+  interstitialLoading = true;
+  try {
+    console.log("[ads] prepare interstitial");
+    // ※ @capacitor-community/admob を想定
+    await p.prepareInterstitial({
+      adId: INTERSTITIAL_AD_ID,
+      // isTesting: true,   // 本番前にテストしたいならコメント外す
+    });
+    interstitialReady = true;
+  } catch (e) {
+    console.error("[ads] prepareInterstitial error", e);
+    interstitialReady = false;
+  } finally {
+    interstitialLoading = false;
+  }
+}
+
+// テスト終了時に呼ぶ用：Lv5 以降で 2 回に 1 回だけ表示
+export async function maybeShowTestInterstitial(level) {
+  try {
+    if (!isNative()) return;
+
+    const p = ensureAdmobPlugin();
+    if (!p || !initialized) return;
+
+    // Lv5 未満は広告ナシ
+    if (level < 5) {
+      // ついでに次回用にロードだけしておく
+      loadInterstitialIfNeeded();
+      return;
+    }
+
+    // 何回テストを終えたかをローカルに保存しておく
+    const key = "jpVocab.ads.testCount";
+    let cnt = Number(localStorage.getItem(key) || "0");
+    cnt += 1;
+    localStorage.setItem(key, String(cnt));
+
+    // 奇数回 → 広告なし（でも次回用にロード）
+    if (cnt % 2 === 1) {
+      loadInterstitialIfNeeded();
+      return;
+    }
+
+    // 偶数回 → 広告を出す（準備できてなければロードしてから）
+    if (!interstitialReady) {
+      await loadInterstitialIfNeeded();
+    }
+
+    if (!interstitialReady) {
+      // 準備失敗ならあきらめる
+      return;
+    }
+
+    console.log("[ads] show interstitial");
+    await p.showInterstitial();
+    interstitialReady = false;
+
+    // 見終わったあとに次回分をロード
+    loadInterstitialIfNeeded();
+  } catch (e) {
+    console.error("[ads] maybeShowTestInterstitial error", e);
+    interstitialReady = false;
+  }
+}
+
+
 /**
  * アプリ起動時に 1 回だけ呼ぶ
  */
