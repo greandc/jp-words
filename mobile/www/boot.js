@@ -4,6 +4,15 @@ import * as ViewNumbers  from "./numbers/view.js";
 import * as ViewHira     from "./hiragana/view.js";
 import * as ViewKata     from "./katakana/view.js";
 import { initBannerAds } from "./ads.js";
+import { initBilling } from "../billing.js";
+
+(async () => {
+  try {
+    await initBilling();
+  } catch (e) {
+    console.error("[billing] init error", e);
+  }
+})();
 
 try {
   initBannerAds();

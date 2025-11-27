@@ -58,7 +58,14 @@ async function loadInterstitialIfNeeded() {
 }
 
 // テスト終了時に呼ぶ用：Lv5 以降で 2 回に 1 回だけ表示
+import { isAdRemoved } from "../billing.js"; // 仮
+
 export async function maybeShowTestInterstitial(level) {
+  // ★ 課金済みなら即終了
+  if (isAdRemoved()) return;
+
+  // ここから先は今のロジックのまま
+
   try {
     if (!isNative()) return;
 
@@ -147,7 +154,7 @@ export async function showMainBanner() {
     await admob.showBanner({
       // あなたのバナー広告ユニット ID
       adId: "ca-app-pub-3807814255813325/2540761791",
-      adSize: "BANNER",          // = BannerAdSize.BANNER
+      adSize: "ADAPTIVE_BANNER",          // = BannerAdSize.BANNER
       position: "BOTTOM_CENTER", // = BannerAdPosition.BOTTOM_CENTER
       margin: 0,
       // isTesting: true,  // テスト ID を使うならこっちは false のままでOK
