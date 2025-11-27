@@ -5,7 +5,11 @@ import * as ViewHira     from "./hiragana/view.js";
 import * as ViewKata     from "./katakana/view.js";
 import { initBannerAds } from "./ads.js";
 
-
+try {
+  initBannerAds();
+} catch (e) {
+  console.error("[ads] initBannerAds error", e);
+}
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
