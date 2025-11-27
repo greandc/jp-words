@@ -113,7 +113,6 @@ export async function maybeShowTestInterstitial(level) {
   }
 }
 
-
 /**
  * アプリ起動時に 1 回だけ呼ぶ
  */

@@ -589,14 +589,24 @@ function cleanupTTS(){
 }
 
 // 右（日本語）を押した時だけ読む
-function speakJPFromItem(it, preferReading = true){
-  if (!tts) return;                                   // チェックボックス尊重
-  const yomi =
-    (preferReading ? (it?.jp?.reading || it?.kana) : '') ||
-    it?.jp?.orth || '';
+function speakJPFromItem(it, preferReading = true) {
+  if (!tts) return;
+
+  // 読み上げる文字列をここで毎回組み立て直す
+  const yomi = preferReading
+    ? (it?.jp?.reading || it?.kana || it?.jp?.orth || "")
+    : (it?.jp?.orth || "");
+
+  // デバッグログ：実際に TTS に渡している文字を確認
+  console.log("[tts] speak", it?.id, yomi);
+
   if (!yomi) return;
+
+  // 念のため前の発声を止めてから
   stop();
-  speak(yomi, { lang: 'ja-JP' });
+
+  // ここで必ず日本語として読ませる
+  speak(yomi, { lang: "ja-JP" });
 }
 
   // 状態
@@ -619,9 +629,7 @@ function speakJPFromItem(it, preferReading = true){
     }
   });
 
-const [hearts, setHearts] = R.useState(HEARTS);
-
-
+  const [hearts, setHearts] = R.useState(HEARTS);
   const [left,  setLeft ] = R.useState(Array(ROWS).fill(null));
   const [right, setRight] = R.useState(Array(ROWS).fill(null));
 
