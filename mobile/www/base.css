@@ -216,24 +216,25 @@ body{
   color: #9aa7b5; letter-spacing: .12em;
   font-weight: 700;
 }
-/* 画面下に固定するバナーの仮スペース */
-/* 画面下に固定するバナーの仮スペース（透明で高さだけ確保） */
+/* 画面最下部に固定するバナー枠（枠・背景は消す） */
 .banner-slot {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
 
-  height: 60px;          /* ← AdMob の標準バナーに合わせる（後で調整OK） */
+  /* 高さはとりあえず 52px 。（あとで広告サイズに合わせて調整） */
+  height: 52px;
 
-  /* 全部透明にする（枠・背景・文字なし） */
+  /* Flex で中央寄せ（バナーが中央に来るように） */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* ここで枠・背景を完全に消す */
   background: transparent;
   border: none;
-  color: transparent;
-
-  padding: 0;
-  margin: 0;
-  z-index: 20;           /* そのまま保持（上に乗せる） */
+  box-shadow: none;
 }
 
 /* menu1 専用の調整用CSS に追加 */
