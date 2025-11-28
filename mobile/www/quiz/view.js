@@ -566,9 +566,6 @@ function speakJPFromItem(it, preferReading = true){
   console.log("[tts] speak", it?.id, yomi);
   if (!yomi) return;
 
-  // さっき追加した読み補正（今は「の む」対策）も残してOK
-  yomi = normalizeJPReading(yomi);
-
   stop();
   speak(yomi, { lang: "ja-JP" });
 }
