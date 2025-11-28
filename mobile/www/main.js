@@ -15,6 +15,7 @@ import * as ViewHira    from "./hiragana/view.js";
 import * as ViewKata    from "./katakana/view.js";
 import * as Hira     from "./hiragana/view.js";   
 import * as Kata     from "./katakana/view.js";
+import * as ViewRemoveAds from "../removeAds/view.js";
 
  // ====== グローバル状態（範囲・レベル） ======
 let currentRange = [1, 20]; // ← デフォルト値（初回はLv1〜20）
@@ -36,6 +37,7 @@ let currentRange = [1, 20]; // ← デフォルト値（初回はLv1〜20）
    numbers: Numbers,
    hiragana: ViewHira,
    katakana: ViewKata,
+   removeAds: ViewRemoveAds,
  };
 
  // 追加：グローバル状態の作成
