@@ -22,9 +22,10 @@ if (!document.querySelector('style[data-testtitle-style]')) {
   }
 
   .screen-testtitle h1 {
-    font-size: clamp(26px, 6vw, 40px);
-    margin-bottom: 16px;
-  }
+  font-size: inherit;   /* 完全に親と同じにする */
+  margin-bottom: 20px;
+}
+
 
   .screen-testtitle p {
     font-size: clamp(15px, 2vw, 18px);
