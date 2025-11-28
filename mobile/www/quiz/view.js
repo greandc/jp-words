@@ -588,42 +588,34 @@ function cleanupTTS(){
   stop();
 }
 
-// 変な読みをする単語を補正する
-function normalizeJPReading(yomi) {
-  if (!yomi) return yomi;
-
-  // 「のむ」が「はち」と読まれる端末対策
-  if (yomi === "のむ") {
-    return "の む";   // スペースを入れて TTS に渡す
-  }
-
-  return yomi;
-}
-
 
 // 右（日本語）を押した時だけ読む
-function speakJPFromItem(it, preferReading = true) {
+function speakJPFromItem(it, preferReading = true){
   if (!tts) return;
 
-  // 読み上げる文字列をここで毎回組み立て直す
-  const yomi = preferReading
-    ? (it?.jp?.reading || it?.kana || it?.jp?.orth || "")
-    : (it?.jp?.orth || "");
+  // まずはいつも通り読み仮名を決める
+  let yomi =
+    (preferReading ? (it?.jp?.reading || it?.jp?.kana || it?.jp?.orth || '') :
+                     (it?.jp?.orth || it?.jp?.kana || it?.jp?.reading || '')
+    );
 
-  // デバッグログ：実際に TTS に渡している文字を確認
+  // 🔧 ここで「飲む」専用の例外処理
+  //   orth が「飲む」で、読みが「のむ」になっているときだけ、
+  //   わざと漢字の「飲む」のほうを TTS に渡す
+  if (it?.jp?.orth === "飲む" && yomi === "のむ") {
+    yomi = it.jp.orth;   // => 「飲む」
+  }
+
   console.log("[tts] speak", it?.id, yomi);
-
   if (!yomi) return;
 
-  // ★ 読み補正をここでかける
+  // さっき追加した読み補正（今は「の む」対策）も残してOK
   yomi = normalizeJPReading(yomi);
 
-  // 念のため前の発声を止めてから
   stop();
-
-  // ここで必ず日本語として読ませる
   speak(yomi, { lang: "ja-JP" });
 }
+
 
   // 状態
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
