@@ -987,9 +987,16 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
       disabled: R_isHole,
 
     onClick: () => {
-     if (tts && RItem) speakJPFromItem(RItem, true); // ← ふりがな優先
+     if (tts && RItem) {
+      try {
+       speakJPFromItem(RItem, true);
+      } catch (e) {
+        console.error("[tts] speak error (R)", e);
+       }
+     }
      pick("R", i);
-    }
+  }
+
 
     }, RItem ? h("span", { className: "qinner" },
       h(JpLabel, { jp: RItem.jp, kana: RItem.kana, showFuri: furi })
