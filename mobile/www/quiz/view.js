@@ -56,20 +56,6 @@ function boardEmpty(L, R){
       && R.every(v => v == null);
 }
 
-// TTS（ふりがな優先で読む）
-function speakJPFromItem(item, useFuri){
-  try{
-    const text = (useFuri && (item?.jp?.reading || item?.kana))
-      ? (item.jp.reading || item.kana)
-      : (item?.jp?.orth || "");
-    if (!text) return;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "ja-JP";
-    u.rate = 1;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  }catch{}
-}
 
 function readCurrentLevel(){
   const lv =
