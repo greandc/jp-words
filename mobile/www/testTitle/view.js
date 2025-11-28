@@ -22,7 +22,7 @@ if (!document.querySelector('style[data-testtitle-style]')) {
   }
 
   .screen-testtitle h1 {
-    font-size: clamp(22px, 4vw, 36px);
+    font-size: clamp(26px, 6vw, 40px);
     margin-bottom: 16px;
   }
 
