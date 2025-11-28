@@ -21,10 +21,14 @@ if (!document.querySelector('style[data-testtitle-style]')) {
     box-sizing: border-box;
   }
 
-  .screen-testtitle h1 {
-  font-size: inherit;   /* 完全に親と同じにする */
-  margin-bottom: 20px;
-}
+    /* Level 1 を大きく（menu3 と同じくらい） */
+  .screen-testtitle h1,
+  .screen-testtitle h2,
+  .screen-testtitle #title {
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
 
 
   .screen-testtitle p {
