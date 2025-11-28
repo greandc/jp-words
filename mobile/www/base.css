@@ -221,24 +221,25 @@ body{
   --banner-height: 52px; /* バナーの高さをここで一元管理 */
 }
 
+/* 画面下に固定するバナー用コンテナ（枠は透明にする） */
 .banner-slot {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  height: var(--banner-height);
 
+  height: 52px;                 /* バナー分の高さだけ確保 */
   display: flex;
   align-items: center;
   justify-content: center;
 
-  /* ここはもう透明のままでOK */
-  background: transparent;
+  background: transparent;      /* ★ 枠色なし */
+  border: none;                 /* ★ 線もなし */
+  box-shadow: none;             /* ★ 影もなし */
   color: inherit;
-  font-size: 0;
-
   z-index: 20;
 }
+
 
 
 /* menu1 専用の調整用CSS に追加 */

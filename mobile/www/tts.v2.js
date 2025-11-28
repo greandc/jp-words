@@ -2,32 +2,32 @@
 // ==========================================================
 // Capacitor / Web 両対応の TTS + 画面ログ付き（デバッグ用）
 // ==========================================================
+// ここを追加（ファイルの一番上あたりでOK）
+const ENABLE_TTS_UI_LOG = false;  // ← 本番では false
 
 // === 画面右上に出す簡易ログ ===
 function ttsUILog(label, data) {
+  if (!ENABLE_TTS_UI_LOG) return;   // ★ 追加：OFF のときは何もしない
+
   try {
-    let box = document.getElementById("tts-ui-log");
+    let box = document.getElementById('tts-ui-log');
     if (!box) {
-      box = document.createElement("div");
-      box.id = "tts-ui-log";
+      box = document.createElement('div');
+      box.id = 'tts-ui-log';
       box.style.cssText =
-        "position:fixed;top:8px;right:8px;z-index:999999;" +
-        "padding:6px 8px;background:rgba(0,0,0,.75);color:#fff;" +
-        "border-radius:6px;font:12px/1.3 system-ui;max-width:60vw;";
+        'position:fixed;top:8px;right:8px;z-index:999999;padding:6px 8px;' +
+        'background:rgba(0,0,0,.75);color:#fff;border-radius:6px;' +
+        'font:12px/1.3 system-ui;max-width:60vw';
       document.body.appendChild(box);
     }
-    const line = document.createElement("div");
-    line.textContent =
-      "[TTS] " +
-      label +
-      (data ? " " + JSON.stringify(data) : "");
+    const line = document.createElement('div');
+    line.textContent = `[TTS] ${label}` + (data ? ` ${JSON.stringify(data)}` : '');
     box.appendChild(line);
-    while (box.childElementCount > 10) {
-      box.removeChild(box.firstChild);
-    }
-    console.log("[TTS]", label, data || "");
+    while (box.childElementCount > 10) box.removeChild(box.firstChild);
+    console.log('[TTS]', label, data || '');
   } catch (_) {}
 }
+
 
 // ==========================================================
 // TTS 本体
