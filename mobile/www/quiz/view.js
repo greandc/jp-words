@@ -548,7 +548,7 @@ function cleanupTTS(){
 
 // 右（日本語）を押した時だけ読む
 function speakJPFromItem(it, preferReading = true){
-  if (!tts) return;
+  if (!ttsAvailable()) return;
 
   // まずはいつも通り読み仮名を決める
   let yomi =
