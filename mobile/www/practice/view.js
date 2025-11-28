@@ -36,16 +36,16 @@ function cleanup() {
   shell.className = "screen-practice-shell";
   shell.style.minHeight = "100vh";
   shell.style.position = "relative";
-  shell.style.paddingBottom = "52px";  // ← 下のバナー高さぶん空ける
+  shell.style.overflow = "hidden";
 
   const div = document.createElement("div");
   div.className = "screen";
   // ★ 追加：縦方向中央寄せ & 左右はそのまま
-div.style.display = "flex";
-div.style.flexDirection = "column";
-div.style.paddingTop = "10vh";         // ←追加：画面高さの10%分だけ上に寄せる
-div.style.paddingBottom = "5vh";       // ←追加：バランス確保（任意）
-div.style.minHeight = "100vh";
+  div.style.display = "flex";
+  div.style.flexDirection = "column";
+  div.style.paddingTop = "24px";         // ←追加：画面高さの10%分だけ上に寄せる
+  div.style.paddingBottom = "5vh";       // ←追加：バランス確保（任意）
+  
   div.innerHTML = `
     <h1>${t("level.label",{n:levelNum})}</h1>
     <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 16px;">
