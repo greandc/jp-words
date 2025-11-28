@@ -510,16 +510,11 @@ function ensureQuizLayoutStyle() {
       margin-top: 8px;
     }
 
-    /* 下固定バナー：ネイティブの AdMob を使うので
-   Web 側のプレースホルダーは非表示にする */
-.quiz-banner {
-  display: none;
-}
-
-/* クイズ本体の下にちょっとだけ余白だけ残す */
-.quiz-main {
-  padding-bottom: 16px;  /* 好きな値でOK。0～24pxくらいが無難 */
-}
+    /* 下に並べるだけのスペーサー（アドモブの高さ分） */
+    .quiz-banner {
+      flex: 0 0 56px;  /* 高さ 56px を予約（端末に合わせて調整してOK） */
+      height: 56px;
+    }
 
 
   `;
