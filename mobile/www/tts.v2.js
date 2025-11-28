@@ -96,22 +96,24 @@ async function ensureNativeVoice(lang) {
   }
 }
 
-export async function speak(text, opts = {}) {
-  const msg = String(text || "").trim();
+export async function speak(text, opts = {}){
+  // 元のテキスト
+  let msg = String(text || "").trim();
   if (!msg) return;
 
-  const lang = opts.lang || cfg.lang;
-  const rate =
-    typeof opts.rate === "number" ? opts.rate : cfg.rate;
-  const pitch =
-    typeof opts.pitch === "number" ? opts.pitch : cfg.pitch;
+  const lang  = opts.lang  || cfg.lang;
+  const rate  = typeof opts.rate  === "number" ? opts.rate  : cfg.rate;
+  const pitch = typeof opts.pitch === "number" ? opts.pitch : cfg.pitch;
 
-  // 文字とコードポイントも出す（「飲む」なのか「八」なのかを見る）
-  const codes = [...msg]
-    .map((ch) => `${ch} (U+${ch.codePointAt(0).toString(16)})`)
-    .join(" ");
+  // 🔧 日本語用の読み補正（端末依存バグ対策）
+  if (lang && lang.startsWith("ja")) {
+    // 「のむ」だけ、漢字の「飲む」として読ませる
+    if (msg === "のむ") {
+      msg = "飲む";
+    }
+  }
 
-  ttsUILog("speak() enter", { msg, codes, lang });
+  ttsUILog('speak() enter', { msg, lang });
 
   if (isNative() && NativeTTS) {
     try {
@@ -119,30 +121,29 @@ export async function speak(text, opts = {}) {
       await ensureNativeVoice(lang);
 
       const payload = { text: msg, lang, rate, pitch, volume: cfg.volume };
-      ttsUILog("native speak try", payload);
+      ttsUILog('native speak try', payload);
 
       await NativeTTS.speak(payload);
-      ttsUILog("native speak OK");
+      ttsUILog('native speak OK');
       return;
     } catch (e) {
-      ttsUILog("native speak ERR", String(e && e.message || e));
-      ttsUILog("→ web fallback");
+      ttsUILog('native speak ERR', String(e && e.message || e));
+      ttsUILog('→ web fallback');
     }
   }
 
   // ---- Web フォールバック ----
   try {
     const u = new SpeechSynthesisUtterance(msg);
-    u.lang = lang;
-    u.rate = rate;
-    u.pitch = pitch;
+    u.lang = lang; u.rate = rate; u.pitch = pitch;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
-    ttsUILog("web speak OK", { msg, lang, rate, pitch });
-  } catch (e) {
-    ttsUILog("web speak ERR", String(e && e.message || e));
+    ttsUILog('web speak OK', { msg, lang, rate, pitch });
+  } catch(e){
+    ttsUILog('web speak ERR', String(e && e.message || e));
   }
 }
+
 
 // （ダミー）
 export async function ttsSetup() {
