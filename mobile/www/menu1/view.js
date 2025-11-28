@@ -34,6 +34,16 @@ function ensureMenu1HintStyle() {
       border-color:#facc15 !important;
       box-shadow:0 0 0 2px rgba(250,204,21,.55);
     }
+    .btn-removeads {
+     background: #fef3c7;   /* やさしい黄色 */
+     border-color: #facc15;
+     color: #92400e;
+     font-weight: 600;
+    }
+    .btn-removeads:active {
+     background: #fde68a;
+    }
+
   `;
   document.head.appendChild(st);
 }
@@ -203,7 +213,22 @@ export async function render(el, deps = {}) {
   list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));
   const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
   const label = `🌐 Language：${LANG_NAME[getLang()] || getLang()}`;
+  // Language ボタン
   list.appendChild(mk(label, () => deps.goto?.("lang")));
+
+    // Remove Ads ボタン（追加）
+  const removeAdsLabel = "✨ Remove Ads (Ad-free)";
+
+  // ① いったんボタンを作る
+  const removeBtn = mk(removeAdsLabel, () => deps.goto?.("removeAds"));
+
+  // ② 特別な見た目用のクラスを足す
+  removeBtn.classList.add("btn-removeads");
+
+  // ③ リストに追加
+  list.appendChild(removeBtn);
+
+
 
   showMenu1Hint(div);
 
