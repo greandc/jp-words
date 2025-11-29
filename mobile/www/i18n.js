@@ -54,6 +54,12 @@ export const MESSAGES = {
   + "When you finish reading this guide, tap “OK”, then use “Back” to return to the menu.",
   "tutorial.hiraTitle": "How to use this page",
   "tutorial.ok": "OK",
+  "removeAds.title": "Remove Ads",
+  "removeAds.desc1": "Remove all full-screen ads from the app.",
+  "removeAds.desc2": "Enjoy learning with no interruptions.",
+  "removeAds.purchaseBtn": "Remove Ads (One-time purchase)",
+  "removeAds.restore": "Restore Purchase",
+  "removeAds.note": "Your purchase can be restored even after reinstalling.",
   "locked": "Locked"
 },
 
@@ -101,20 +107,25 @@ export const MESSAGES = {
   "hira.title": "ひらがな",
   "hira.again": "もう一度再生",
   "tutorial.ttsHint":
-    "このアプリは日本語の単語を読み上げます。\n" +
-    "音が聞こえない場合は、音量・マナーモード・音声読み上げ（TTS）の設定を確認してください。",
+  "このアプリは日本語の単語を読み上げます。\n" +
+  "音が聞こえない場合は、音量・マナーモード・音声読み上げ（TTS）の設定を確認してください。",
   "tutorial.menu1Title": "まずは「ひらがな」から",
   "tutorial.menu1Body":
-    "最初に『ひらがな』ボタンを押してください。このステップが終わると、他のメニューが使えるようになります。",
+  "最初に『ひらがな』ボタンを押してください。このステップが終わると、他のメニューが使えるようになります。",
   "tutorial.menu1Hint":
-    "まず「ひらがな」をタップしてください。終わると他のメニューが使えます。",
+  "まず「ひらがな」をタップしてください。終わると他のメニューが使えます。",
   "tutorial.hiraHint":
-    "🔊 ボタン、またはひらがなをタップすると読み上げます。",
- "tutorial.ttsTitle": "音声読み上げについて",
-"tutorial.hiraBody": "🔊 ボタン、または任意のひらがなをタップすると音声が再生されます。ガイドを読み終えたら「OK」を押し、「戻る」でメニューに戻れます。",
-
+  "🔊 ボタン、またはひらがなをタップすると読み上げます。",
+  "tutorial.ttsTitle": "音声読み上げについて",
+  "tutorial.hiraBody": "🔊 ボタン、または任意のひらがなをタップすると音声が再生されます。ガイドを読み終えたら「OK」を押し、「戻る」でメニューに戻れます。",
   "tutorial.hiraTitle": "このページの使い方",
   "tutorial.ok": "OK",
+  "removeAds.title": "広告を削除",
+  "removeAds.desc1": "広告なしで、すべての機能を快適に利用できます。",
+  "removeAds.desc2": "一度購入すると、今後ずっと広告が表示されなくなります。",
+  "removeAds.purchaseBtn": "購入する",
+  "removeAds.restore": "購入を復元",
+  "removeAds.note": "購入情報は、ご利用の端末／アカウントに紐づきます。",
   "locked": "ロック中"
 },
 
@@ -168,6 +179,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "点击 🔊 按钮或任意平假名即可听到发音。阅读完说明后，点击“OK”，然后使用“返回”回到菜单。",
     "tutorial.hiraTitle": "页面使用方法",
     "tutorial.ok": "OK",
+    "removeAds.title": "移除广告",
+    "removeAds.desc1": "解锁无广告的完整体验。",
+    "removeAds.desc2": "一次性购买即可永久去除所有广告。",
+    "removeAds.purchaseBtn": "立即购买",
+    "removeAds.restore": "恢复购买",
+    "removeAds.note": "购买记录与您的设备/账号绑定。",
     "locked": "已锁定"
   },
 
@@ -220,6 +237,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "🔊 버튼 또는 아무 히라가나를 눌러 소리를 들을 수 있습니다. 안내를 모두 읽은 후 “OK”를 탭하고, “뒤로”를 눌러 메뉴로 돌아가세요.",
     "tutorial.hiraTitle": "이 페이지 사용 방법",
     "tutorial.ok": "OK",
+    "removeAds.title": "광고 제거",
+    "removeAds.desc1": "광고 없이 전체 기능을 이용하세요.",
+    "removeAds.desc2": "한 번 구매하면 모든 광고가 영구적으로 제거됩니다.",
+    "removeAds.purchaseBtn": "구매하기",
+    "removeAds.restore": "구매 복원",
+    "removeAds.note": "구매 내역은 기기/계정에 연결됩니다.",
     "locked": "잠김"
   },
 
@@ -272,6 +295,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Nhấn nút 🔊 hoặc bất kỳ ký tự hiragana nào để nghe âm thanh. Sau khi đọc xong hướng dẫn, hãy nhấn “OK”, rồi nhấn “Quay lại” để trở về menu.",
     "tutorial.hiraTitle": "Cách sử dụng trang này",
     "tutorial.ok": "OK",
+    "removeAds.title": "Xóa quảng cáo",
+    "removeAds.desc1": "Trải nghiệm đầy đủ mà không bị gián đoạn.",
+    "removeAds.desc2": "Mua một lần để xóa vĩnh viễn tất cả quảng cáo.",
+    "removeAds.purchaseBtn": "Mua ngay",
+    "removeAds.restore": "Khôi phục mua hàng",
+    "removeAds.note": "Mua hàng được liên kết với thiết bị/tài khoản của bạn.",
     "locked": "Đã khóa"
   },
 
@@ -325,6 +354,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Toca el botón 🔊 o cualquier carácter hiragana para escuchar el sonido. Cuando termines de leer esta guía, toca “OK” y luego “Atrás” para volver al menú.",
     "tutorial.hiraTitle": "Cómo usar esta página",
     "tutorial.ok": "OK",
+    "removeAds.title": "Eliminar anuncios",
+    "removeAds.desc1": "Disfruta de la experiencia completa sin interrupciones.",
+    "removeAds.desc2": "Una compra única elimina todos los anuncios para siempre.",
+    "removeAds.purchaseBtn": "Comprar ahora",
+    "removeAds.restore": "Restaurar compra",
+    "removeAds.note": "Las compras están vinculadas a tu dispositivo/cuenta.",
     "locked": "Bloqueado"
   },
 
@@ -377,6 +412,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Touchez le bouton 🔊 ou n’importe quel hiragana pour entendre le son. Après avoir lu ce guide, touchez « OK », puis « Retour » pour revenir au menu.",
     "tutorial.hiraTitle": "Comment utiliser cette page",
     "tutorial.ok": "OK",
+    "removeAds.title": "Supprimer les publicités",
+    "removeAds.desc1": "Profitez de l’expérience complète sans interruptions.",
+    "removeAds.desc2": "Un achat unique pour supprimer définitivement toutes les publicités.",
+    "removeAds.purchaseBtn": "Acheter",
+    "removeAds.restore": "Restaurer l'achat",
+    "removeAds.note": "Les achats sont liés à votre appareil/compte.",
     "locked": "Verrouillé"
   },
 
@@ -429,6 +470,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Tippe auf die 🔊-Taste oder ein beliebiges Hiragana, um den Ton zu hören. Wenn du fertig bist, tippe auf „OK“ und dann auf „Zurück“, um zum Menü zu gelangen.",
     "tutorial.hiraTitle": "So benutzt du diese Seite",
     "tutorial.ok": "OK",
+    "removeAds.title": "Werbung entfernen",
+    "removeAds.desc1": "Erlebe die vollständige Nutzung ohne Unterbrechungen.",
+    "removeAds.desc2": "Ein einmaliger Kauf entfernt alle Werbung dauerhaft.",
+    "removeAds.purchaseBtn": "Jetzt kaufen",
+    "removeAds.restore": "Kauf wiederherstellen",
+    "removeAds.note": "Käufe sind mit deinem Gerät/Konto verknüpft.",
     "locked": "Gesperrt"
   },
 
@@ -481,6 +528,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Tocca il pulsante 🔊 o qualsiasi hiragana per ascoltare il suono. Dopo aver letto la guida, tocca “OK” e poi “Indietro” per tornare al menu.",
     "tutorial.hiraTitle": "Come usare questa pagina",
     "tutorial.ok": "OK",
+    "removeAds.title": "Rimuovi gli annunci",
+    "removeAds.desc1": "Goditi l’esperienza completa senza interruzioni.",
+    "removeAds.desc2": "Con un unico acquisto rimuovi per sempre tutti gli annunci.",
+    "removeAds.purchaseBtn": "Acquista ora",
+    "removeAds.restore": "Ripristina acquisto",
+    "removeAds.note": "Gli acquisti sono collegati al tuo dispositivo/account.",
     "locked": "Bloccato"
   },
 
@@ -533,6 +586,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Toque no botão 🔊 ou em qualquer hiragana para ouvir o som. Ao terminar de ler este guia, toque em “OK” e depois em “Voltar” para retornar ao menu.",
     "tutorial.hiraTitle": "Como usar esta página",
     "tutorial.ok": "OK",
+    "removeAds.title": "Remover anúncios",
+    "removeAds.desc1": "Desbloqueie a experiência completa sem interrupções.",
+    "removeAds.desc2": "Uma compra única remove todos os anúncios permanentemente.",
+    "removeAds.purchaseBtn": "Comprar agora",
+    "removeAds.restore": "Restaurar compra",
+    "removeAds.note": "As compras estão vinculadas ao seu dispositivo/conta.",
     "locked": "Bloqueado"
   },
 
@@ -586,6 +645,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Ketuk tombol 🔊 atau huruf hiragana apa pun untuk mendengar suara. Setelah selesai membaca panduan, ketuk “OK”, lalu ketuk “Kembali” untuk kembali ke menu.",
     "tutorial.hiraTitle": "Cara menggunakan halaman ini",
     "tutorial.ok": "OK",
+    "removeAds.title": "Hapus Iklan",
+    "removeAds.desc1": "Nikmati pengalaman penuh tanpa gangguan.",
+    "removeAds.desc2": "Pembelian satu kali akan menghapus semua iklan secara permanen.",
+    "removeAds.purchaseBtn": "Beli sekarang",
+    "removeAds.restore": "Pulihkan pembelian",
+    "removeAds.note": "Pembelian terkait dengan perangkat/akun Anda.",
     "locked": "Terkunci"
   },
 
@@ -638,6 +703,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Pindutin ang 🔊 na button o anumang hiragana para marinig ang tunog. Pagkatapos basahin ang gabay, pindutin ang “OK”, saka ang “Back” para bumalik sa menu.",
     "tutorial.hiraTitle": "Paano gamitin ang pahinang ito",
     "tutorial.ok": "OK",
+    "removeAds.title": "Alisin ang mga ad",
+    "removeAds.desc1": "Masulit ang app nang walang anumang abala.",
+    "removeAds.desc2": "Isang beses na pagbili para tuluyang alisin ang lahat ng ad.",
+    "removeAds.purchaseBtn": "Bumili ngayon",
+    "removeAds.restore": "Ibalik ang pagbili",
+    "removeAds.note": "Ang mga pagbili ay naka-link sa iyong device/account.",
     "locked": "Naka-lock"
   },
 
@@ -690,6 +761,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "แตะปุ่ม 🔊 หรือฮิรางานะใด ๆ เพื่อฟังเสียง หลังจากอ่านคู่มือนี้เสร็จ ให้แตะ “OK” แล้วกด “ย้อนกลับ” เพื่อกลับไปที่เมนู",
     "tutorial.hiraTitle": "วิธีใช้หน้านี้",
     "tutorial.ok": "OK",
+    "removeAds.title": "ลบโฆษณา",
+    "removeAds.desc1": "ปลดล็อกประสบการณ์เต็มรูปแบบแบบไม่สะดุด.",
+    "removeAds.desc2": "ซื้อครั้งเดียวเพื่อลบโฆษณาทั้งหมดอย่างถาวร.",
+    "removeAds.purchaseBtn": "ซื้อเลย",
+    "removeAds.restore": "กู้คืนการซื้อ",
+    "removeAds.note": "การซื้อจะเชื่อมกับอุปกรณ์/บัญชีของคุณ.",
     "locked": "ถูกล็อก"
   },
 
@@ -742,6 +819,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "Нажмите кнопку 🔊 или любой символ хираганы, чтобы услышать звук. После прочтения инструкции нажмите «OK», затем «Назад», чтобы вернуться в меню.",
     "tutorial.hiraTitle": "Как пользоваться этой страницей",
     "tutorial.ok": "OK",
+    "removeAds.title": "Убрать рекламу",
+    "removeAds.desc1": "Полный доступ без каких-либо прерываний.",
+    "removeAds.desc2": "Однократная покупка навсегда убирает всю рекламу.",
+    "removeAds.purchaseBtn": "Купить",
+    "removeAds.restore": "Восстановить покупку",
+    "removeAds.note": "Покупки привязаны к вашему устройству/аккаунту.",
     "locked": "Заблокировано"
   },
 
@@ -794,6 +877,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "ध्वनि सुनने के लिए 🔊 बटन या किसी भी हिरागाना को टैप करें। इस गाइड को पढ़ने के बाद “OK” दबाएँ, और फिर “वापस” दबाकर मेनू में लौटें।",
     "tutorial.hiraTitle": "इस पेज का उपयोग कैसे करें",
     "tutorial.ok": "OK",
+    "removeAds.title": "विज्ञापन हटाएँ",
+    "removeAds.desc1": "बिना किसी रुकावट के पूरा अनुभव प्राप्त करें।",
+    "removeAds.desc2": "एक बार खरीदने पर सभी विज्ञापन स्थायी रूप से हट जाते हैं।",
+    "removeAds.purchaseBtn": "अभी खरीदें",
+    "removeAds.restore": "खरीद पुनर्स्थापित करें",
+    "removeAds.note": "खरीद आपके उपकरण/खाते से जुड़ी होती है।",
     "locked": "लॉक किया गया"
   },
 
@@ -846,6 +935,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "ចុចប៊ូតុង 🔊 ឬអក្សរហ៊ីរ៉ាហ្គានាណាមួយ ដើម្បីលឺសំឡេង។ បន្ទាប់ពីអានរួច សូមចុច “OK” ហើយចុច “ថយក្រោយ” ដើម្បីត្រឡប់ទៅម៉ឺនុយ។",
     "tutorial.hiraTitle": "របៀបប្រើទំព័រនេះ",
     "tutorial.ok": "OK",
+    "removeAds.title": "លុបការផ្សាយពាណិជ្ជកម្ម",
+    "removeAds.desc1": "រីករាយនឹងបទពិសោធន៍ពេញលេញដោយគ្មានឧបសគ្គ។",
+    "removeAds.desc2": "ការទិញម្តង កំណត់លុបការផ្សាយពាណិជ្ជកម្មទាំងអស់ជាអចិន្ត្រៃយ៍។",
+    "removeAds.purchaseBtn": "ទិញឥឡូវនេះ",
+    "removeAds.restore": "ស្ដារការទិញ",
+    "removeAds.note": "ការទិញត្រូវបានភ្ជាប់ជាមួយឧបករណ៍/គណនីរបស់អ្នក។",
     "locked": "បានចាក់សោ"
   },
 
@@ -898,6 +993,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "ແຕະປຸ່ມ 🔊 ຫຼືຕົວອັກສອນຮິຣາການາໃດໆ ເພື່ອຟັງສຽງ. ຫຼັງຈາກອ່ານຄູ່ມືນີ້ແລ້ວ ແຕະ “OK” ແລ້ວ “ກັບຄືນ” ເພື່ອກັບໄປເມນູ.",
     "tutorial.hiraTitle": "ວິທີໃຊ້ໜ້ານີ້",
     "tutorial.ok": "OK",
+    "removeAds.title": "ລຶບໂຄສະນາ",
+    "removeAds.desc1": "ເປີດປະສົບການໃຊ້ງານແບບໄຮ້ການລົບກວນ.",
+    "removeAds.desc2": "ຊື້ພຽງຄັ້ງດຽວເພື່ອລຶບໂຄສະນາທັງໝົດຖາວອນ.",
+    "removeAds.purchaseBtn": "ຊື້ດຽວນີ້",
+    "removeAds.restore": "ກູ້ຄືນການຊື້",
+    "removeAds.note": "ການຊື້ຖືກເຊື່ອມກັບອຸປະກອນ/ບັນຊີຂອງທ່ານ.",
     "locked": "ຖືກລັອກ"
   },
 
@@ -950,6 +1051,12 @@ export const MESSAGES = {
     "tutorial.hiraBody": "ध्वनि सुन्नका लागि 🔊 बटन वा कुनै पनि हिरागाना ट्याप गर्नुहोस्। यो मार्गदर्शन पढिसकेपछि “OK” ट्याप गर्नुहोस्, अनि “पछाडि” ट्याप गरेर मेनुमा फर्कनुहोस्।",
     "tutorial.hiraTitle": "यस पृष्ठको प्रयोग विधि",
     "tutorial.ok": "OK",
+    "removeAds.title": "विज्ञापन हटाउनुहोस्",
+    "removeAds.desc1": "कुनै अवरोध बिना पूरा अनुभव प्राप्त गर्नुहोस्।",
+    "removeAds.desc2": "एक पटकको खरिदले सबै विज्ञापन स्थायी रूपमा हटाइदिन्छ।",
+    "removeAds.purchaseBtn": "अहिले खरिद गर्नुहोस्",
+    "removeAds.restore": "खरिद पुनर्स्थापना गर्नुहोस्",
+    "removeAds.note": "खरिदहरू तपाईंको उपकरण/खातासँग जोडिएका छन्।",
     "locked": "लक गरिएको"
   }
 };
