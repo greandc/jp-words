@@ -3,6 +3,10 @@ import { t } from "../i18n.js";
 import { loadLevel } from "../data/loader.js";
 import { MAX_Q } from "../config.js";
 
+const DIFF_KEY = "jpVocab.test.diff";   // "normal" | "hard"
+const NORMAL_SEC_PER_Q = 10;           // 1問あたり10秒
+const HARD_SEC_PER_Q   = 5;            // 1問あたり5秒
+
 function readCurrentLevel() {
 
   // ===== スタイルを追加（中央寄せレイアウト）=====
@@ -11,15 +15,15 @@ if (!document.querySelector('style[data-testtitle-style]')) {
   st.setAttribute('data-testtitle-style', '1');
   st.textContent = `
   .screen-testtitle {
-    display: flex;
-    flex-direction: column;
-    align-items: center;       /* 横中央 */
-    justify-content: center;   /* 縦中央 */
-    min-height: 100svh;        /* 画面全体で中央寄せ */
-    text-align: center;
-    padding: 24px;
-    box-sizing: border-box;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  text-align: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
 
     /* Level 1 を大きく（menu3 と同じくらい） */
   .screen-testtitle h1,
@@ -30,12 +34,45 @@ if (!document.querySelector('style[data-testtitle-style]')) {
     margin-bottom: 16px;
   }
 
-
   .screen-testtitle p {
     font-size: clamp(15px, 2vw, 18px);
     color: #374151;
     margin-bottom: 24px;
   }
+  
+  /* ▼ ここから追加 ─ 難易度(秒数)モードボタン */
+.testtitle-mode-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+  margin: 4px 0 16px;
+}
+
+.mode-btn {
+  border-radius: 999px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 8px;
+  cursor: pointer;
+}
+
+.mode-btn span {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* 選択中 */
+.mode-btn--active {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
 
   .screen-testtitle .btn {
   margin: 0;              /* 余白はラッパー側で管理 */
@@ -80,16 +117,30 @@ if (!document.querySelector('style[data-testtitle-style]')) {
 
 export async function render(el, deps = {}) {
   const wrap = document.createElement("div");
-  wrap.className = "screen screen-testtitle";  
+  wrap.className = "screen screen-testtitle";
   wrap.innerHTML = `
     <h1 id="title"></h1>
-     <div id="meta"></div>
-     <div class="testtitle-btnwrap">
+
+    <!-- ★ 1問あたりの秒数を選ぶボタン（数字だけ） -->
+    <div class="testtitle-mode-row">
+      <button type="button" class="mode-btn" data-mode="normal">
+        10s / question
+        <span></span>
+      </button>
+      <button type="button" class="mode-btn" data-mode="hard">
+        5s / question
+        <span></span>
+      </button>
+    </div>
+
+    <p id="meta"></p>
+
+    <div class="testtitle-btnwrap">
       <button class="btn bigbtn" id="start">${t("common.start")}</button>
       <button class="btn bigbtn" id="back">${t("common.back")}</button>
-     </div>
-
+    </div>
   `;
+
   el.appendChild(wrap);
 
   const lv = readCurrentLevel();
@@ -104,9 +155,73 @@ export async function render(el, deps = {}) {
     count += items.length;
   }
   const q = Math.min(MAX_Q, count);
-  const secs = q * 5;
-   wrap.querySelector("#meta").textContent =
-     `${q} ${t("quiz.questions")} · ${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")}`;
+
+// ① 前回の選択を復元
+let mode = "normal";
+try {
+  const saved = localStorage.getItem(DIFF_KEY);
+  if (saved === "hard" || saved === "normal") mode = saved;
+} catch {}
+
+// ② モードごとの秒数
+function secPerQuestion(m) {
+  return m === "hard" ? HARD_SEC_PER_Q : NORMAL_SEC_PER_Q;
+}
+
+let secs = q * secPerQuestion(mode);
+
+// ③ タイトル / メタ表記を書き出す
+wrap.querySelector("#title").textContent =
+  t("level.label", { n: lv }) || `Level ${lv}`;
+
+const metaEl = wrap.querySelector("#meta");
+function updateMeta() {
+  secs = q * secPerQuestion(mode);
+  const mm = Math.floor(secs / 60);
+  const ss = String(secs % 60).padStart(2, "0");
+  metaEl.textContent =
+    `${q} quiz.questions · ${mm}:${ss}`;
+}
+updateMeta();
+
+// ④ 秒数モードボタンを作る
+const modeRow = wrap.querySelector(".testtitle-mode-row");
+const normalBtn = modeRow.querySelector('[data-mode="normal"]');
+const hardBtn   = modeRow.querySelector('[data-mode="hard"]');
+
+function updateModeButtons() {
+  normalBtn.classList.toggle("mode-btn--active", mode === "normal");
+  hardBtn.classList.toggle("mode-btn--active",   mode === "hard");
+}
+
+// ボタンの表示テキスト（数字だけ）
+function updateModeLabels() {
+  const normalTotal = q * NORMAL_SEC_PER_Q;
+  const hardTotal   = q * HARD_SEC_PER_Q;
+  normalBtn.querySelector("span").textContent =
+    `${NORMAL_SEC_PER_Q}s × ${q} = ${normalTotal}s`;
+  hardBtn.querySelector("span").textContent =
+    `${HARD_SEC_PER_Q}s × ${q} = ${hardTotal}s`;
+}
+
+updateModeLabels();
+updateModeButtons();
+
+// ⑤ クリック時の処理
+normalBtn.addEventListener("click", () => {
+  mode = "normal";
+  try { localStorage.setItem(DIFF_KEY, mode); } catch {}
+  updateModeButtons();
+  updateMeta();
+});
+
+hardBtn.addEventListener("click", () => {
+  mode = "hard";
+  try { localStorage.setItem(DIFF_KEY, mode); } catch {}
+  updateModeButtons();
+  updateMeta();
+});
+
   // Start → quiz
   wrap.querySelector("#start").addEventListener("click", () => {
     // 念のためもう一度保存（戻ってきた時の保険）
