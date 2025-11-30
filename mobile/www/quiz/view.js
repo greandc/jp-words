@@ -17,6 +17,7 @@ import {
   setRate as ttsSetRate,
   setPitch as ttsSetPitch
 } from "../tts.v2.js?v=v2-20251109d";
+import { showMainBanner, destroyBanner } from "../ads.js"; // ←★ この一行を追加
 import { maybeShowTestInterstitial } from "../../ads.js";
 
 
@@ -136,10 +137,11 @@ function ensureStyle(){
   width: 100vw;
   overflow: hidden;     /* 画面の外にはみ出してもページはスクロールさせない */
 
-  /* 上下左右の安全域だけ残す（ノッチ対応）。余計な余白は作らない */
+  
+  /* 上下左右の安全域＋バナーの高さ(56px)分の余白を確保 */
   padding: env(safe-area-inset-top)
            max(8px, env(safe-area-inset-left))
-           env(safe-area-inset-bottom)
+           calc(56px + env(safe-area-inset-bottom)) // ←★ この行を書き換え
            max(8px, env(safe-area-inset-right));
 
   margin: 0;
@@ -523,6 +525,11 @@ function JpLabel({ jp, kana, showFuri }){
 // ======================================================
  function QuizScreen(props){
   ensureStyle();
+
+   R.useEffect(() => {
+    showMainBanner();// この画面が表示されたら、バナーを出す
+    return () => destroyBanner(); // この画面から去るとき、自動でバナーを破壊する
+  }, []);
 
   // --- TTS 初期化（この画面中は日本語・標準速度） ---
 ttsSetLang('ja-JP');
