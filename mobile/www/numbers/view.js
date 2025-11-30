@@ -1,6 +1,8 @@
 // mobile/www/numbers/view.js
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { t } from "../i18n.js";
+import { showMainBanner, destroyBanner } from "../ads.js"; // ←★ この一行を追加
+
 
 const KANA = ["ゼロ","いち","に","さん","よん","ご","ろく","なな","はち","きゅう"];
 
@@ -50,6 +52,7 @@ function numberToJa(n){
 }
 
 export async function render(el, deps = {}){
+  showMainBanner();
   ttsSetLang("ja-JP");
 
   let digits = "";        // 入力中の数字（文字列）
@@ -153,7 +156,10 @@ export async function render(el, deps = {}){
   });
 
   $auto.addEventListener("change", ()=> auto = $auto.checked);
-  root.querySelector("#back").addEventListener("click", ()=> deps.goto?.("menu1"));
+    root.querySelector("#back").addEventListener("click", () => {
+      destroyBanner(); // ←★ 追加！
+      deps.goto?.("menu1");
+    });
 
     updateView();
 

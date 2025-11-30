@@ -3,6 +3,8 @@ import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { ROWS, EXTRA_HIRA_EXAMPLES } from "./data.hira.js";
 import { transformKana } from "./transformKana.js";
+import { showMainBanner, destroyBanner } from "../ads.js"; // ←★ この一行を追加
+
 
 // ==== ひらがなチュートリアル（初回だけふきだし表示） ====
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
@@ -270,7 +272,7 @@ function ensureStyle() {
 
 // ==========================================================
 export async function render(el, deps = {}) {
-
+  showMainBanner();
   ensureStyle();
   ttsSetLang("ja-JP");
 
@@ -471,6 +473,7 @@ function showHiraTutorialBubble() {
 function bindHeaderAndToggles(){
     // Back
     wrap.querySelector("#back")?.addEventListener("click", () => {
+      destroyBanner();
       deps.goto?.("menu1");
     });
 

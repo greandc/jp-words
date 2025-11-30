@@ -2,8 +2,10 @@ import { t, getLang, setLang as setUILang } from "../i18n.js";
 import { MAX_Q, SECS_PER_Q } from "../config.js";
 import { loadLevel } from "../data/loader.js";
 import { speak, stop, ttsAvailable, setLang as ttsSetLang, setRate as ttsSetRate, setPitch as ttsSetPitch } from "../tts.v2.js?v=v2-20251109d";
+import { showMainBanner, destroyBanner } from "../ads.js";
 
 export async function render(el, deps = {}) {
+  showMainBanner();
   // レベルを復元（deps → localStorage）
   let levelNum = deps.level?.();
   if (!levelNum) {
@@ -307,7 +309,8 @@ btnNext.addEventListener("click", () => {
 });
 
 btnBack.addEventListener("click", () => {
-  cleanup();                            // 画面離脱時の後片付け
+  destroyBanner(); // ←★ この一行を追加
+  cleanup();       //画面離脱時の後片付け
   deps.goto?.("menu3");
 });
 

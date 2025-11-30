@@ -1,8 +1,10 @@
 // app/features/menu2/view.js
 import { t, getLang, setLang } from "../i18n.js";
+import { showMainBanner, destroyBanner } from "../ads.js";
 
 
 export async function render(el, deps = {}) {
+   showMainBanner();
   const [a, b] = deps.getRange?.() || [1, 20];
 
   // 画面全体
@@ -67,6 +69,7 @@ for (let i = a; i <= b; i++) {
       } catch {}
 
       deps.setSet?.(set);   // ← 状態はセット番号で渡す
+      destroyBanner();
       deps.goto?.("menu3");
     });
   }
@@ -74,7 +77,10 @@ for (let i = a; i <= b; i++) {
   grid.appendChild(btn);
 }
 
-    root.querySelector("#back").addEventListener("click", () => deps.goto?.("menu1"));
+    root.querySelector("#back").addEventListener("click", () => {
+      destroyBanner(); // ←★ 追加！
+      deps.goto?.("menu1");
+    });
 
   // === Menu2 画面用の下固定バナー ===
   const bannerRow = document.createElement("div");

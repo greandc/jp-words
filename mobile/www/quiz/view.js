@@ -1051,6 +1051,7 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
 
  // ===== 外から呼ばれる render =====
  export async function render(el, deps = {}){
+
   ensureQuizLayoutStyle();
   const comp = R.createElement(QuizScreen, { goto: deps.goto });
   if (RD.createRoot){

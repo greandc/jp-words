@@ -3,6 +3,7 @@ import { t } from "../i18n.js";
 import { speak, stop, setLang as ttsSetLang } from "../tts.v2.js";
 import { transformKana, normalizeKana } from "./transformKana.js";
 import { ROWS, EXTRA_KATA_EXAMPLES } from "./data.kata.js";
+import { showMainBanner, destroyBanner } from "../ads.js"; // ←★ この一行を追加
 
 
 console.log("KATAKANA SRC = v1");
@@ -116,6 +117,7 @@ function ensureStyle() {
 
 // ==========================================================
 export async function render(el, deps = {}) {
+  showMainBanner();
   ensureStyle();
   ttsSetLang("ja-JP");
 
@@ -252,7 +254,10 @@ export async function render(el, deps = {}) {
 
   function wireEvents() {
     // 戻る
-    wrap.querySelector("#back")?.addEventListener("click", () => deps.goto?.("menu1"));
+   wrap.querySelector("#back")?.addEventListener("click", () => {
+  destroyBanner(); // ←★ 呪文を追加
+  deps.goto?.("menu1");
+  });
 
     // 表クリック
     wrap.querySelectorAll("button[data-k]").forEach((b) => {
