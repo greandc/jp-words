@@ -89,11 +89,6 @@ export async function initBannerAds() {
     initialized = true;
     console.log("[ads] AdMob initialized!");
 
-    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-    // ★ ここにあった showMainBanner() の呼び出しを削除しました！ ★
-    // ★ これで、起動時に勝手にバナーが表示されることはなくなります 
-    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-
   } catch (err) {
     console.log("[ads] init error", err);
   }
