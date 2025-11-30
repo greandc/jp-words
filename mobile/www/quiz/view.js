@@ -658,18 +658,19 @@ R.useEffect(() => {
   if (overlay) stopTimer();
 }, [overlay]);
 
-// === クリア時にインタースティシャル広告（Lv5 以降・2回に1回） ===
+
+// === クイズ終了時（クリア/失敗/タイムアップ）にインタースティシャル広告を試みる ===
 R.useEffect(() => {
+  // オーバーレイ（リザルト画面）が表示されていなければ、何もしない
   if (!overlay) return;
-  if (overlay.type !== "clear" && overlay.type !== "gameover") return;
 
   try {
-    // savedLevel はそのテストのレベル番号
+    // どの終了パターンでも、広告表示チェック（2回に1回など）を実行する
     maybeShowTestInterstitial(savedLevel);
   } catch (e) {
     console.error("[ads] interstitial from quiz error", e);
   }
-}, [overlay, savedLevel]);
+}, [overlay, savedLevel]); // overlayが表示されるたびに、この処理が走る
 
 // QuizScreen 内
 function unlockNextLevel() {
