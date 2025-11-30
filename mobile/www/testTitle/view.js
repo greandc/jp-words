@@ -8,105 +8,92 @@ const SEC_PER_Q_KEY = "jpVocab.test.secPerQ";
 const NORMAL_SEC_PER_Q = 10;           // 1問あたり10秒
 const HARD_SEC_PER_Q   = 5;            // 1問あたり5秒
 
-function readCurrentLevel() {
-
-  // ===== スタイルを追加（中央寄せレイアウト）=====
-if (!document.querySelector('style[data-testtitle-style]')) {
+// ===== スタイルを追加（中央寄せレイアウト）=====
+// この関数は、スタイルがまだなければ追加するだけの役割です
+function ensureTestTitleStyle() {
+  if (document.querySelector('style[data-testtitle-style]')) return;
   const st = document.createElement('style');
   st.setAttribute('data-testtitle-style', '1');
   st.textContent = `
-  .screen-testtitle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100svh;
-  text-align: center;
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-    /* Level 1 を大きく（menu3 と同じくらい） */
-  .screen-testtitle h1,
-  .screen-testtitle h2,
-  .screen-testtitle #title {
-    font-size: clamp(28px, 5vw, 40px);
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
-
-  .screen-testtitle p {
-    font-size: clamp(15px, 2vw, 18px);
-    color: #374151;
-    margin-bottom: 24px;
-  }
-  
-  /* ▼ ここから追加 ─ 難易度(秒数)モードボタン */
-.testtitle-mode-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 420px;
-  margin: 4px 0 16px;
-}
-
-.mode-btn {
-  border-radius: 999px;
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #1e3a8a;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 10px 8px;
-  cursor: pointer;
-}
-
-.mode-btn span {
-  display: block;
-  font-size: 0.8rem;
-  opacity: 0.9;
-}
-
-/* 選択中 */
-.mode-btn--active {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  color: #ffffff;
-}
-
-  .screen-testtitle .btn {
-  margin: 0;              /* 余白はラッパー側で管理 */
-  border-radius: 12px;
-  border: 2px solid #66a3ff;
-  background: #eef6ff;
-  font-size: 17px;
-  font-weight: 600;
-  width: auto;            /* 幅指定は外す */
-  height: auto;           /* 高さも外す */
- }
-
-  
-  /* menu3 と同じ感じのボタン */
-  .testtitle-btnwrap {
-  display: grid;
-  gap: 16px;
-  width: 100%;
-  max-width: 480px;
-  margin-top: 24px;
- }
-
- .bigbtn {
-  width: 100%;
-  padding: 14px 0;
-  font-size: 1rem;
-  border-radius: 12px;
- }
-
+    .screen-testtitle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100svh;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .screen-testtitle h1,
+    .screen-testtitle h2,
+    .screen-testtitle #title {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .screen-testtitle p {
+      font-size: clamp(15px, 2vw, 18px);
+      color: #374151;
+      margin-bottom: 24px;
+    }
+    .testtitle-mode-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 420px;
+      margin: 4px 0 16px;
+    }
+    .mode-btn {
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 8px;
+      cursor: pointer;
+    }
+    .mode-btn span {
+      display: block;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+    .mode-btn--active {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      color: #ffffff;
+    }
+    .screen-testtitle .btn {
+      margin: 0;
+      border-radius: 12px;
+      border: 2px solid #66a3ff;
+      background: #eef6ff;
+      font-size: 17px;
+      font-weight: 600;
+      width: auto;
+      height: auto;
+    }
+    .testtitle-btnwrap {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+      max-width: 480px;
+      margin-top: 24px;
+    }
+    .bigbtn {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1rem;
+      border-radius: 12px;
+    }
   `;
   document.head.appendChild(st);
 }
 
+// この関数は、現在のレベル番号を読み込むだけの役割です
+function readCurrentLevel() {
   const lv =
     Number(localStorage.getItem("jpVocab.currentLevel")) ||
     Number(sessionStorage.getItem("selectedLevel")) ||

@@ -6,7 +6,6 @@ const RD = window.ReactDOM;
 if (!R || !RD) throw new Error("React/ReactDOM が読み込まれていません");
 const h  = R.createElement;   // ← ここに移動
 
-
 // ===== 依存 =====
 import { MAX_Q }   from "../config.js";
 import { loadLevel } from "../data/loader.js";
@@ -20,7 +19,6 @@ import {
 import { showMainBanner, destroyBanner } from "../ads.js"; // ←★ この一行を追加
 import { maybeShowTestInterstitial } from "../../ads.js";
 
-
 // ===== 定数（レイアウト固定）=====
 const ROWS       = 5;      // 5行固定
 const CELL_MIN   = 76;
@@ -29,20 +27,25 @@ const GAP_Y      = 12;
 const BACK_H     = 48;
 const HEARTS     = 5;
 
-// testTitle と同じキー・設定にすること！
-const DIFF_KEY = "jpVocab.test.difficulty";
-const NORMAL_SEC_PER_Q = 10;
-const HARD_SEC_PER_Q   = 5;
+// testTitle画面と、このキーを完全に一致させます
+const SEC_PER_Q_KEY     = "jpVocab.test.secPerQ"; // 1問あたりの秒数を保存するキー
+const DEFAULT_SEC_PER_Q = 10;                     // 未設定だった場合の初期値は10秒
 
+// localStorageから秒数を読み取る、唯一の正しい関数
 function readSecPerQuestion() {
   try {
-    const mode = localStorage.getItem(DIFF_KEY);
-    if (mode === "hard")  return HARD_SEC_PER_Q;
-    // "normal" か未設定ならノーマル扱い
-    return NORMAL_SEC_PER_Q;
-  } catch {
-    return NORMAL_SEC_PER_Q;
-  }
+    // testTitleで保存された秒数を文字列として読み取る
+    const savedSecStr = localStorage.getItem(SEC_PER_Q_KEY);
+    if (savedSecStr) {
+      const sec = Number(savedSecStr);
+      // 5秒か10秒のどちらかなので、それ以外の値は無視する
+      if (sec === 5 || sec === 10) {
+        return sec;
+      }
+    }
+  } catch {}
+  // 何か問題があったり、未設定の場合は、安全な10秒を返す
+  return DEFAULT_SEC_PER_Q;
 }
 
 // ===== ヘルパ =====
@@ -71,7 +74,6 @@ function boardEmpty(L, R){
       && L.every(v => v == null)
       && R.every(v => v == null);
 }
-
 
 function readCurrentLevel(){
   const lv =
@@ -136,8 +138,6 @@ function getPlayedLevel() {
   );
 }
 
-const SEC_PER_Q_KEY = "jpVocab.test.secPerQ";
-
 // デフォルトは 10秒 / 1問
 function readSecPerQuestion() {
   let sec = 10;
@@ -149,7 +149,6 @@ function readSecPerQuestion() {
   } catch {}
   return sec;
 }
-
 
 // ===== スタイル =====
 function ensureStyle(){
@@ -533,8 +532,6 @@ function ensureQuizLayoutStyle() {
       flex: 0 0 56px;  /* 高さ 56px を予約（端末に合わせて調整してOK） */
       height: 56px;
     }
-
-
   `;
   document.head.appendChild(st);
 }
@@ -582,7 +579,6 @@ function cleanupTTS(){
   stop();
 }
 
-
 // 右（日本語）を押した時だけ読む
 function speakJPFromItem(it, preferReading = true){
   if (!ttsAvailable()) return;
@@ -606,7 +602,6 @@ function speakJPFromItem(it, preferReading = true){
   stop();
   speak(yomi, { lang: "ja-JP" });
 }
-
 
   // 状態
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
@@ -688,7 +683,6 @@ R.useEffect(() => {
   if (overlay) stopTimer();
 }, [overlay]);
 
-
 // === クイズ終了時（クリア/失敗/タイムアップ）にインタースティシャル広告を試みる ===
 R.useEffect(() => {
   // オーバーレイ（リザルト画面）が表示されていなければ、何もしない
@@ -726,7 +720,6 @@ function unlockNextLevel() {
   } catch {}
 }
 
-
  const onBackToTitle = () => {
   // 失敗 or タイムアップ時の戻り先
   props.goto?.("testTitle");
@@ -748,7 +741,6 @@ function unlockNextLevel() {
       setOverlay({ type: "fail" });   // ← これだけ
     }
   }, [ui, hearts]);
-
 
   R.useEffect(() => {
    if (ui !== "playing") return;
@@ -783,8 +775,6 @@ function unlockNextLevel() {
   )
 );
 
-
-  
   // ===== クリック（左→右の順しか受けない）=====
   const [selL, setSelL] = R.useState(null);
   const [selR, setSelR] = R.useState(null);
@@ -852,7 +842,6 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
   }
   return;
 }
-
 
     // 2ペア貯まったら次の左タップで補充
     refillRef.current.cleared = (refillRef.current.cleared || 0) + 1;
@@ -966,7 +955,6 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
   setSelL(typeof rowIndex === "number" ? rowIndex : null); // 左続行なら選び直し
   setSelR(null);
   }
-
 
   // ====== PLAYING ======
   if (ui === "playing"){
@@ -1086,9 +1074,6 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
         h("span", null, "")
       )
     );
-    // ★★★ 差し替えここまで ★★★
-
-  
   }
   return null;
 }
