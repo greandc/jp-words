@@ -1,17 +1,16 @@
-// mobile/www/testTitle/view.js (完全修復版)
+// mobile/www/testTitle/view.js (最終完成版)
 import { t } from "../i18n.js";
-import { loadLevel } from "../data/loader.js";import { MAX_Q } from "../config.js";
+import { loadLevel } from "../data/loader.js";
+import { MAX_Q } from "../config.js";
 
 // --- 定数 ---
-// このキーは quiz/view.js と完全に一致させる必要があります
-const DIFF_KEY = "jpVocab.test.diff"; // "normal" か "hard"
-const SEC_PER_Q_KEY = "jpVocab.test.secPerQ"; // 1問あたりの秒数
+const DIFF_KEY = "jpVocab.test.diff"; // "normal" | "hard"
+const SEC_PER_Q_KEY = "jpVocab.test.secPerQ";
 const NORMAL_SEC_PER_Q = 10;
 const HARD_SEC_PER_Q   = 5;
 
 // --- ヘルパー関数 ---
 
-// このページのスタイルを定義するだけの、シンプルな関数
 function ensureStyle() {
   if (document.querySelector('style[data-testtitle-style]')) return;
   const st = document.createElement('style');
@@ -55,28 +54,30 @@ function ensureStyle() {
   document.head.appendChild(st);
 }
 
-// 現在のレベルを読み込むだけの、シンプルな関数
 function readCurrentLevel() {
-  const lv =
-    Number(localStorage.getItem("jpVocab.currentLevel")) ||
-    Number(sessionStorage.getItem("selectedLevel")) ||
-    Number(localStorage.getItem("jpVocab.level")) ||
-    1;
-  return lv;
+  return Number(localStorage.getItem("jpVocab.currentLevel") ||
+                sessionStorage.getItem("selectedLevel") ||
+                localStorage.getItem("jpVocab.level") || 1);
 }
 
 // --- メインの描画関数 ---
 export async function render(el, deps = {}) {
-  // 最初にスタイルを準備
   ensureStyle();
 
   const wrap = document.createElement("div");
   wrap.className = "screen screen-testtitle";
+  // ★★★ UIを、ユーザーさんの元のデザインに戻しました！ ★★★
   wrap.innerHTML = `
     <h1 id="title"></h1>
     <div class="testtitle-mode-row">
-      <button type="button" class="mode-btn" data-mode="normal">Normal</button>
-      <button type="button" class="mode-btn" data-mode="hard">Hard</button>
+      <button type="button" class="mode-btn" data-mode="normal">
+        10s / question
+        <span></span>
+      </button>
+      <button type="button" class="mode-btn" data-mode="hard">
+        5s / question
+        <span></span>
+      </button>
     </div>
     <p id="meta"></p>
     <div class="testtitle-btnwrap">
@@ -87,15 +88,12 @@ export async function render(el, deps = {}) {
   el.appendChild(wrap);
 
   // --- ロジック ---
-
-  // 1. UI要素を取得
   const lv = readCurrentLevel();
+  const titleEl = wrap.querySelector("#title");
   const metaEl = wrap.querySelector("#meta");
-  const modeRow = wrap.querySelector(".testtitle-mode-row");
-  const normalBtn = modeRow.querySelector('[data-mode="normal"]');
-  const hardBtn = modeRow.querySelector('[data-mode="hard"]');
+  const normalBtn = wrap.querySelector('[data-mode="normal"]');
+  const hardBtn = wrap.querySelector('[data-mode="hard"]');
 
-  // 2. 問題数を計算
   const startLv = Math.max(1, lv - 4);
   let count = 0;
   for (let L = startLv; L <= lv; L++) {
@@ -103,28 +101,29 @@ export async function render(el, deps = {}) {
   }
   const q = Math.min(MAX_Q, count);
 
-  // 3. モードの状態を管理
   let mode = "normal";
   try {
-    const saved = localStorage.getItem(DIFF_KEY);
-    if (saved === "hard") mode = "hard";
+    if (localStorage.getItem(DIFF_KEY) === "hard") mode = "hard";
   } catch {}
 
   const secPerQuestion = (m) => m === "hard" ? HARD_SEC_PER_Q : NORMAL_SEC_PER_Q;
 
-  // 4. UIを更新する関数を定義
   const updateUI = () => {
-    // メタ情報（問題数と合計時間）を更新
+    // ★★★ UIの更新ロジックを、ユーザーさんのデザインに合わせました！ ★★★
+    titleEl.textContent = t("level.label", { n: lv }) || `Level ${lv}`;
+
     const totalSecs = q * secPerQuestion(mode);
     const mm = Math.floor(totalSecs / 60);
     const ss = String(totalSecs % 60).padStart(2, "0");
     metaEl.textContent = `${q} questions · ${mm}:${ss}`;
-    // ボタンの見た目を更新
+
+    normalBtn.querySelector("span").textContent = `${NORMAL_SEC_PER_Q}s × ${q} = ${q * NORMAL_SEC_PER_Q}s`;
+    hardBtn.querySelector("span").textContent = `${HARD_SEC_PER_Q}s × ${q} = ${q * HARD_SEC_PER_Q}s`;
+
     normalBtn.classList.toggle("mode-btn--active", mode === "normal");
     hardBtn.classList.toggle("mode-btn--active", mode === "hard");
   };
 
-  // 5. 現在の状態を保存する関数を定義
   const saveState = () => {
     try {
       localStorage.setItem(DIFF_KEY, mode);
@@ -132,29 +131,12 @@ export async function render(el, deps = {}) {
     } catch {}
   };
 
-  // 6. ボタンのクリックイベントを設定
-  normalBtn.addEventListener("click", () => {
-    mode = "normal";
-    updateUI();
-    saveState();
-  });
+  normalBtn.addEventListener("click", () => { mode = "normal"; updateUI(); saveState(); });
+  hardBtn.addEventListener("click", () => { mode = "hard"; updateUI(); saveState(); });
 
-  hardBtn.addEventListener("click", () => {
-    mode = "hard";
-    updateUI();
-    saveState();
-  });
-
-  // 7. 初期表示
   updateUI();
   saveState();
 
-  // --- 画面遷移ボタン ---
-  wrap.querySelector("#start").addEventListener("click", () => {
-    deps.goto?.("quiz");
-  });
-
-  wrap.querySelector("#back").addEventListener("click", () => {
-    deps.goto?.("menu3");
-  });
+  wrap.querySelector("#start").addEventListener("click", () => deps.goto?.("quiz"));
+  wrap.querySelector("#back").addEventListener("click", () => deps.goto?.("menu3"));
 }
