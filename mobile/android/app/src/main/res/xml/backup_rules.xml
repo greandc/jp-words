@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- localStorageなどのデータは、データベースと共有プレファレンスに保存されるため、これらをバックアップ対象から完全に除外する -->
+    <exclude domain="database" path="."/>
+    <exclude domain="sharedpref" path="."/>
+</full-backup-content>
