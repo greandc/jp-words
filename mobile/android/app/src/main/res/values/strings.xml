@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TANGO Loop</string>
+    <string name="app_name">TANGO Words Loop</string>
     <string name="title_activity_main">TANGO Loop</string>
     <string name="package_name">com.greandc.tangoloop</string>
     <string name="custom_url_scheme">com.greandc.tangoloop</string>
