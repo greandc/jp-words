@@ -12,7 +12,7 @@ let admob = null;
 let initialized = false;
 
 // ======== インタースティシャル (ここは変更なし) ========
-const INTERSTITIAL_AD_ID = "ca-app-pub-3940256099942544/1033173712";
+const INTERSTITIAL_AD_ID = "ca-app-pub-3807814255813325/9462103809";
 
 let interstitialReady   = false;
 let interstitialLoading = false;
