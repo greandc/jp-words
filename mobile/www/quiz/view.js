@@ -139,10 +139,10 @@ function ensureStyle(){
 
   
   /* 上下左右の安全域＋バナーの高さ(56px)分の余白を確保 */
-  padding: env(safe-area-inset-top)
-           max(8px, env(safe-area-inset-left))
-           calc(56px + env(safe-area-inset-bottom)) // ←★ この行を書き換え
-           max(8px, env(safe-area-inset-right));
+  padding: calc(12px + env(safe-area-inset-top))      /* 上：カメラの穴を避けるための余白 */
+           max(8px, env(safe-area-inset-left))       /* 右：安全な余白 */
+           calc(64px + env(safe-area-inset-bottom))  /* 下：バナーと重ならないための余白 */
+           max(8px, env(safe-area-inset-right));     /* 左：安全な余白 */
 
   margin: 0;
   box-sizing: border-box;
