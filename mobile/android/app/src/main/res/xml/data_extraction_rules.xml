@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Googleのクラウドバックアップから、localStorageのデータを完全に除外する -->
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+    </cloud-backup>
+    <device-to-device>
+        <!-- 新しいスマホへの「お引越し」の際も、このデータは除外する -->
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+    </device-to-device>
+</data-extraction-rules>
