@@ -4,6 +4,7 @@ import { loadLevel } from "../data/loader.js";
 import { MAX_Q } from "../config.js";
 
 const DIFF_KEY = "jpVocab.test.diff";   // "normal" | "hard"
+const SEC_PER_Q_KEY = "jpVocab.test.secPerQ";
 const NORMAL_SEC_PER_Q = 10;           // 1問あたり10秒
 const HARD_SEC_PER_Q   = 5;            // 1問あたり5秒
 
@@ -160,8 +161,11 @@ export async function render(el, deps = {}) {
 let mode = "normal";
 try {
   const saved = localStorage.getItem(DIFF_KEY);
-  if (saved === "hard" || saved === "normal") mode = saved;
+  if (saved === "hard" || saved === "normal") {
+    mode = saved;
+  }
 } catch {}
+
 
 // ② モードごとの秒数
 function secPerQuestion(m) {
@@ -208,19 +212,32 @@ updateModeLabels();
 updateModeButtons();
 
 // ⑤ クリック時の処理
+function saveMode() {
+  try {
+    localStorage.setItem(DIFF_KEY, mode);
+    // いま選ばれているモードの「1問あたり秒数」も保存
+    const sec = secPerQuestion(mode); // ← NORMAL/HARD から計算する関数
+    localStorage.setItem(SEC_PER_Q_KEY, String(sec));
+  } catch {}
+}
+
 normalBtn.addEventListener("click", () => {
   mode = "normal";
-  try { localStorage.setItem(DIFF_KEY, mode); } catch {}
+  saveMode();
   updateModeButtons();
   updateMeta();
 });
 
 hardBtn.addEventListener("click", () => {
   mode = "hard";
-  try { localStorage.setItem(DIFF_KEY, mode); } catch {}
+  saveMode();
   updateModeButtons();
   updateMeta();
 });
+
+// 初期表示時にも一度保存しておく（初回起動用）
+saveMode();
+
 
   // Start → quiz
   wrap.querySelector("#start").addEventListener("click", () => {

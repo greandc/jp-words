@@ -114,8 +114,8 @@ export async function showMainBanner() {
   try {
     console.log("[ads] showMainBanner called");
     await p.showBanner({
-      // Googleのテスト専用バナーIDに入れ替え
-      adId: "ca-app-pub-3940256099942544/6300978111",
+      
+      adId: "ca-app-pub-3807814255813325/2540761791",
       adSize: "ADAPTIVE_BANNER",
       position: "BOTTOM_CENTER",
       margin: 0,

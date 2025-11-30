@@ -28,7 +28,22 @@ const CELL_MAX   = 112;
 const GAP_Y      = 12;
 const BACK_H     = 48;
 const HEARTS     = 5;
-const SECS_PER_Q = 5;      // 1問=5秒
+
+// testTitle と同じキー・設定にすること！
+const DIFF_KEY = "jpVocab.test.difficulty";
+const NORMAL_SEC_PER_Q = 10;
+const HARD_SEC_PER_Q   = 5;
+
+function readSecPerQuestion() {
+  try {
+    const mode = localStorage.getItem(DIFF_KEY);
+    if (mode === "hard")  return HARD_SEC_PER_Q;
+    // "normal" か未設定ならノーマル扱い
+    return NORMAL_SEC_PER_Q;
+  } catch {
+    return NORMAL_SEC_PER_Q;
+  }
+}
 
 // ===== ヘルパ =====
 function fmtTime(sec){
@@ -120,6 +135,21 @@ function getPlayedLevel() {
     1
   );
 }
+
+const SEC_PER_Q_KEY = "jpVocab.test.secPerQ";
+
+// デフォルトは 10秒 / 1問
+function readSecPerQuestion() {
+  let sec = 10;
+  try {
+    const v = Number(localStorage.getItem(SEC_PER_Q_KEY));
+    if (Number.isFinite(v) && v > 0 && v <= 60) {
+      sec = v;
+    }
+  } catch {}
+  return sec;
+}
+
 
 // ===== スタイル =====
 function ensureStyle(){
@@ -883,9 +913,15 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
     setPool(all.slice(ROWS));
 
     setRemain(all.length);
-    setSecs(all.length * SECS_PER_Q);
+
+    // ★ 選択したモードに応じて 1問あたりの秒数を決める
+    const secPerQ = readSecPerQuestion();
+
+    // 全体の制限時間をセット
+    setSecs(all.length * secPerQ);
+
     setHearts(HEARTS);
-    refillRef.current = { cleared:0, armed:false };
+    refillRef.current = { cleared: 0, armed: false };
     setUI("playing");
   }
   
