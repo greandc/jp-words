@@ -1,5 +1,6 @@
 // mobile/www/menu1/view.js
 import { t, getLang, setLang } from "../i18n.js";
+import { showMainBanner, destroyBanner } from "../ads.js";
 
 // 一度だけ「ひらがなチュートリアル」を出したかどうか（ひらがな画面と同じキー）
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
@@ -138,6 +139,7 @@ function calcStreak(days){
 }
 
 export async function render(el, deps = {}) {
+  showMainBanner();
   ensureMenu1HintStyle();
   const days = touchToday();
   const { total, streak } = calcStreak(days);
@@ -193,6 +195,7 @@ export async function render(el, deps = {}) {
     list.appendChild(
       mk(`Lv${a}–${b}`, () => {
         if (locked) return;
+        destroyBanner();
         deps.setRange?.([a, b]);
         deps.goto?.("menu2");
       }, locked)
@@ -200,35 +203,53 @@ export async function render(el, deps = {}) {
   });
 
   // ひらがなボタンは変数に保持
-  const hiraBtn = mk("ひらがな", () => deps.goto?.("hiragana"));
+  const hiraBtn = mk("ひらがな", () => {
+  destroyBanner(); // ←★ 追加
+  deps.goto?.("hiragana");
+  });
   list.appendChild(hiraBtn);
 
   const lockOthers = tutorialHiraOnly;
   list.appendChild(
-    mk("カタカナ", () => { if (lockOthers) return; deps.goto?.("katakana"); }, lockOthers)
+  mk("カタカナ", () => {
+    if (lockOthers) return;
+    destroyBanner(); // ←★ 追加
+    deps.goto?.("katakana");
+  }, lockOthers)
   );
   list.appendChild(
-    mk(t("numbers.title"), () => { if (lockOthers) return; deps.goto?.("numbers"); }, lockOthers)
+  mk(t("numbers.title"), () => {
+    if (lockOthers) return;
+    destroyBanner(); // ←★ 追加
+    deps.goto?.("numbers");
+  }, lockOthers)
   );
-  list.appendChild(mk(t("common.back"), () => deps.goto?.("title")));
+  list.appendChild(mk(t("common.back"), () => {
+  destroyBanner(); // ←★ 追加
+  deps.goto?.("title");
+  }));
   const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
   const label = `🌐 Language：${LANG_NAME[getLang()] || getLang()}`;
   // Language ボタン
-  list.appendChild(mk(label, () => deps.goto?.("lang")));
+  list.appendChild(mk(label, () => {
+  destroyBanner(); // ←★ 追加
+  deps.goto?.("lang");
+  }));
 
     // Remove Ads ボタン（追加）
   const removeAdsLabel = "✨ Remove Ads (Ad-free)";
 
   // ① いったんボタンを作る
-  const removeBtn = mk(removeAdsLabel, () => deps.goto?.("removeAds"));
+  const removeBtn = mk(removeAdsLabel, () => {
+  destroyBanner(); // ←★ 追加
+  deps.goto?.("removeAds");
+  });
 
   // ② 特別な見た目用のクラスを足す
   removeBtn.classList.add("btn-removeads");
 
   // ③ リストに追加
   list.appendChild(removeBtn);
-
-
 
   showMenu1Hint(div);
 

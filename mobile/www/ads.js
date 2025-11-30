@@ -1,53 +1,37 @@
-// mobile/www/ads.js
-console.log("[ads] src = v1");
+// mobile/www/ads.js (修正版)
+console.log("[ads] src = v2-fixed");
 
 function isNative() {
   try {
     return !!window.Capacitor?.isNativePlatform?.() &&
            window.Capacitor.isNativePlatform();
-  } catch (e) {
-    return false;
-  }
+  } catch (e) { return false; }
 }
 
 let admob = null;
 let initialized = false;
 
-// ======== インタースティシャル用 ========
-
-// AdMob のインタースティシャル広告ユニット ID
+// ======== インタースティシャル (ここは変更なし) ========
 const INTERSTITIAL_AD_ID = "ca-app-pub-3807814255813325/9462103809";
-
 let interstitialReady   = false;
 let interstitialLoading = false;
 
-// AdMob プラグインを取得（initBannerAds の中で一度だけ呼ばれている想定）
 function ensureAdmobPlugin() {
   if (admob) return admob;
   try {
     admob = window.Capacitor?.Plugins?.AdMob || null;
-  } catch (_) {
-    admob = null;
-  }
+  } catch (_) { admob = null; }
   return admob;
 }
 
-// インタースティシャルを事前ロード
 async function loadInterstitialIfNeeded() {
-  if (!isNative()) return;
-  if (interstitialLoading || interstitialReady) return;
-
+  if (!isNative() || interstitialLoading || interstitialReady) return;
   const p = ensureAdmobPlugin();
   if (!p || !initialized) return;
-
   interstitialLoading = true;
   try {
     console.log("[ads] prepare interstitial");
-    // ※ @capacitor-community/admob を想定
-    await p.prepareInterstitial({
-      adId: INTERSTITIAL_AD_ID,
-      // isTesting: true,   // 本番前にテストしたいならコメント外す
-    });
+    await p.prepareInterstitial({ adId: INTERSTITIAL_AD_ID });
     interstitialReady = true;
   } catch (e) {
     console.error("[ads] prepareInterstitial error", e);
@@ -57,55 +41,30 @@ async function loadInterstitialIfNeeded() {
   }
 }
 
-// テスト終了時に呼ぶ用：Lv5 以降で 2 回に 1 回だけ表示
-import { isAdRemoved } from "../billing.js"; // 仮
+import { isAdRemoved } from "../billing.js";
 
 export async function maybeShowTestInterstitial(level) {
-  // ★ 課金済みなら即終了
   if (isAdRemoved()) return;
-
-  // ここから先は今のロジックのまま
-
   try {
     if (!isNative()) return;
-
     const p = ensureAdmobPlugin();
     if (!p || !initialized) return;
-
-    // Lv5 未満は広告ナシ
     if (level < 5) {
-      // ついでに次回用にロードだけしておく
       loadInterstitialIfNeeded();
       return;
     }
-
-    // 何回テストを終えたかをローカルに保存しておく
     const key = "jpVocab.ads.testCount";
-    let cnt = Number(localStorage.getItem(key) || "0");
-    cnt += 1;
+    let cnt = Number(localStorage.getItem(key) || "0") + 1;
     localStorage.setItem(key, String(cnt));
-
-    // 奇数回 → 広告なし（でも次回用にロード）
     if (cnt % 2 === 1) {
       loadInterstitialIfNeeded();
       return;
     }
-
-    // 偶数回 → 広告を出す（準備できてなければロードしてから）
-    if (!interstitialReady) {
-      await loadInterstitialIfNeeded();
-    }
-
-    if (!interstitialReady) {
-      // 準備失敗ならあきらめる
-      return;
-    }
-
+    if (!interstitialReady) await loadInterstitialIfNeeded();
+    if (!interstitialReady) return;
     console.log("[ads] show interstitial");
     await p.showInterstitial();
     interstitialReady = false;
-
-    // 見終わったあとに次回分をロード
     loadInterstitialIfNeeded();
   } catch (e) {
     console.error("[ads] maybeShowTestInterstitial error", e);
@@ -113,31 +72,30 @@ export async function maybeShowTestInterstitial(level) {
   }
 }
 
+
+// ======== バナー広告 (ここからが重要) ========
+
 /**
- * アプリ起動時に 1 回だけ呼ぶ
+ * アプリ起動時に 1 回だけ呼ぶ（初期化だけする）
  */
 export async function initBannerAds() {
-  if (!isNative()) {
-    console.log("[ads] not native, skip");
-    return;
-  }
-
-  const plugins = window.Capacitor?.Plugins || window.Capacitor?.plugins;
-  if (!plugins?.AdMob) {
-    console.log("[ads] AdMob plugin not found");
-    return;
-  }
-  admob = plugins.AdMob;
-
+  if (!isNative()) return console.log("[ads] not native, skip");
   if (initialized) return;
-  initialized = true;
+
+  const p = ensureAdmobPlugin();
+  if (!p) return console.log("[ads] AdMob plugin not found");
 
   try {
-    // AdMob 初期化
-    await admob.initialize();
+    console.log("[ads] AdMob initializing...");
+    await p.initialize();
+    initialized = true;
+    console.log("[ads] AdMob initialized!");
 
-    // そのままバナーを表示（常時表示）
-    await showMainBanner();
+    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+    // ★ ここにあった showMainBanner() の呼び出しを削除しました！ ★
+    // ★ これで、起動時に勝手にバナーが表示されることはなくなります ★
+    // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
   } catch (err) {
     console.log("[ads] init error", err);
   }
@@ -145,40 +103,64 @@ export async function initBannerAds() {
 
 /**
  * 画面下にメインのバナーを表示
+ * (バナーが必要なページが、自分のタイミングで呼ぶ)
  */
 export async function showMainBanner() {
-  if (!admob) return;
+  if (isAdRemoved()) return; // 課金済みは表示しない
+  if (!initialized || !isNative()) return;
+  const p = ensureAdmobPlugin();
+  if (!p) return;
 
   try {
-    await admob.showBanner({
-      // あなたのバナー広告ユニット ID
+    console.log("[ads] showMainBanner called");
+    await p.showBanner({
       adId: "ca-app-pub-3807814255813325/2540761791",
-      adSize: "ADAPTIVE_BANNER",          // = BannerAdSize.BANNER
-      position: "BOTTOM_CENTER", // = BannerAdPosition.BOTTOM_CENTER
+      adSize: "ADAPTIVE_BANNER",
+      position: "BOTTOM_CENTER",
       margin: 0,
-      // isTesting: true,  // テスト ID を使うならこっちは false のままでOK
-    });
-
-    // 「バナー広告スペース（仮）」の文字は消しておく
-    document.querySelectorAll(".banner-slot").forEach((el) => {
-      if (!el.dataset.adBound) {
-        el.textContent = "";
-        el.dataset.adBound = "1";
-      }
     });
   } catch (err) {
-    console.log("[ads] showBanner error", err);
+    console.error("[ads] showBanner error", err);
   }
 }
 
 /**
- * 必要ならバナーを隠す用（今は使わなくてOK）
+ * バナーを非表示にする
+ * (ページ遷移の直前に呼ぶ)
  */
 export async function hideBanner() {
-  if (!admob) return;
+  if (!initialized || !isNative()) return;
+  const p = ensureAdmobPlugin();
+  if (!p) return;
+
   try {
-    await admob.hideBanner();
+    console.log("[ads] hideBanner called");
+    await p.hideBanner();
   } catch (err) {
-    console.log("[ads] hideBanner error", err);
+    console.error("[ads] hideBanner error", err);
+  }
+}
+
+
+/**
+ * バナーを完全に破棄する
+ * (ページ遷移の直前に呼ぶ、hideより確実)
+ */
+export async function destroyBanner() {
+  if (!initialized || !isNative()) return;
+  const p = ensureAdmobPlugin();
+  if (!p) return;
+
+  try {
+    console.log("[ads] destroyBanner called");
+    // @capacitor-community/admob v5から、hide/removeが統合された
+    await p.removeBanner();
+  } catch (err) {
+    // 古いバージョン用のフォールバック
+    if (/hidebanner/i.test(err.message || '')) {
+       try { await p.hideBanner(); } catch(e2) { console.error("[ads] fallback hide error", e2); }
+    } else {
+       console.error("[ads] destroyBanner error", err);
+    }
   }
 }
