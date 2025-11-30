@@ -654,7 +654,7 @@ R.useEffect(() => {
 // === クリア時にインタースティシャル広告（Lv5 以降・2回に1回） ===
 R.useEffect(() => {
   if (!overlay) return;
-  if (overlay.type !== "clear") return;
+  if (overlay.type !== "clear" && overlay.type !== "gameover") return;
 
   try {
     // savedLevel はそのテストのレベル番号
@@ -663,8 +663,6 @@ R.useEffect(() => {
     console.error("[ads] interstitial from quiz error", e);
   }
 }, [overlay, savedLevel]);
-
-
 
 // QuizScreen 内
 function unlockNextLevel() {
