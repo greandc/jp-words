@@ -254,10 +254,10 @@ export async function render(el, deps = {}) {
 
   function wireEvents() {
     // 戻る
-   wrap.querySelector("#back")?.addEventListener("click", () => {
-  destroyBanner(); // ←★ 呪文を追加
-  deps.goto?.("menu1");
-  });
+   wrap.querySelector("#back")?.addEventListener("click", async () => { // ←★ async を追加
+      await destroyBanner();                                    // ←★ await を追加
+      deps.goto?.("menu1");
+});
 
     // 表クリック
     wrap.querySelectorAll("button[data-k]").forEach((b) => {

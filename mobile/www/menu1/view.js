@@ -193,46 +193,46 @@ export async function render(el, deps = {}) {
     const lockedByProgress = idx > unlockedIndex;
     const locked = tutorialHiraOnly ? true : lockedByProgress;
     list.appendChild(
-      mk(`Lv${a}–${b}`, () => {
-        if (locked) return;
-        destroyBanner();
-        deps.setRange?.([a, b]);
-        deps.goto?.("menu2");
-      }, locked)
-    );
-  });
+    mk(`Lv${a}–${b}`, async () => { // ←★ async を追加
+      if (locked) return;
+      await destroyBanner(); // ←★ await を追加
+      deps.setRange?.([a, b]);
+      deps.goto?.("menu2");
+    }, locked)
+  );
+});
 
   // ひらがなボタンは変数に保持
-  const hiraBtn = mk("ひらがな", () => {
-  destroyBanner(); // ←★ 追加
+  const hiraBtn = mk("ひらがな", async() => {
+  await destroyBanner();
   deps.goto?.("hiragana");
   });
   list.appendChild(hiraBtn);
 
   const lockOthers = tutorialHiraOnly;
   list.appendChild(
-  mk("カタカナ", () => {
+  mk("カタカナ", async() => {
     if (lockOthers) return;
-    destroyBanner(); // ←★ 追加
+    await destroyBanner();
     deps.goto?.("katakana");
   }, lockOthers)
   );
   list.appendChild(
-  mk(t("numbers.title"), () => {
+  mk(t("numbers.title"),async () => {
     if (lockOthers) return;
-    destroyBanner(); // ←★ 追加
+    await destroyBanner();
     deps.goto?.("numbers");
   }, lockOthers)
   );
-  list.appendChild(mk(t("common.back"), () => {
-  destroyBanner(); // ←★ 追加
+  list.appendChild(mk(t("common.back"),async () => {
+  await destroyBanner();
   deps.goto?.("title");
   }));
   const LANG_NAME = { en:"English", ja:"日本語", zh:"中文", ko:"한국어", es:"Español", fr:"Français", de:"Deutsch", it:"Italiano", pt:"Português", vi:"Tiếng Việt", id:"Bahasa Indonesia", th:"ไทย", ru:"Русский", tr:"Türkçe", ar:"العربية", fa:"فارسی", hi:"हिन्दी", ms:"Bahasa Melayu", nl:"Nederlands", pl:"Polski", sv:"Svenska", uk:"Українська", el:"Ελληνικά", cs:"Čeština", hu:"Magyar", ro:"Română", he:"עברית", km:"ខ្មែរ", lo:"ລາວ", ne:"नेपाली", tl:"Filipino", };
   const label = `🌐 Language：${LANG_NAME[getLang()] || getLang()}`;
   // Language ボタン
-  list.appendChild(mk(label, () => {
-  destroyBanner(); // ←★ 追加
+  list.appendChild(mk(label,async () => {
+  await destroyBanner();
   deps.goto?.("lang");
   }));
 
@@ -240,8 +240,8 @@ export async function render(el, deps = {}) {
   const removeAdsLabel = "✨ Remove Ads (Ad-free)";
 
   // ① いったんボタンを作る
-  const removeBtn = mk(removeAdsLabel, () => {
-  destroyBanner(); // ←★ 追加
+  const removeBtn = mk(removeAdsLabel,async () => {
+  await destroyBanner();
   deps.goto?.("removeAds");
   });
 

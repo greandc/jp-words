@@ -54,7 +54,7 @@ for (let i = a; i <= b; i++) {
     btn.style.opacity = 0.5;
     btn.title = (t?.("locked")) || "Locked";
   } else {
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click",async (e) => {
       const abs = Number(e.currentTarget.dataset.abs);
       const set = Number(e.currentTarget.dataset.set);
 
@@ -69,7 +69,7 @@ for (let i = a; i <= b; i++) {
       } catch {}
 
       deps.setSet?.(set);   // ← 状態はセット番号で渡す
-      destroyBanner();
+      await destroyBanner();
       deps.goto?.("menu3");
     });
   }
@@ -77,8 +77,8 @@ for (let i = a; i <= b; i++) {
   grid.appendChild(btn);
 }
 
-    root.querySelector("#back").addEventListener("click", () => {
-      destroyBanner(); // ←★ 追加！
+    root.querySelector("#back").addEventListener("click",async () => {
+      await destroyBanner();
       deps.goto?.("menu1");
     });
 

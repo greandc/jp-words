@@ -283,9 +283,7 @@ const _m = div.querySelector("#msg"); if (_m) { _m.textContent = ""; _m.style.di
   // ===== ここまで追加 =====
 }
 
-
   renderCard();
-
 
   // ===== ボタン =====
 const btnPrev = div.querySelector("#prev");
@@ -308,8 +306,8 @@ btnNext.addEventListener("click", () => {
   renderCard(); 
 });
 
-btnBack.addEventListener("click", () => {
-  destroyBanner(); // ←★ この一行を追加
+btnBack.addEventListener("click",async () => {
+  await destroyBanner();
   cleanup();       //画面離脱時の後片付け
   deps.goto?.("menu3");
 });

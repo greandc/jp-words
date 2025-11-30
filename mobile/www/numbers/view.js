@@ -156,8 +156,8 @@ export async function render(el, deps = {}){
   });
 
   $auto.addEventListener("change", ()=> auto = $auto.checked);
-    root.querySelector("#back").addEventListener("click", () => {
-      destroyBanner(); // ←★ 追加！
+    root.querySelector("#back").addEventListener("click",async () => {
+      await destroyBanner();
       deps.goto?.("menu1");
     });
 

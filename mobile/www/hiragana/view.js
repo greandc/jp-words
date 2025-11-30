@@ -472,10 +472,10 @@ function showHiraTutorialBubble() {
   // Back & モードボタンにイベントを付ける関数
 function bindHeaderAndToggles(){
     // Back
-    wrap.querySelector("#back")?.addEventListener("click", () => {
-      destroyBanner();
+    wrap.querySelector("#back")?.addEventListener("click", async () => { // ←★ async を追加
+      await destroyBanner();                                    // ←★ await を追加
       deps.goto?.("menu1");
-    });
+});
 
     // 濁点
     wrap.querySelector("#btnDaku")?.addEventListener("click", () => {
