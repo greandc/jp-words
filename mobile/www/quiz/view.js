@@ -355,14 +355,16 @@ function QuizOverlay({ type, goto, onClear }) {
       h("div", { className:"left" },
         h("div", {style:{fontWeight:600, fontSize:18}}, `Level ${savedLevel}`),
         h("div", { className:"switches" },
+        
           h("label", null, h("input",{type:"checkbox",checked:furi,onChange:e=>setFuri(e.target.checked)}), h("span", null, "Furigana")),
-          h("label", null, h("input",{type:"checkbox",checked:tts, onChange:e=>setTTS(e.target.checked)}), h("span", null, "Read Aloud")),
+          h("label", null, h("input",{type:"checkbox",checked:tts, onChange:e=>setTTS(e.target.checked)}), h("span", null, t("practice.autoTTS"))), 
         ),
+
       ),
     ),
     h("div", { className: "status" },
       h("div", { className: "hearts" }, Array.from({length:hearts},(_,i)=>h("span",{key:i},"💗"))),
-      h("div", { className: "meta" }, `${remain} questions · ${fmtTime(secs)}`),
+      h("div", { className: "meta" }, `${remain} ${t("common.questions")} · ${fmtTime(secs)}`), 
     ),
     h("div", { className: "board" }, ...cells),
     h("button", { className:"backbtn", onClick:()=>props.goto("testTitle")}, "Back"),

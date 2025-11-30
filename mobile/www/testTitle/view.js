@@ -66,7 +66,7 @@ export async function render(el, deps = {}) {
 
   const wrap = document.createElement("div");
   wrap.className = "screen screen-testtitle";
-  // ★★★ UIを、ユーザーさんの元のデザインに戻しました！ ★★★
+  
   wrap.innerHTML = `
     <h1 id="title"></h1>
     <div class="testtitle-mode-row">
@@ -115,7 +115,7 @@ export async function render(el, deps = {}) {
     const totalSecs = q * secPerQuestion(mode);
     const mm = Math.floor(totalSecs / 60);
     const ss = String(totalSecs % 60).padStart(2, "0");
-    metaEl.textContent = `${q} questions · ${mm}:${ss}`;
+    metaEl.textContent = `${q} ${t("common.questions")} · ${mm}:${ss}`; 
 
     normalBtn.querySelector("span").textContent = `${NORMAL_SEC_PER_Q}s × ${q} = ${q * NORMAL_SEC_PER_Q}s`;
     hardBtn.querySelector("span").textContent = `${HARD_SEC_PER_Q}s × ${q} = ${q * HARD_SEC_PER_Q}s`;
