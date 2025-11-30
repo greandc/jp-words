@@ -835,7 +835,7 @@ if (pool.length === 0 && boardEmpty(nl, nr)) {
       refillRef.current.justMissed = true;
       setHearts(h => {
         const next = Math.max(0, h - 1);
-        if (next === 0) setOverlay({ type: "fail" });
+        
         return next;
       });
       setTimeout(() => { refillRef.current.justMissed = false; }, 250);
