@@ -72,9 +72,6 @@ export async function maybeShowTestInterstitial(level) {
   }
 }
 
-
-// ======== バナー広告 (ここからが重要) ========
-
 /**
  * アプリ起動時に 1 回だけ呼ぶ（初期化だけする）
  */
@@ -141,7 +138,6 @@ export async function hideBanner() {
     console.error("[ads] hideBanner error", err);
   }
 }
-
 
 /**
  * バナーを完全に破棄する
