@@ -1,28 +1,29 @@
 [
   {
-    "id": "lv27-01",
-    "jp": { "orth": "カバン", "reading": "かばん" },
-    "defs": {
-      "en": "bag / briefcase",
-      "zh": "包 / 书包 / 公文包",
-      "ko": "가방",
-      "vi": "cặp / túi",
-      "es": "bolso / maletín",
-      "fr": "sac / cartable",
-      "de": "Tasche / Aktentasche",
-      "it": "borsa / valigetta",
-      "pt": "bolsa / pasta",
-      "id": "tas",
-      "tl": "bag / maleta",
-      "th": "กระเป๋า",
-      "ru": "сумка / портфель",
-      "hi": "बैग / बस्ता",
-      "km": "កាបូប",
-      "lo": "ກະເປົາ",
-      "ne": "झोला / ब्याग"
-    },
-    "pos": "noun"
+  "id": "lv27-01",
+  "jp": { "orth": "リュック", "reading": "りゅっく" },
+  "defs": {
+    "en": "backpack / rucksack",
+    "zh": "背包",
+    "ko": "배낭",
+    "vi": "ba lô",
+    "es": "mochila",
+    "fr": "sac à dos",
+    "de": "Rucksack",
+    "it": "zaino",
+    "pt": "mochila",
+    "id": "ransel",
+    "tl": "backpack",
+    "th": "กระเป๋าเป้",
+    "ru": "рюкзак",
+    "hi": "पीठ पर टांगने वाला बैग",
+    "km": "កាបូបស្ពាយ",
+    "lo": "ກະເປົາສະພາຍ",
+    "ne": "झोला (backpack)"
   },
+  "pos": "noun"
+},
+
   {
     "id": "lv27-02",
     "jp": { "orth": "テーブル", "reading": "てーぶる" },
