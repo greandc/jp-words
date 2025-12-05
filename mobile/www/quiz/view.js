@@ -5,7 +5,7 @@ const R  = window.React;
 const RD = window.ReactDOM;
 if (!R || !RD) throw new Error("React/ReactDOM が読み込まれていません");
 const h  = R.createElement;
-
+const TEST_TUTORIAL_KEY = "jpVocab.tutorial.testHintShown";
 
 // ===== 依存 =====
 import { MAX_Q }   from "../config.js";
@@ -192,7 +192,17 @@ function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数に
 
   // --- 状態管理 (useState
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
-  const [ui, setUI]       = R.useState("title");
+  // 初回だけ「tutorial」から始める。それ以降は直接 playing
+  const [ui, setUI] = R.useState(() => {
+   try {
+    return localStorage.getItem(TEST_TUTORIAL_KEY) === "1"
+      ? "playing"
+      : "tutorial";
+   } catch {
+    return "tutorial";
+   }
+  });
+
   const [furi, setFuri]   = R.useState(localStorage.getItem("prefs.furi") !== "0"
   );
   const [tts,  setTTS]    = R.useState(() => localStorage.getItem("prefs.tts") !== "0");
@@ -212,23 +222,26 @@ function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数に
   const timerRef = R.useRef(null);
   const endedRef = R.useRef(false);
 
-  // ライフサイクル：マウント時にゲーム開始、アンマウント時に色々停止
+  // ライフサイクル：ui が "playing" になったときにゲーム開始
   R.useEffect(() => {
-    startGame();
-    
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        stop(); // TTS音声も止める
-      }
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+  if (ui !== "playing") return;  // ← チュートリアル中は何もしない
 
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      stop();
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
+  startGame();
+
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      stop(); // TTS音声も止める
+    }
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  return () => {
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    stop();
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+  }, [ui]);
+
 
   // ライフサイクル：バナーの表示・非表示
   R.useEffect(() => {
@@ -372,7 +385,89 @@ function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数に
 
 
   // --- レンダリング ---
-  if (ui !== "playing") return null;
+
+// ① テストチュートリアル（初回だけ）
+if (ui === "tutorial") {
+  const title =
+    t("tutorial.testTitle") || "How to play the Test";
+  const body =
+    t("tutorial.testBody") ||
+    [
+      "1) 左側の英語（または自分の言語）を先にタップします。",
+      "2) そのあと、右側の日本語をタップしてペアを完成させます。",
+      "3) 画面上のチェックを外すと、ふりがな・自動読み上げをOFFにできます。"
+    ].join("\n");
+
+  return h(
+    "div",
+    {
+      className: "screen-quiz",
+      style: {
+        minHeight: "100svh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px 16px",
+        boxSizing: "border-box",
+      },
+    },
+    h(
+      "div",
+      {
+        style: {
+          maxWidth: "440px",
+          width: "100%",
+          background: "#0f172a",
+          color: "#f9fafb",
+          borderRadius: "18px",
+          padding: "16px 18px 14px",
+          boxShadow: "0 18px 40px rgba(15,23,42,0.45)",
+          boxSizing: "border-box",
+        },
+      },
+      h(
+        "div",
+        { style: { fontSize: "1rem", fontWeight: 600, marginBottom: 6 } },
+        title
+      ),
+      h(
+        "div",
+        {
+          style: {
+            fontSize: ".9rem",
+            lineHeight: 1.6,
+            whiteSpace: "pre-line",
+            marginBottom: 10,
+          },
+        },
+        body
+      ),
+      h(
+        "div",
+        { style: { display: "flex", justifyContent: "flex-end" } },
+        h(
+          "button",
+          {
+            className: "btn",
+            style: { minWidth: 80, padding: ".35rem .9rem" },
+            onClick: () => {
+              try {
+                localStorage.setItem(TEST_TUTORIAL_KEY, "1");
+              } catch {}
+              // 一度 testTitle に戻して、改めて Start してもらう
+              props.goto("testTitle");
+            },
+          },
+          t("tutorial.ok") || "OK"
+        )
+      )
+    )
+  );
+}
+
+// ② それ以外（通常プレイ）
+if (ui !== "playing") return null;
+
 
   const cells = [];
   for (let i = 0; i < ROWS; i++) {
