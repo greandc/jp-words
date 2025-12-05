@@ -153,8 +153,27 @@ function QuizOverlay({ type, goto, onClear }) {
   if (!type) return null;
   const title = type === "clear" ? t("result.clearTitle") : type === "fail" ? t("result.failTitle") : t("result.timeoutTitle");
   const desc = type === "clear" ? t("result.clearDesc") : type === "fail" ? t("result.failDesc") : t("result.timeoutDesc");
+  // ...
   const onPrimary = () => {
-    if (type === "clear") { try { onClear?.(); } catch {} goto?.("menu2"); return; }
+    if (type === "clear") {
+      try { onClear?.(); } catch {}
+      // 
+      クリアしたレベル番号を取得する
+      const clearedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
+
+      // もし、クリアしたレベルが20の倍数だったら…
+      if (clearedLevel > 0 && clearedLevel % 20 === 0) {
+            // → 大きな括りを選ぶ menu1 に戻る
+        goto?.("menu1");
+      } else {
+        // それ以外のレベルだったら…
+        // → 今まで通り、同じグループ内の menu2 に戻る
+        goto?.("menu2");
+      }
+      return;
+    }
+
+
     if (type === "fail") { goto?.("menu3"); return; }
     goto?.("testTitle");
   };
