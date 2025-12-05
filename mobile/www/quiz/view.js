@@ -262,12 +262,20 @@ function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数に
   }, [ui, hearts]);
 
   // タイムアップ判定
-  R.useEffect(() => {
-    if (ui === "playing" && secs <= 0 && !endedRef.current) {
-      endedRef.current = true;
-      setOverlay({ type: "timeout" });
-    }
-  }, [ui, secs]);
+R.useEffect(() => {
+  // プレイ中以外は何もしない
+  if (ui !== "playing") return;
+
+  // まだゲーム開始前（startGame でタイマーがセットされていない）ならスキップ
+  if (!timerRef.current) return;
+
+  // 実際のタイムアップ判定
+  if (secs <= 0 && !endedRef.current) {
+    endedRef.current = true;
+    setOverlay({ type: "timeout" });
+  }
+}, [ui, secs]);
+
 
   // クイズ終了時にインタースティシャル広告を試みる
   R.useEffect(() => {
