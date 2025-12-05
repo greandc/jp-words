@@ -173,49 +173,41 @@ function QuizOverlay({ type, goto, onClear }) {
  function QuizScreen(props){
   ensureStyle();
 
-  // --- 状態管理 (useState) ---
+  // --- 状態管理 (useState
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
   const [ui, setUI]       = R.useState("title");
-  const [furi, setFuri]   = R.useState(localStorage.getItem("prefs.furi") !== "0");
+  const [furi, setFuri]   = R.useState(localStorage.getItem("prefs.furi") !== "0"
+  );
   const [tts,  setTTS]    = R.useState(() => localStorage.getItem("prefs.tts") !== "0");
   const [hearts, setHearts] = R.useState(HEARTS);
-  const [left,  setLeft ] = R.useState(Array(ROWS).fill(null));
+  const [left,  setLeft ] = R.useState(Array(ROWS
+  ).fill(null));
   const [right, setRight] = R.useState(Array(ROWS).fill(null));
   const [pool, setPool]     = R.useState([]);
-  const [remain, setRemain] = R.useState(0);
-  const [secs, setSecs]     = R.useState(0);
+  const [remain, setRemain] = R.useState(0);  const [secs, setSecs]     =
+   R.useState(0);
   const [selL, setSelL] = R.useState(null);
   const [selR, setSelR] = R.useState(null);
   const [overlay, setOverlay] = R.useState(null);
-  const [isPaused, setIsPaused] = R.useState(false); // ←★ この一行を追加
-  
-  // ...
+
   // --- 副作用 (useEffect) & Refs ---
-  const refillRef = R.useRef({ cleared:0, armed:false, justMissed: false });
+    const refillRef = R.useRef({ cleared:0, armed:false, justMissed: false });
   const timerRef = R.useRef(null);
   const endedRef = R.useRef(false);
 
-  // ★★★↓ここから、新しい「見張り番」を追加します↓★★★
+  // ライフサイクル：マウント時にゲーム開始、アンマウント時に色々停止
   R.useEffect(() => {
+    startGame();
+    
     const handleVisibilityChange = () => {
-      setIsPaused(document.hidden);
-          if (document.hidden) {
+      if (document.hidden) {
         stop(); // TTS音声も止める
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []);
 
-  // ライフサイクル：マウント時にゲーム開始、アンマウント時にTTS停止
-  R.useEffect(() => {
-    startGame();
-    const handleHide = () => stop();
-    window.addEventListener('visibilitychange', handleHide);
-    window.addEventListener('pagehide', handleHide);
     return () => {
-      window.removeEventListener('visibilitychange', handleHide);
-      window.removeEventListener('pagehide', handleHide);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       stop();
       if (timerRef.current) clearInterval(timerRef.current);
     };
@@ -286,17 +278,19 @@ function QuizOverlay({ type, goto, onClear }) {
     setRemain(all.length); setHearts(HEARTS);
     setSecs(all.length * readSecPerQuestion());
 
-    // ...
     endedRef.current = false;
     refillRef.current = { cleared:0, armed:false, justMissed: false };
+    
+    // ★★★ここが、新しいタイマーのロジックです！★★★
     timerRef.current = setInterval(() => {
-      // isPaused
-    がtrueの間は何もせずに処理をスキップする
-      if (window.document.hidden) return;
+      // アプリが非表示の間は、何もせずに処理をスキップする
+      if (document.hidden) return;
+      // 表示されている時だけ、秒を減らす
       setSecs(s => s - 1);
     }, 1000);
+    
     setUI("playing");
-  };// ...
+  };
 
   const refillRows = (triggeredRowIndex) => {
     const Ls = left.slice();
@@ -375,11 +369,9 @@ function QuizOverlay({ type, goto, onClear }) {
       h("div", { className:"left" },
         h("div", {style:{fontWeight:600, fontSize:18}}, `Level ${savedLevel}`),
         h("div", { className:"switches" },
-        
           h("label", null, h("input",{type:"checkbox",checked:furi,onChange:e=>setFuri(e.target.checked)}), h("span", null, "Furigana")),
           h("label", null, h("input",{type:"checkbox",checked:tts, onChange:e=>setTTS(e.target.checked)}), h("span", null, t("practice.autoTTS"))), 
         ),
-
       ),
     ),
     h("div", { className: "status" },
@@ -391,6 +383,7 @@ function QuizOverlay({ type, goto, onClear }) {
     h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel }),
   );
 }
+
 
  // ===== 外から呼ばれる render =====
  export async function render(el, deps = {}){
