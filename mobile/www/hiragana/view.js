@@ -532,16 +532,21 @@ function wireEvents(){
       composeChars.push(k);
       updateComposeText();
 
-      // --- 読み上げロジック ---
-      if (beforeLen === 0) {
-      // ★ 1文字目：押した文字だけ
-       speak(k);
-      } else {
-      // ★ 2文字目以降：押した文字 → 全部 の順
-      speak(k);
-      const full = composeChars.join("");
-      speak(full);
-      }
+      
+      // --- 読み上げロジック（async/awaitを使った新しい方法）---
+      const runSpeakSequence = async () => {
+        // まず、今押した文字を読み上げる
+        await speak(k);
+
+        // もし、これで2文字以上になったら…
+        if (composeChars.length > 1) {
+          // 少しだけ間を置いてから（0.1秒）、出来上がった単語全体を読む
+          const full = composeChars.join("");
+          setTimeout(() => speak(full), 100);
+        }
+      };
+      runSpeakSequence(); // 作成した読み上げ処理を実行
+
     };
   });
 
