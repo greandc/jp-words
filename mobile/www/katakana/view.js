@@ -125,6 +125,16 @@ export async function render(el, deps = {}) {
   let curKana = "ア";         // 初期表示カナ
   let flags = { daku:false, handaku:false, small:false };
 
+    const MAX_COMPOSE = 5;      // 最高5文字まで
+  let composeChars = [];      // 押されたかなのリスト
+
+  function updateComposeText() {
+    const el = wrap.querySelector("#compose-text");
+    if (!el) return;
+    el.textContent = composeChars.length ? composeChars.join(" ") : "";
+  }
+
+
   const root = document.createElement("div");
   root.className = "screen screen-sub hira-tight";
 
@@ -202,32 +212,20 @@ export async function render(el, deps = {}) {
 }
 
   function cardHTML(curKana){
-  const base = normalizeKana(curKana);
-  const ex =
-    KANA_MAP.get(curKana) ||
-    KANA_MAP.get(base)    ||
-    { kanji:"", yomi:"" };
-
   return `
-    <div id="card"
-         style="border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa;width:100%;box-sizing:border-box;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-        <div style="font-size:2.4rem;font-weight:700;line-height:1">${curKana}</div>
-        <button class="btn" id="again"
-                style="padding:.32rem .6rem;font-size:.95rem;">🔁 ${t("hira.again") || "Play again"}</button>
+    <div id="compose-area"
+         style="margin-top:12px;border:1px solid #e5e7eb;border-radius:12px;padding:10px;background:#fafafa;">
+      <div id="compose-text"
+           style="min-height:32px;font-size:1.4rem;margin-bottom:8px;word-wrap:break-word;">
+        &nbsp;
       </div>
-
-      <button id="ex" class="hira-exbtn" style="width:100%;box-sizing:border-box;">
-        <span class="hira-exicon">🔊</span>
-        <span class="hira-exbody">
-          <span style="font-size:1.2rem;">${ex.kanji}</span>
-          <span style="font-size:1rem;color:#374151;">
-            ${ex.yomi ? `（${ex.yomi}）` : ""}
-          </span>
-        </span>
+      <button id="compose-clear" class="btn"
+              style="padding:.32rem .8rem;font-size:.9rem;">
+        Clear
       </button>
     </div>`;
 }
+
 
   function applyI18nLabels() {
     const backBtn  = wrap.querySelector("#back");
@@ -275,31 +273,39 @@ export async function render(el, deps = {}) {
       };
     });
 
-      // 行読み上げ（カタカナ：1文字ずつ）
-wrap.querySelectorAll(".row-speaker").forEach((btn) => {
-  btn.onclick = () => {
-    const idx = Number(btn.getAttribute("data-row-idx"));
-    const row = ROWS[idx];
-    if (!row || !row.items) return;
+        // 50音ボタン
+  wrap.querySelectorAll("button[data-k]").forEach((b) => {
+    b.onclick = () => {
+      const k = b.getAttribute("data-k"); // 画面に表示されてるかな
+      if (!k || k === "・") return;
 
-    // 1文字ずつ取り出す
-    const seq = row.items
-      .map(it => it.k)
-      .filter(k => k && k !== "・")
-      .map(k => transformKana(k, flags));  // 濁点・小文字を反映
+      // 最大5文字まで
+      if (composeChars.length >= MAX_COMPOSE) return;
 
-    let i = 0;
+      const beforeLen = composeChars.length;
 
-    const playNext = () => {
-      if (i >= seq.length) return;
-      speak(seq[i]);
-      i++;
-      setTimeout(playNext, 450); // 0.45秒間隔（同じにした）
+// 文字を追加
+composeChars.push(k);
+updateComposeText();
+
+
+      // --- 読み上げロジック（async/awaitを使った新しい方法）---
+      const runSpeakSequence = async () => {
+        // まず、今押した文字を読み上げる
+        await speak(k);
+
+        // もし、これで2文字以上になったら…
+        if (composeChars.length > 1) {
+          // 少しだけ間を置いてから（0.1秒）、出来上がった単語全体を読む
+          const full = composeChars.join("");
+          setTimeout(() => speak(full), 100);
+        }
+      };
+      runSpeakSequence(); // 作成した読み上げ処理を実行
+
     };
+  });
 
-    playNext();
-  };
-});
 
 
 
@@ -342,17 +348,18 @@ wrap.querySelectorAll(".row-speaker").forEach((btn) => {
   }
 
   function wireCardEvents(){
-  // もう一回 → かなを読む
-  wrap.querySelector("#again")?.addEventListener("click", () => speak(curKana));
+  const clearBtn = wrap.querySelector("#compose-clear");
+  if (!clearBtn) return;
 
-  // 例語ボタン → よみを読む
-  const base = normalizeKana(curKana);
-  const ex   = KANA_MAP.get(curKana) || KANA_MAP.get(base);
+  // 画面を描き直したあとにも、今の内容を反映
+  updateComposeText();
 
-  wrap.querySelector("#ex")?.addEventListener("click", () => {
-    if (ex?.yomi) speak(ex.yomi);
-  });
+  clearBtn.onclick = () => {
+    composeChars = [];
+    updateComposeText();
+  };
 }
+
 
   // 初期描画
   mountGrid();
