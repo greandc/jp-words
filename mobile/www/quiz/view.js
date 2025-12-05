@@ -148,35 +148,32 @@ function JpLabel({ jp, kana, showFuri }){
   );
 }
 
-// リザルト画面
-function QuizOverlay({ type, goto, onClear }) {
+// リザルト画面（改造版）
+function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数にclearedLevelを追加
   if (!type) return null;
   const title = type === "clear" ? t("result.clearTitle") : type === "fail" ? t("result.failTitle") : t("result.timeoutTitle");
   const desc = type === "clear" ? t("result.clearDesc") : type === "fail" ? t("result.failDesc") : t("result.timeoutDesc");
-  // ...
+
   const onPrimary = () => {
     if (type === "clear") {
-      try { onClear?.(); } catch {}
-      // 
-      クリアしたレベル番号を取得する
-      const clearedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
+      try { onClear?.(); } catch {} // まずレベルアップ処理を実行
 
-      // もし、クリアしたレベルが20の倍数だったら…
+      // ★★★ここが、新しい、安全な行き先判定です★★★
+      // 手渡しされた、正真正銘「クリアしたレベル」で判断する
       if (clearedLevel > 0 && clearedLevel % 20 === 0) {
-            // → 大きな括りを選ぶ menu1 に戻る
+        // 20の倍数なら、大きな括りを選ぶ menu1 に戻る
         goto?.("menu1");
       } else {
-        // それ以外のレベルだったら…
-        // → 今まで通り、同じグループ内の menu2 に戻る
+        // それ以外なら、今まで通り同じグループ内の menu2 に戻る
         goto?.("menu2");
       }
       return;
     }
-
-
+    // ゲームオーバーやタイムアップの時の処理は、今まで通り
     if (type === "fail") { goto?.("menu3"); return; }
     goto?.("testTitle");
   };
+
   return h("div", { className: "quiz-overlay" },
     h("div", { className: "panel" },
       h("div", { className: "ttl"  }, title),
@@ -185,6 +182,7 @@ function QuizOverlay({ type, goto, onClear }) {
     )
   );
 }
+
 
 // ======================================================
 //  本体コンポーネント
@@ -398,8 +396,14 @@ function QuizOverlay({ type, goto, onClear }) {
       h("div", { className: "meta" }, `${remain} ${t("common.questions")} · ${fmtTime(secs)}`), 
     ),
     h("div", { className: "board" }, ...cells),
+    
     h("button", { className:"backbtn", onClick:()=>props.goto("testTitle")}, "Back"),
-    h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel }),
+    h(QuizOverlay, { // ← 引数が4つになる
+      type: overlay?.type, 
+      goto: props.goto, 
+      onClear: unlockNextLevel,
+      clearedLevel: savedLevel // ←★「クリアしたレベル」を、ここで手渡し！
+    }),
   );
 }
 
