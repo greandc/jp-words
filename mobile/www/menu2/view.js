@@ -5,7 +5,6 @@ import { showMainBanner, destroyBanner } from "../ads.js";
 // ★ 開発中だけ全レベル解放するフラグ（終わったら false or 削除）
 const DEV_FORCE_UNLOCK_ALL = true;
 
-
 export async function render(el, deps = {}) {
    showMainBanner();
   const [a, b] = deps.getRange?.() || [1, 20];
