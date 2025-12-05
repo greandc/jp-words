@@ -2,6 +2,8 @@
 import { t, getLang, setLang } from "../i18n.js";
 import { showMainBanner, destroyBanner } from "../ads.js";
 
+// ★ 開発中だけ全レベル解放するフラグ（終わったら false or 削除）
+const DEV_FORCE_UNLOCK_ALL = true;
 
 export async function render(el, deps = {}) {
    showMainBanner();
@@ -38,7 +40,12 @@ try {
 } catch {}
 
 // このページの範囲に丸めておく（1..20 / 21..40 など）
-const pageMax = Math.min(b, Math.max(a, maxUnlocked));
+let pageMax = Math.min(b, Math.max(a, maxUnlocked));
+
+// ★ 開発モード中は、このページの最大値まで全部解放
+if (DEV_FORCE_UNLOCK_ALL) {
+  pageMax = b;
+}
 
 for (let i = a; i <= b; i++) {
   const btn = document.createElement("button");
