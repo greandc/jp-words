@@ -526,15 +526,22 @@ function wireEvents(){
       // 最大5文字まで
       if (composeChars.length >= MAX_COMPOSE) return;
 
+      const beforeLen = composeChars.length;
+
+      // 文字を追加
       composeChars.push(k);
       updateComposeText();
 
-      // 新しく押した1文字
+      // --- 読み上げロジック ---
+      if (beforeLen === 0) {
+      // ★ 1文字目：押した文字だけ
+       speak(k);
+      } else {
+      // ★ 2文字目以降：押した文字 → 全部 の順
       speak(k);
-
-      // ぜんぶつなげた読み
       const full = composeChars.join("");
       speak(full);
+      }
     };
   });
 
