@@ -2,6 +2,9 @@
 import { t, getLang, setLang } from "../i18n.js";
 import { showMainBanner, destroyBanner } from "../ads.js";
 
+// ★ 開発中だけ全レベルブロックを解放するフラグ（あとで必ず false or 削除）
+const DEV_FORCE_UNLOCK_ALL = true;
+
 // 一度だけ「ひらがなチュートリアル」を出したかどうか（ひらがな画面と同じキー）
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
 
@@ -189,18 +192,27 @@ export async function render(el, deps = {}) {
     if (!locked) b.addEventListener("click", onClick);
     return b;
   };
-  ranges.forEach(([a, b], idx) => {
+    ranges.forEach(([a, b], idx) => {
     const lockedByProgress = idx > unlockedIndex;
-    const locked = tutorialHiraOnly ? true : lockedByProgress;
+
+    // ★ ふつうのロック判定
+    let locked = tutorialHiraOnly ? true : lockedByProgress;
+
+    // ★ 開発モード中は、menu1 も全部解放
+    if (DEV_FORCE_UNLOCK_ALL) {
+      locked = false;
+    }
+
     list.appendChild(
-    mk(`Lv${a}–${b}`, async () => { // ←★ async を追加
-      if (locked) return;
-      await destroyBanner(); // ←★ await を追加
-      deps.setRange?.([a, b]);
-      deps.goto?.("menu2");
-    }, locked)
-  );
-});
+      mk(`Lv${a}–${b}`, async () => {
+        if (locked) return;
+        await destroyBanner();
+        deps.setRange?.([a, b]);
+        deps.goto?.("menu2");
+      }, locked)
+    );
+  });
+
 
   // ひらがなボタンは変数に保持
   const hiraBtn = mk("ひらがな", async() => {
