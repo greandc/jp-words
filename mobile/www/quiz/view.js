@@ -187,11 +187,25 @@ function QuizOverlay({ type, goto, onClear }) {
   const [selL, setSelL] = R.useState(null);
   const [selR, setSelR] = R.useState(null);
   const [overlay, setOverlay] = R.useState(null);
-
+  const [isPaused, setIsPaused] = R.useState(false); // ←★ この一行を追加
+  
+  // ...
   // --- 副作用 (useEffect) & Refs ---
   const refillRef = R.useRef({ cleared:0, armed:false, justMissed: false });
   const timerRef = R.useRef(null);
   const endedRef = R.useRef(false);
+
+  // ★★★↓ここから、新しい「見張り番」を追加します↓★★★
+  R.useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPaused(document.hidden);
+          if (document.hidden) {
+        stop(); // TTS音声も止める
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
   // ライフサイクル：マウント時にゲーム開始、アンマウント時にTTS停止
   R.useEffect(() => {
@@ -272,11 +286,17 @@ function QuizOverlay({ type, goto, onClear }) {
     setRemain(all.length); setHearts(HEARTS);
     setSecs(all.length * readSecPerQuestion());
 
+    // ...
     endedRef.current = false;
     refillRef.current = { cleared:0, armed:false, justMissed: false };
-    timerRef.current = setInterval(() => setSecs(s => s - 1), 1000);
+    timerRef.current = setInterval(() => {
+      // isPaused
+    がtrueの間は何もせずに処理をスキップする
+      if (window.document.hidden) return;
+      setSecs(s => s - 1);
+    }, 1000);
     setUI("playing");
-  };
+  };// ...
 
   const refillRows = (triggeredRowIndex) => {
     const Ls = left.slice();
