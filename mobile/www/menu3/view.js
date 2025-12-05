@@ -1,11 +1,52 @@
 // app/features/menu3/view.js
 import { t, getLang, setLang } from "../i18n.js";
 
+// ★ Practice チュートリアル表示済みフラグ
+const LS_PRACTICE_HINT = "jpVocab.tutorial.practiceHintShown";
+
+function ensureMenu3HintStyle() {
+  if (document.getElementById("menu3-hint-style")) return;
+  const st = document.createElement("style");
+  st.id = "menu3-hint-style";
+  st.textContent = `
+    .menu3-hint {
+      background:#0f172a;
+      color:#e5e7eb;
+      border-radius:12px;
+      padding:10px 12px;
+      margin:0 0 12px;
+      box-shadow:0 10px 25px rgba(15,23,42,.28);
+      font-size:.85rem;
+      line-height:1.5;
+      width:100%;
+      max-width:480px;
+      box-sizing:border-box;
+    }
+    .menu3-hint-title {
+      font-weight:600;
+      margin-bottom:4px;
+      font-size:.9rem;
+    }
+    .menu3-hint-footer {
+      margin-top:6px;
+      text-align:right;
+    }
+    .menu3-hint-footer .btn-mini {
+      font-size:.8rem;
+      padding:.25rem .7rem;
+      border-radius:999px;
+    }
+  `;
+  document.head.appendChild(st);
+}
+
 /**
  * Mode 選択画面（Practice / Test）
  * - 直前に選んだレベルを state / storage から復元
  */
 export async function render(el, deps = {}) {
+  ensureMenu3HintStyle();
+
   // ---- レベル確定（state → storage の順に復元）----
   const ensureLevel = () => {
     let n = deps.level?.(); // state から
@@ -43,70 +84,106 @@ export async function render(el, deps = {}) {
   const div = document.createElement("div");
   div.className = "screen";
   div.innerHTML = `
-  <div style="
-    position:fixed; inset:0;                   /* ← 画面ぜんぶを覆う */
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;/* ← 完全センター */
-    padding:24px 16px; box-sizing:border-box;
-    overflow:hidden;                           /* ← スクロール禁止 */
-  ">
-    <h1 style="text-align:center;margin:0 0 20px;">
-      ${t("level.label", { n: levelNum }) || `${t("level") || "Level"} ${levelNum}`}
-    </h1>
-
     <div style="
-      display:grid; gap:12px;
-      grid-template-columns:1fr;
-      width:100%; max-width:480px;
+      position:fixed; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      padding:24px 16px; box-sizing:border-box;
+      overflow:hidden;
     ">
-      <button class="btn" id="btnPractice">${t("menu3.practice") || "Practice"}</button>
-      <button class="btn" id="btnTest">${t("menu3.test") || "Test"}</button>
-      <button class="btn" id="btnBack">${t("common.back") || "Back"}</button>
-    </div>
-  </div>
-`;
+      <h1 style="text-align:center;margin:0 0 16px;">
+        ${t("level.label", { n: levelNum }) || `${t("level") || "Level"} ${levelNum}`}
+      </h1>
 
+      <!-- Practice ヒント差し込み用スロット -->
+      <div id="menu3-practice-hint-slot" style="width:100%;max-width:480px;"></div>
+
+      <div style="
+        display:grid; gap:12px;
+        grid-template-columns:1fr;
+        width:100%; max-width:480px;
+      ">
+        <button class="btn" id="btnPractice">${t("menu3.practice") || "Practice"}</button>
+        <button class="btn" id="btnTest">${t("menu3.test") || "Test"}</button>
+        <button class="btn" id="btnBack">${t("common.back") || "Back"}</button>
+      </div>
+    </div>
+  `;
 
   el.appendChild(div);
 
+  // ---- Practice ヒント（初回だけ）----
+  (function maybeShowPracticeHint() {
+    try {
+      if (localStorage.getItem(LS_PRACTICE_HINT) === "1") return;
+    } catch {}
+
+    const slot = div.querySelector("#menu3-practice-hint-slot");
+    if (!slot) return;
+
+    const box = document.createElement("div");
+    box.className = "menu3-hint";
+
+    const title =
+      t("tutorial.practiceTitle") || "Tip: Practice before Test";
+    const body =
+      t("tutorial.practiceBody") ||
+      'You can use "Practice" to review this level before starting the Test.';
+
+    box.innerHTML = `
+      <div class="menu3-hint-title">${title}</div>
+      <div>${body}</div>
+      <div class="menu3-hint-footer">
+        <button type="button" class="btn btn-mini" id="menu3PracticeHintOk">
+          ${t("tutorial.ok") || "OK"}
+        </button>
+      </div>
+    `;
+
+    slot.replaceWith(box);
+
+    box.querySelector("#menu3PracticeHintOk")?.addEventListener("click", () => {
+      box.remove();
+      try { localStorage.setItem(LS_PRACTICE_HINT, "1"); } catch {}
+    });
+  })();
+
   // ---- ボタン配線 ----
-  div.querySelector("#btnPractice").addEventListener("click", () => {
+  div.querySelector("#btnPractice")?.addEventListener("click", () => {
     deps.setMode?.("practice");
-    // 念のため現在レベルを保存
-    try { localStorage.setItem("jpVocab.level", String(levelNum)); } catch {}
+    try {
+      localStorage.setItem("jpVocab.level", String(levelNum));
+    } catch {}
     deps.goto?.("practice");
   });
 
-// --- 省略: 先頭の import と画面作成部分はそのまま ---
+  div.querySelector("#btnTest")?.addEventListener("click", () => {
+    // A) localStorage から直読み（あれば優先）
+    let lv = Number(localStorage.getItem("jpVocab.level")) || 0;
 
-div.querySelector("#btnTest").addEventListener("click", () => {
-  // A) まず localStorage から直読み（過去に選んだ値があれば最優先）
-  let levelNum = Number(localStorage.getItem("jpVocab.level")) || 0;
+    // B) 無ければ state から復元
+    if (!lv) {
+      const st = deps.getState?.();
+      const [a] = st?.range || [1, 20]; // 範囲の先頭
+      const set = st?.set || 1;         // セット (1..20)
+      lv = a + (set - 1);
+    }
+    if (!lv) lv = 1;
 
-  // B) 無ければ state から復元（range + set → 絶対レベル）
-  if (!levelNum) {
-    const st  = deps.getState?.();
-    const [a] = st?.range || [1, 20];   // 範囲の先頭 (1,21,41,...)
-    const set = st?.set   || 1;         // セット (1..20)
-    levelNum = a + (set - 1);
-  }
+    // C) 3か所に揃えて保存
+    try {
+      sessionStorage.setItem("selectedLevel", String(lv));
+      localStorage.setItem("jpVocab.currentLevel", String(lv));
+      localStorage.setItem("jpVocab.level", String(lv));
+    } catch {}
 
-  if (!levelNum) levelNum = 1;
+    console.log("[menu3] set level =", lv);
 
-  // C) 3か所に**同じ値**を保存（どこからでも読めるようにする）
-  try {
-    sessionStorage.setItem("selectedLevel", String(levelNum));
-    localStorage.setItem("jpVocab.currentLevel", String(levelNum));
-    localStorage.setItem("jpVocab.level", String(levelNum));
-  } catch {}
+    // D) testTitle へ
+    deps.goto?.("testTitle");
+  });
 
-  console.log("[menu3] set level =", levelNum);
-
-  // D) testTitle へ
-  deps.goto?.("testTitle");
-});
-
-  div.querySelector("#btnBack").addEventListener("click", () => {
+  div.querySelector("#btnBack")?.addEventListener("click", () => {
     deps.goto?.("menu2");
   });
 }
