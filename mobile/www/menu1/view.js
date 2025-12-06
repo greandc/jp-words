@@ -3,7 +3,7 @@ import { t, getLang, setLang } from "../i18n.js";
 import { showMainBanner, destroyBanner } from "../ads.js";
 
 // ★ 開発中だけ全レベルブロックを解放するフラグ（あとで必ず false or 削除）
-const DEV_FORCE_UNLOCK_ALL = true;
+const DEV_FORCE_UNLOCK_ALL = false;
 
 // 一度だけ「ひらがなチュートリアル」を出したかどうか（ひらがな画面と同じキー）
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";

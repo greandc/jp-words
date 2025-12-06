@@ -190,6 +190,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "立即购买",
     "removeAds.restore": "恢复购买",
     "removeAds.note": "购买记录与您的设备/账号绑定。",
+    "tutorial.practiceTitle": "练习模式说明",
+    "tutorial.practiceBody": "请先确认本级的新词 10 个。点击🔊图标可以听日语读音。使用 Prev / Next 在卡片之间移动。没有时间限制。",
+    "tutorial.testTitle": "测试玩法说明",
+    "tutorial.testBody": "将左侧卡片与右侧卡片配对。\n先点左边的一张卡片，然后在右边选择正确的日语。\n每答错一次会失去一颗心。\n关闭本说明后计时器开始计时。",
+    "common.clear": "清除",
     "locked": "已锁定"
   },
 
@@ -248,6 +253,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "구매하기",
     "removeAds.restore": "구매 복원",
     "removeAds.note": "구매 내역은 기기/계정에 연결됩니다.",
+    "tutorial.practiceTitle": "연습 모드 안내",
+    "tutorial.practiceBody": "이 레벨에서 새 단어 10개를 확인하세요. 🔊 아이콘을 탭하면 일본어 발음을 들을 수 있습니다. Prev / Next로 카드 사이를 이동합니다. 시간 제한은 없습니다.",
+    "tutorial.testTitle": "테스트 이용 방법",
+    "tutorial.testBody": "왼쪽 카드와 오른쪽 카드를 짝지으세요.\n먼저 왼쪽 카드 하나를 탭한 뒤, 오른쪽에서 알맞은 일본어를 고르세요.\n틀릴 때마다 하트가 하나 줄어듭니다.\n이 안내를 닫으면 타이머가 시작됩니다.",
+    "common.clear": "지우기",
     "locked": "잠김"
   },
 
@@ -306,6 +316,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Mua ngay",
     "removeAds.restore": "Khôi phục mua hàng",
     "removeAds.note": "Mua hàng được liên kết với thiết bị/tài khoản của bạn.",
+    "tutorial.practiceTitle": "Giới thiệu chế độ Luyện tập",
+    "tutorial.practiceBody": "Hãy xem 10 từ mới của cấp độ này. Chạm vào biểu tượng 🔊 để nghe cách đọc tiếng Nhật. Dùng nút Prev / Next để chuyển giữa các thẻ. Không có giới hạn thời gian.",
+    "tutorial.testTitle": "Cách làm bài Test",
+    "tutorial.testBody": "Ghép thẻ bên trái với thẻ bên phải.\nTrước tiên chạm một thẻ ở bên trái, sau đó chọn tiếng Nhật đúng ở bên phải.\nMỗi lần trả lời sai bạn sẽ mất một tim.\nBộ đếm thời gian bắt đầu sau khi đóng hướng dẫn này.",
+    "common.clear": "Xóa",
     "locked": "Đã khóa"
   },
 
@@ -365,6 +380,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Comprar ahora",
     "removeAds.restore": "Restaurar compra",
     "removeAds.note": "Las compras están vinculadas a tu dispositivo/cuenta.",
+    "tutorial.practiceTitle": "Acerca del modo Práctica",
+    "tutorial.practiceBody": "Revisa las 10 palabras nuevas de este nivel. Toca el ícono 🔊 para escuchar la lectura en japonés. Usa Prev / Next para moverte entre las tarjetas. No hay límite de tiempo.",
+    "tutorial.testTitle": "Cómo jugar el Test",
+    "tutorial.testBody": "Empareja las tarjetas de la izquierda con las de la derecha.\nPrimero toca una tarjeta de la izquierda y luego elige el japonés correcto a la derecha.\nPierdes un corazón por cada error.\nEl temporizador comienza después de cerrar esta guía.",
+    "common.clear": "Borrar",
     "locked": "Bloqueado"
   },
 
@@ -423,6 +443,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Acheter",
     "removeAds.restore": "Restaurer l'achat",
     "removeAds.note": "Les achats sont liés à votre appareil/compte.",
+    "tutorial.practiceTitle": "À propos du mode Entraînement",
+    "tutorial.practiceBody": "Vérifiez les 10 nouveaux mots de ce niveau. Touchez l’icône 🔊 pour entendre la lecture en japonais. Utilisez Prev / Next pour passer d’une carte à l’autre. Il n’y a pas de limite de temps.",
+    "tutorial.testTitle": "Comment jouer au Test",
+    "tutorial.testBody": "Associez les cartes de gauche avec celles de droite.\nTouchez d’abord une carte à gauche, puis choisissez le japonais correct à droite.\nVous perdez un cœur à chaque erreur.\nLe minuteur démarre après la fermeture de ce guide.",
+    "common.clear": "Effacer",
     "locked": "Verrouillé"
   },
 
@@ -481,6 +506,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Jetzt kaufen",
     "removeAds.restore": "Kauf wiederherstellen",
     "removeAds.note": "Käufe sind mit deinem Gerät/Konto verknüpft.",
+    "tutorial.practiceTitle": "Über den Übungsmodus",
+    "tutorial.practiceBody": "Sieh dir die 10 neuen Wörter für dieses Level an. Tippe auf das 🔊-Symbol, um die japanische Aussprache zu hören. Benutze Prev / Next, um zwischen den Karten zu wechseln. Es gibt kein Zeitlimit.",
+    "tutorial.testTitle": "So spielst du den Test",
+    "tutorial.testBody": "Bringe die Karten auf der linken und rechten Seite zusammen.\nTippe zuerst eine Karte links an und wähle dann das richtige Japanisch rechts.\nFür jeden Fehler verlierst du ein Herz.\nDer Timer startet, nachdem du diese Anleitung geschlossen hast.",
+    "common.clear": "Löschen",
     "locked": "Gesperrt"
   },
 
@@ -539,6 +569,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Acquista ora",
     "removeAds.restore": "Ripristina acquisto",
     "removeAds.note": "Gli acquisti sono collegati al tuo dispositivo/account.",
+    "tutorial.practiceTitle": "Informazioni sulla modalità Practice",
+    "tutorial.practiceBody": "Controlla le 10 nuove parole di questo livello. Tocca l’icona 🔊 per ascoltare la lettura in giapponese. Usa Prev / Next per spostarti tra le carte. Non c’è limite di tempo.",
+    "tutorial.testTitle": "Come giocare al Test",
+    "tutorial.testBody": "Abbina le carte di sinistra con quelle di destra.\nPer prima cosa tocca una carta a sinistra, poi scegli il giapponese corretto a destra.\nPer ogni errore perdi un cuore.\nIl timer inizia dopo la chiusura di questa guida.",
+    "common.clear": "Cancella",
     "locked": "Bloccato"
   },
 
@@ -597,6 +632,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Comprar agora",
     "removeAds.restore": "Restaurar compra",
     "removeAds.note": "As compras estão vinculadas ao seu dispositivo/conta.",
+    "tutorial.practiceTitle": "Sobre o modo Prática",
+    "tutorial.practiceBody": "Veja as 10 novas palavras deste nível. Toque no ícone 🔊 para ouvir a leitura em japonês. Use Prev / Next para alternar entre os cartões. Não há limite de tempo.",
+    "tutorial.testTitle": "Como jogar o Teste",
+    "tutorial.testBody": "Associe as cartas do lado esquerdo com as do lado direito.\nPrimeiro toque em uma carta à esquerda e depois escolha o japonês correto à direita.\nVocê perde um coração a cada erro.\nO cronômetro começa após fechar este guia.",
+    "common.clear": "Limpar",
     "locked": "Bloqueado"
   },
 
@@ -656,6 +696,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Beli sekarang",
     "removeAds.restore": "Pulihkan pembelian",
     "removeAds.note": "Pembelian terkait dengan perangkat/akun Anda.",
+    "tutorial.practiceTitle": "Tentang mode Latihan",
+    "tutorial.practiceBody": "Periksa 10 kosakata baru di level ini. Ketuk ikon 🔊 untuk mendengar bacaan bahasa Jepangnya. Gunakan tombol Prev / Next untuk berpindah antar kartu. Tidak ada batas waktu.",
+    "tutorial.testTitle": "Cara bermain Tes",
+    "tutorial.testBody": "Pasangkan kartu di sisi kiri dan kanan.\nPertama ketuk satu kartu di kiri, lalu pilih bahasa Jepang yang benar di kanan.\nSetiap kesalahan akan mengurangi satu hati.\nTimer mulai berjalan setelah Anda menutup panduan ini.",
+    "common.clear": "Hapus",
     "locked": "Terkunci"
   },
 
@@ -714,6 +759,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Bumili ngayon",
     "removeAds.restore": "Ibalik ang pagbili",
     "removeAds.note": "Ang mga pagbili ay naka-link sa iyong device/account.",
+    "tutorial.practiceTitle": "Tungkol sa Practice mode",
+    "tutorial.practiceBody": "Suriin ang 10 bagong salita para sa level na ito. I-tap ang 🔊 icon para marinig ang pagbasa sa Japanese. Gamitin ang Prev / Next para lumipat sa mga card. Walang time limit.",
+    "tutorial.testTitle": "Paano laruin ang Test",
+    "tutorial.testBody": "Ipares ang mga card sa kaliwa at kanan.\nUna, i-tap ang isang card sa kaliwa, tapos piliin ang tamang Japanese sa kanan.\nMawawala ang isang puso sa bawat maling sagot.\nMagsisimula ang timer kapag isinara mo ang gabay na ito.",
+    "common.clear": "Burahin",
     "locked": "Naka-lock"
   },
 
@@ -772,6 +822,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "ซื้อเลย",
     "removeAds.restore": "กู้คืนการซื้อ",
     "removeAds.note": "การซื้อจะเชื่อมกับอุปกรณ์/บัญชีของคุณ.",
+    "tutorial.practiceTitle": "เกี่ยวกับโหมดฝึกหัด",
+    "tutorial.practiceBody": "ตรวจดูคำศัพท์ใหม่ 10 คำของเลเวลนี้ แตะไอคอน 🔊 เพื่อฟังการอ่านภาษาญี่ปุ่น ใช้ปุ่ม Prev / Next เพื่อเลื่อนดูการ์ด ไม่มีการจำกัดเวลา",
+    "tutorial.testTitle": "วิธีทำแบบทดสอบ",
+    "tutorial.testBody": "จับคู่การ์ดด้านซ้ายกับการ์ดด้านขวา\nแตะการ์ดด้านซ้ายก่อน จากนั้นเลือกภาษาญี่ปุ่นที่ถูกต้องทางด้านขวา\nตอบผิดหนึ่งครั้ง หัวใจจะหายไปหนึ่งดวง\nตัวจับเวลาจะเริ่มหลังจากปิดหน้าคำแนะนำนี้",
+    "common.clear": "ล้าง",
     "locked": "ถูกล็อก"
   },
 
@@ -830,6 +885,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "Купить",
     "removeAds.restore": "Восстановить покупку",
     "removeAds.note": "Покупки привязаны к вашему устройству/аккаунту.",
+    "tutorial.practiceTitle": "О режиме «Practice»",
+    "tutorial.practiceBody": "Посмотрите 10 новых слов этого уровня. Нажмите значок 🔊, чтобы услышать японское чтение. Используйте Prev / Next, чтобы переходить между карточками. Ограничения по времени нет.",
+    "tutorial.testTitle": "Как проходить тест",
+    "tutorial.testBody": "Соединяйте карточки слева и справа.\nСначала нажмите карточку слева, затем выберите правильный японский вариант справа.\nЗа каждую ошибку вы теряете одно сердце.\nТаймер запускается после закрытия этой подсказки.",
+    "common.clear": "Стереть",
     "locked": "Заблокировано"
   },
 
@@ -888,6 +948,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "अभी खरीदें",
     "removeAds.restore": "खरीद पुनर्स्थापित करें",
     "removeAds.note": "खरीद आपके उपकरण/खाते से जुड़ी होती है।",
+    "tutorial.practiceTitle": "Practice मोड के बारे में",
+    "tutorial.practiceBody": "इस स्तर के 10 नए शब्द देख लें। जापानी उच्चारण सुनने के लिए 🔊 आइकन पर टैप करें। कार्ड बदलने के लिए Prev / Next का उपयोग करें। कोई समय सीमा नहीं है।",
+    "tutorial.testTitle": "Test कैसे खेलें",
+    "tutorial.testBody": "बाएँ और दाएँ पक्ष की कार्डों को मिलाएँ。\nपहले बाएँ तरफ की एक कार्ड पर टैप करें, फिर दाएँ तरफ सही जापानी चुनें。\nहर गलती पर एक दिल कम हो जाता है。\nयह गाइड बंद करने के बाद टाइमर शुरू होता है।",
+    "common.clear": "साफ करें",
     "locked": "लॉक किया गया"
   },
 
@@ -946,6 +1011,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "ទិញឥឡូវនេះ",
     "removeAds.restore": "ស្ដារការទិញ",
     "removeAds.note": "ការទិញត្រូវបានភ្ជាប់ជាមួយឧបករណ៍/គណនីរបស់អ្នក។",
+    "tutorial.practiceTitle": "អំពីរបៀបហាត់ (Practice Mode)",
+    "tutorial.practiceBody": "ពិនិត្យមើលពាក្យថ្មី 10 ពាក្យសម្រាប់កម្រិតនេះ។ ចុចរូបសញ្ញា 🔊 ដើម្បីស្តាប់ការអានជាភាសាជប៉ុន។ ប្រើ Prev / Next ដើម្បីផ្លាស់ប្តូររវាងកាត។ គ្មានកំណត់ពេលវេលា។",
+    "tutorial.testTitle": "របៀបលេងតេស្ត",
+    "tutorial.testBody": "ផ្គូរផ្គង់កាតខាងឆ្វេងជាមួយកាតខាងស្តាំ។\nជាមុនសិន ចុចកាតមួយនៅខាងឆ្វេង បន្ទាប់មកជ្រើសភាសាជប៉ុនត្រឹមត្រូវនៅខាងស្តាំ។\nរាល់ពេលខុស អ្នកនឹងបាត់បង់បេះដូងមួយ។\nម៉ោងរាប់ពេលនឹងចាប់ផ្តើមបន្ទាប់ពីបិទសេចក្តីណែនាំនេះ។",
+    "common.clear": "លុប",
     "locked": "បានចាក់សោ"
   },
 
@@ -1004,6 +1074,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "ຊື້ດຽວນີ້",
     "removeAds.restore": "ກູ້ຄືນການຊື້",
     "removeAds.note": "ການຊື້ຖືກເຊື່ອມກັບອຸປະກອນ/ບັນຊີຂອງທ່ານ.",
+    "tutorial.practiceTitle": "ກ່ຽວກັບໂໝດຝຶກ (Practice)",
+    "tutorial.practiceBody": "ກວດເບິ່ງຄໍາສັບໃໝ່ 10 ຄໍາຂອງລະດັບນີ້. ກົດທີ່ໄອຄອນ 🔊 ເພື່ອຟັງການອ່ານພາສາຍີ່ປຸ່ນ. ໃຊ້ Prev / Next ເພື່ອປ່ຽນລະຫວ່າງກາດ. ບໍ່ມີກໍານົດເວລາ.",
+    "tutorial.testTitle": "ວິທີເຮັດ Test",
+    "tutorial.testBody": "ຈັບຄູ່ກາດດ້ານຊ້າຍກັບກາດດ້ານຂວາ.\nກ່ອນອື່ນ ກົດກາດໜຶ່ງໃນດ້ານຊ້າຍ ແລ້ວເລືອກຄໍາພາສາຍີ່ປຸ່ນທີ່ຖືກຕ້ອງທາງດ້ານຂວາ.\nທຸກຄັ້ງທີ່ຕອບຜິດ ຈະເສຍຫົວໃຈ 1 ດວງ.\nເວລານັບຖອຍຈະເລີ່ມຫຼັງຈາກປິດຄຳແນະນຳນີ້.",
+    "common.clear": "ລ້າງ",
     "locked": "ຖືກລັອກ"
   },
 
@@ -1062,6 +1137,11 @@ export const MESSAGES = {
     "removeAds.purchaseBtn": "अहिले खरिद गर्नुहोस्",
     "removeAds.restore": "खरिद पुनर्स्थापना गर्नुहोस्",
     "removeAds.note": "खरिदहरू तपाईंको उपकरण/खातासँग जोडिएका छन्।",
+    "tutorial.practiceTitle": "Practice मोड बारे",
+    "tutorial.practiceBody": "यस स्तरका १० नयाँ शब्दहरू जाँच्नुहोस्। जापानी उच्चारण सुन्नका लागि 🔊 आइकनमा ट्याप गर्नुहोस्। कार्डहरू बीच सर्न Prev / Next प्रयोग गर्नुहोस्। कुनै समय सीमा छैन।",
+    "tutorial.testTitle": "Test कसरी खेल्ने",
+    "tutorial.testBody": "देब्रे र दाहिने दुवैपट्टि भएका कार्डहरू मिलाउनुहोस्。\nपहिले देब्रेपट्टि एउटा कार्ड ट्याप गर्नुहोस्, त्यसपछि दाहिनेपट्टि सही जापानी छान्नुहोस्。\nहरेक गल्तीमा एउटा हृदय कम हुन्छ。\nयो गाइड बन्द गरेपछि टाइमर सुरु हुन्छ।",
+    "common.clear": "खाली गर्नुहोस्",
     "locked": "लक गरिएको"
   }
 };

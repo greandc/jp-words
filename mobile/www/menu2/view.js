@@ -3,7 +3,7 @@ import { t, getLang, setLang } from "../i18n.js";
 import { showMainBanner, destroyBanner } from "../ads.js";
 
 // ★ 開発中だけ全レベル解放するフラグ（終わったら false or 削除）
-const DEV_FORCE_UNLOCK_ALL = true;
+const DEV_FORCE_UNLOCK_ALL = false;
 
 export async function render(el, deps = {}) {
    showMainBanner();
