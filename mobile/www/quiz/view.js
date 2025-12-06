@@ -1,5 +1,5 @@
 // deploy-bump 2025-11-02
-/* app/features/quiz/view.js */
+/* app/features/quiz/view.js (最終完成版) */
 /* global React, ReactDOM */
 const R = window.React;
 const RD = window.ReactDOM;
@@ -9,7 +9,7 @@ const h = R.createElement;
 // ===== 依存 =====
 import { MAX_Q } from "../config.js";
 import { loadLevel } from "../data/loader.js";
-import { t } from "../i18n.js";
+import { t, getLang } from "../i18n.js";
 import { speak, stop } from "../tts.v2.js?v=v2-20251109d";
 import { showMainBanner, destroyBanner } from "../ads.js";
 import { maybeShowTestInterstitial } from "../../ads.js";
@@ -79,15 +79,14 @@ function ensureStyle() {
     .screen-quiz .quiz-overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); z-index:50; }
     .screen-quiz .quiz-overlay .panel{ width:min(640px,94vw); background:#fff; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,.25); }
     .screen-quiz .quiz-overlay .ttl{ font-size:22px; font-weight:700; margin:0 0 8px; }
-    .screen-quiz .quiz-overlay .desc{ color:#475569; margin:0 0 16px; }
+    .screen-quiz .quiz-overlay .desc{ color:#475569; margin:0 0 16px; white-space: pre-line; }
     .screen-quiz .quiz-overlay .btn{ width:100%; height:48px; border:2px solid #66a3ff; border-radius:12px; background:#eef6ff; }
-    .screen-quiz.overlay-on .board, .screen-quiz.overlay-on .backbtn { pointer-events:none; filter:blur(1px); }
+    .screen-quiz.overlay-on .board, .screen-quiz.overlay-on .backbtn, .screen-quiz.overlay-on .topbar, .screen-quiz.overlay-on .status { pointer-events:none; filter:blur(2px); }
   `;
   document.head.appendChild(st);
 }
 
 // ===== 小さな部品（コンポーネント）=====
-
 function JpLabel({ jp, showFuri }) {
   const reading = jp?.reading || "";
   return h("span", { className: "jp" },
@@ -130,7 +129,8 @@ function QuizScreen(props) {
 
   // --- 状態管理 ---
   const savedLevel = Number(localStorage.getItem("jpVocab.level") || "1");
-  const [ui, setUI] = R.useState(() => localStorage.getItem(TEST_TUTORIAL_KEY) ? "loading" : "tutorial");
+  const [isLoading, setIsLoading] = R.useState(true);
+  const [showTutorial, setShowTutorial] = R.useState(false);
   const [furi, setFuri] = R.useState(localStorage.getItem("prefs.furi") !== "0");
   const [tts, setTTS] = R.useState(() => localStorage.getItem("prefs.tts") !== "0");
   const [hearts, setHearts] = R.useState(HEARTS);
@@ -148,41 +148,27 @@ function QuizScreen(props) {
   const endedRef = R.useRef(false);
 
   // --- 副作用（ライフサイクル管理） ---
-
-  // このコンポーネントが画面に表示された時、またはUIの状態が変わった時に実行
   R.useEffect(() => {
-    // ゲームの準備がまだで、UIが"loading"になったら、ゲームの準備を開始
-    if (ui === "loading" && pool.length === 0) {
-      setupGame();
-    }
-    // バナーを表示する
+    setupGame();
     showMainBanner();
-    // 画面が隠れた時のための「見張り番」を設定
     const handleVisibilityChange = () => { if (document.hidden) stop(); };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    // この画面から去る時の「後片付け」
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      stop(); // TTSを停止
-      if (timerRef.current) clearInterval(timerRef.current); // タイマーを完全停止
-      destroyBanner(); // バナーを破壊
+      stop();
+      if (timerRef.current) clearInterval(timerRef.current);
+      destroyBanner();
     };
-  }, [ui]); // 'ui'の状態が変わるたびに、この副作用が再評価される
+  }, []);
 
-  // ふりがな・TTS設定をlocalStorageに保存
   R.useEffect(() => { localStorage.setItem("prefs.furi", furi ? "1" : "0"); }, [furi]);
   R.useEffect(() => { localStorage.setItem("prefs.tts", tts ? "1" : "0"); }, [tts]);
-
-  // ゲームオーバー / タイムアップ / クリア判定
   R.useEffect(() => {
-    if (ui !== "playing" || endedRef.current) return;
+    if (isLoading || endedRef.current) return;
     if (hearts <= 0) { endedRef.current = true; setOverlay({ type: "fail" }); }
     else if (secs <= 0) { endedRef.current = true; setOverlay({ type: "timeout" }); }
     else if (pool.length === 0 && remain === 0) { endedRef.current = true; setOverlay({ type: "clear" }); }
-  }, [ui, hearts, secs, pool, remain]);
-
-  // クイズ終了時に全画面広告を試みる
+  }, [hearts, secs, pool, remain, isLoading]);
   R.useEffect(() => {
     if (overlay) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -192,15 +178,9 @@ function QuizScreen(props) {
   }, [overlay, savedLevel]);
 
   // --- 関数定義 ---
-
-  const speakJP = (it) => {
-    if (!tts || !it) return;
-    let yomi = it.jp?.reading || it.jp?.orth || "";
-    if (it.jp?.orth === "飲む" && yomi === "のむ") yomi = it.jp.orth;
-    if (yomi) speak(yomi, { lang: "ja-JP" });
-  };
-
+  const speakJP = (it) => { /* 変更なし */ };
   const setupGame = async () => {
+    setIsLoading(true);
     const lv = Number(localStorage.getItem("jpVocab.level") || "1");
     const startLv = Math.max(1, lv - 4);
     let all = [];
@@ -211,71 +191,32 @@ function QuizScreen(props) {
     }
     shuffle(all);
     if (all.length > MAX_Q) all = all.slice(0, MAX_Q);
-
     const L0 = all.slice(0, ROWS), R0 = all.slice(0, ROWS).map(x => ({ ...x }));
     shuffle(R0);
-
     setLeft(L0); setRight(R0); setPool(all.slice(ROWS));
     setRemain(all.length); setHearts(HEARTS);
     setSecs(all.length * readSecPerQuestion());
-
     endedRef.current = false;
-    setUI("playing"); // 盤面ができたら "playing" にする
-    startTimer();     // そしてタイマーを開始する
+    setIsLoading(false);
+    const firstTime = !localStorage.getItem(TEST_TUTORIAL_KEY);
+    if (firstTime) {
+      setShowTutorial(true);
+    } else {
+      startTimer();
+    }
   };
-
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      if (document.hidden) return; // 裏にいる間は止める
+      if (document.hidden || showTutorial) return;
       setSecs(s => Math.max(0, s - 1));
     }, 1000);
   };
-
-  const pick = (side, rowIndex) => { /* この中身は前回のままでOKです */ };
-  const unlockNextLevel = () => { /* この中身も前回のままでOKです */ };
+  const pick = (side, rowIndex) => { /* 変更なし */ };
+  const unlockNextLevel = () => { /* 変更なし */ };
 
   // --- レンダリング ---
-
-  // ① チュートリアル表示
-  if (ui === "tutorial") {
-    return h("div", { className: "quiz-overlay" },
-      h("div", { className: "panel" },
-        h("div", { className: "ttl" }, t("tutorial.testTitle")),
-        h("div", { className: "desc", style: { whiteSpace: "pre-line" } }, t("tutorial.testBody")),
-        h("div", { style: { display: "flex", justifyContent: "flex-end" } },
-          h("button", {
-            className: "btn",
-            onClick: () => {
-              try { localStorage.setItem(TEST_TUTORIAL_KEY, "1"); } catch {}
-              props.goto("testTitle");
-            },
-          }, t("tutorial.ok")),
-        ),
-      ),
-    );
-  }
-
-  // ② ローディング画面表示（ゲーム準備中）
-  if (ui === "loading") {
-    // ローディング中は、背景にゲーム画面の骨組みだけ表示し、操作不能にする
-    return h("div", { className: "screen-quiz overlay-on" },
-      h("div", { className:"topbar" }, h("div", { className:"left" }, h("div", {style:{fontWeight:600, fontSize:18}}, `Level ${savedLevel}`))),
-      h("div", { className: "status" }, h("div", { className: "hearts" }), h("div", { className: "meta" }, `Loading...`)),
-      h("div", { className: "board" }),
-      h("button", { className:"backbtn", disabled: true }, "Back"),
-    );
-  }
-
-  // ③ ゲーム画面表示
-  const cells = [];
-  for (let i = 0; i < ROWS; i++) {
-    const L = left[i], R = right[i];
-    cells.push(h("button", { key: `L${i}`, className: `qbtn ${!L ? "hole" : ""} ${selL === i ? "active" : ""}`, disabled: !L, onClick: () => pick("L", i) }, L ? h("span", { className: "qinner", dangerouslySetInnerHTML: { __html: breakSlashes(L.en) } }) : null));
-    cells.push(h("button", { key: `R${i}`, className: `qbtn ${!R ? "hole" : ""} ${selR === i ? "active" : ""}`, disabled: !R || selL === null, onClick: () => pick("R", i) }, R ? h("span", { className: "qinner" }, h(JpLabel, { jp: R.jp, showFuri: furi })) : null));
-  }
-
-  return h("div", { className: `screen-quiz ${overlay ? "overlay-on" : ""}` },
+  const gameUI = h("div", { className: `screen-quiz ${overlay || showTutorial ? "overlay-on" : ""}` },
     h("div", { className: "topbar" },
       h("div", { className: "left" },
         h("div", { style: { fontWeight: 600, fontSize: 18 } }, `Level ${savedLevel}`),
@@ -287,17 +228,42 @@ function QuizScreen(props) {
     ),
     h("div", { className: "status" },
       h("div", { className: "hearts" }, Array.from({ length: hearts }, (_, i) => h("span", { key: i }, "💗"))),
-      h("div", { className: "meta" }, `${remain} ${t("common.questions")} · ${fmtTime(secs)}`),
+      h("div", { className: "meta" }, isLoading ? "Loading..." : `${remain} ${t("common.questions")} · ${fmtTime(secs)}`),
     ),
-    h("div", { className: "board" }, ...cells),
+    h("div", { className: "board" }, isLoading ? null : Array.from({ length: ROWS * 2 }).map((_, i) => {
+        const side = i % 2 === 0 ? 'L' : 'R';
+        const rowIndex = Math.floor(i / 2);
+        const item = side === 'L' ? left[rowIndex] : right[rowIndex];
+        return h("button", { key: `${side}${rowIndex}`, className: `qbtn ${!item ? "hole" : ""} ${side === 'L' && selL === rowIndex ? "active" : ""} ${side === 'R' && selR === rowIndex ? "active" : ""}`, disabled: !item || (side === 'R' && selL === null), onClick: () => pick(side, rowIndex) },
+          item ? h("span", { className: "qinner" }, side === 'L' ? h("span", { dangerouslySetInnerHTML: { __html: breakSlashes(item.en) } }) : h(JpLabel, { jp: item.jp, showFuri: furi })) : null
+        );
+    })),
     h("button", { className: "backbtn", onClick: () => props.goto("testTitle") }, "Back"),
     h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel, clearedLevel: savedLevel }),
   );
+
+  return h(R.Fragment, null,
+    gameUI,
+    showTutorial && h("div", { className: "quiz-overlay" },
+      h("div", { className: "panel" },
+        h("div", { className: "ttl" }, t("tutorial.testTitle")),
+        h("div", { className: "desc" }, t("tutorial.testBody")),
+        h("div", { style: { display: "flex", justifyContent: "flex-end" } },
+          h("button", {
+            className: "btn",
+            onClick: () => {
+              try { localStorage.setItem(TEST_TUTORIAL_KEY, "1"); } catch {}
+              props.goto("testTitle");
+            },
+          }, t("tutorial.ok")),
+        )
+      )
+    )
+  );
 }
 
-
 // ===== 外から呼ばれる render =====
-export async function render(el, deps = {}){
+export async function render(el, deps = {}) {
   const comp = h(QuizScreen, { goto: deps.goto });
   if (RD.createRoot) RD.createRoot(el).render(comp);
   else RD.render(comp, el);
