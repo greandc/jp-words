@@ -1,9 +1,9 @@
-// deploy-bump2025-11-02
+// deploy-bump 2025-11-02
 /* app/features/quiz/view.js (最終完成版) */
 /* global React, ReactDOM */
 const R = window.React;
 const RD = window.ReactDOM;
-if (!R || !RD) throw new Error("React/ReactDOM が読み込まれていません");
+if (!R ||!RD) throw new Error("React/ReactDOM が読み込まれていません");
 const h = R.createElement;
 
 // ===== 依存 =====
@@ -51,6 +51,10 @@ function shuffle(arr) {
   return arr;
 }
 
+function boardEmpty(L, R) {
+  return Array.isArray(L) && Array.isArray(R) && L.every(v => v == null) && R.every(v => v == null);
+}
+
 // ===== スタイル定義 =====
 function ensureStyle() {
   if (document.querySelector('style[data-quiz-style="1"]')) return;
@@ -87,8 +91,39 @@ function ensureStyle() {
 }
 
 // ===== 小さな部品（コンポーネント）=====
-function JpLabel({ jp, showFuri }) { /* 省略（変更なし） */ }
-function QuizOverlay({ type, goto, onClear, clearedLevel }) { /* 省略（変更なし） */ }
+function JpLabel({ jp, showFuri }) {
+  const reading = jp?.reading || "";
+  return h("span", { className: "jp" },
+    (showFuri && reading) ? h("span", { className: "furi" }, reading) : null,
+    h("span", { className: "orth" }, jp?.orth || "　")
+  );
+}
+
+function QuizOverlay({ type, goto, onClear, clearedLevel }) {
+  if (!type) return null;
+  const title = type === "clear" ? t("result.clearTitle") : type === "fail" ? t("result.failTitle") : t("result.timeoutTitle");
+  const desc = type === "clear" ? t("result.clearDesc") : type === "fail" ? t("result.failDesc") : t("result.timeoutDesc");
+  const onPrimary = () => {
+    if (type === "clear") {
+      onClear?.();
+      if (clearedLevel > 0 && clearedLevel % 20 === 0) {
+        goto?.("menu1");
+      } else {
+        goto?.("menu2");
+      }
+      return;
+    }
+    if (type === "fail") { goto?.("menu3"); return; }
+    goto?.("testTitle");
+  };
+  return h("div", { className: "quiz-overlay" },
+    h("div", { className: "panel" },
+      h("div", { className: "ttl" }, title),
+      h("div", { className: "desc" }, desc),
+      h("button", { className: "btn", onClick: onPrimary }, type === "clear" ? t("result.nextLevel") : t("result.returnMenu")),
+    )
+  );
+}
 
 // ======================================================
 //  本体コンポーネント（最終完成版）
@@ -147,7 +182,13 @@ function QuizScreen(props) {
   }, [overlay, savedLevel]);
 
   // --- 関数定義 ---
-  const speakJP = (it) => { /* 省略（変更なし） */ };
+  const speakJP = (it) => {
+    if (!tts || !it) return;
+    let yomi = it.jp?.reading || it.jp?.orth || "";
+    if (it.jp?.orth === "飲む" && yomi === "のむ") yomi = it.jp.orth;
+    if (yomi) speak(yomi, { lang: "ja-JP" });
+  };
+
   const setupGame = async () => {
     setIsLoading(true);
     const lv = Number(localStorage.getItem("jpVocab.level") || "1");
@@ -185,8 +226,66 @@ function QuizScreen(props) {
       setSecs(s => Math.max(0, s - 1));
     }, 1000);
   };
-  const pick = (side, rowIndex) => { /* 省略（変更なし） */ };
-  const unlockNextLevel = () => { /* 省略（変更なし） */ };
+  const pick = (side, rowIndex) => {
+    if (refillRef.current.armed && side === "L") return refillRows(rowIndex);
+    if (side === "R" && selL === null) return;
+    if (side === "L") return setSelL(rowIndex);
+
+    setSelR(rowIndex);
+    const L = left[selL], R = right[rowIndex];
+    if (!L || !R) return setSelL(null);
+
+    if (L.id === R.id) {
+      speakJP(R);
+      const nl = left.slice(), nr = right.slice();
+      nl[selL] = null, nr[rowIndex] = null;
+      setLeft(nl); setRight(nr); setSelL(null); setSelR(null);
+      const newRemain = remain - 1;
+      setRemain(newRemain);
+      if (pool.length === 0 && newRemain === 0 && !endedRef.current) {
+        endedRef.current = true;
+        setOverlay({ type: "clear" });
+        return;
+      }
+      const newCleared = (refillRef.current.cleared || 0) + 1;
+      refillRef.current.cleared = newCleared;
+      if (newCleared >= 2) refillRef.current.armed = true;
+    } else {
+      if (refillRef.current.justMissed) return;
+      refillRef.current.justMissed = true;
+      setHearts(h => h - 1);
+      setTimeout(() => {
+        setSelL(null); setSelR(null);
+        refillRef.current.justMissed = false;
+      }, 300);
+    }
+  };
+  const refillRows = (triggeredRowIndex) => {
+    const Ls = left.slice();
+    const holes = [];
+    for (let i = 0; i < ROWS; i++) if (!Ls[i]) holes.push(i);
+    if (holes.length === 0) return;
+    const take = Math.min(holes.length, pool.length);
+    const add  = pool.slice(0, take);
+    const rest = pool.slice(take);
+    for (let k = 0; k < take; k++) Ls[holes[k]] = add[k];
+    const Rs = Ls.map(x => (x ? { ...x } : null));
+    shuffle(Rs);
+    setLeft(Ls); setRight(Rs); setPool(rest);
+    refillRef.current = { cleared:0, armed:false, justMissed: false };
+    setSelL(triggeredRowIndex); setSelR(null);
+  };
+  const unlockNextLevel = () => {
+    try {
+      const cur = Number(localStorage.getItem("jpVocab.level") || "1");
+      const prev = Number(localStorage.getItem("jpVocab.progress.highestCleared") || "0");
+      if (cur > prev) localStorage.setItem("jpVocab.progress.highestCleared", String(cur));
+      const next = Math.min(100, cur + 1);
+      localStorage.setItem("jpVocab.currentLevel", String(next));
+      localStorage.setItem("jpVocab.level", String(next));
+    } catch {}
+  };
+
 
   // --- レンダリング ---
   
