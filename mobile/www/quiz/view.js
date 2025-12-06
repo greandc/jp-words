@@ -6,6 +6,8 @@ const RD = window.ReactDOM;
 if (!R || !RD) throw new Error("React/ReactDOM が読み込まれていません");
 const h  = R.createElement;
 const TEST_TUTORIAL_KEY = "jpVocab.tutorial.testHintShown";
+const LS_TEST_TUTORIAL = "jpVocab.tutorial.testShown";
+
 
 // ===== 依存 =====
 import { MAX_Q }   from "../config.js";
@@ -182,6 +184,59 @@ function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数に
     )
   );
 }
+function showTestTutorialOverlay(onOk) {
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.35);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 9999;
+  `;
+
+  const box = document.createElement("div");
+  box.style.cssText = `
+    max-width: 520px;
+    width: calc(100% - 32px);
+    margin-bottom: 40px;
+    background: #0f172a;
+    color: #f9fafb;
+    border-radius: 18px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 10px 25px rgba(15,23,42,0.35);
+  `;
+  box.innerHTML = `
+    <div style="font-weight:600;margin-bottom:6px;font-size:1rem;">
+      ${t("tutorial.testTitle") || "How to play the test"}
+    </div>
+    <div style="font-size:.9rem;line-height:1.5;margin-bottom:10px;">
+      ${t("tutorial.testBody") ||
+        "First tap a card on the left, then tap the matching Japanese card on the right. You can turn off furigana and TTS at the top."}
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+      <button class="btn" id="testTutOk"
+              style="min-width:84px;padding:.35rem .9rem;">
+        ${t("tutorial.ok") || "OK"}
+      </button>
+    </div>
+  `;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.remove();
+    onOk && onOk();
+  };
+
+  overlay.querySelector("#testTutOk")?.addEventListener("click", close);
+  overlay.addEventListener("click", (ev) => {
+    if (ev.target === overlay) close();
+  });
+}
+
 
 
 // ======================================================
@@ -223,24 +278,41 @@ function QuizOverlay({ type, goto, onClear, clearedLevel }) { // ←★引数に
   const endedRef = R.useRef(false);
 
   // ライフサイクル：ui が "playing" になったときにゲーム開始
-  R.useEffect(() => {
-  if (ui !== "playing") return;  // ← チュートリアル中は何もしない
+    R.useEffect(() => {
+    (async () => {
+      // まず盤面だけ作る（下に本物のテスト画面を表示）
+      await setupGame();
 
-  startGame();
+      const firstTime = !localStorage.getItem(LS_TEST_TUTORIAL);
 
-  const handleVisibilityChange = () => {
-    if (document.hidden) {
-      stop(); // TTS音声も止める
-    }
-  };
-  document.addEventListener("visibilitychange", handleVisibilityChange);
+      if (firstTime) {
+        try { localStorage.setItem(LS_TEST_TUTORIAL, "1"); } catch {}
 
-  return () => {
-    document.removeEventListener("visibilitychange", handleVisibilityChange);
-    stop();
-    if (timerRef.current) clearInterval(timerRef.current);
-  };
-  }, [ui]);
+        // 初回だけ：説明オーバーレイを出して、OK で testTitle に戻る
+        showTestTutorialOverlay(() => {
+          props.goto("testTitle");
+        });
+        // ★この時点では startTimer() を呼ばない＝時間は一切減らない
+      } else {
+        // 2回目以降は、すぐカウントダウン開始
+        startTimer();
+      }
+    })();
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stop(); // 画面を離れたら TTS を止める
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      stop();
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
 
 
   // ライフサイクル：バナーの表示・非表示
@@ -279,15 +351,42 @@ R.useEffect(() => {
 
   // クイズ終了時にインタースティシャル広告を試みる
   R.useEffect(() => {
-    if (overlay) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      try { maybeShowTestInterstitial(savedLevel); }
-      catch (e) { console.error("[ads] interstitial from quiz error", e); }
+  (async () => {
+    // まず盤面だけ作る（下の本物の画面）
+    await setupGame();
+
+    const firstTime = !localStorage.getItem(LS_TEST_TUTORIAL);
+
+    if (firstTime) {
+      try { localStorage.setItem(LS_TEST_TUTORIAL, "1"); } catch {}
+
+      // チュートリアル表示 → OK で testTitle に戻す
+      showTestTutorialOverlay(() => {
+        props.goto("testTitle");
+      });
+      // ★ここでは startTimer() は呼ばない★
+    } else {
+      // 2回目以降は、すぐタイマー開始
+      startTimer();
     }
-  }, [overlay, savedLevel]);
+  })();
+
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      stop(); // TTS 停止だけでOK
+    }
+  };
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+
+  return () => {
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    stop();
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+}, []);
 
 
-  // --- 関数 ---
+    // --- 関数 ---
   const speakJP = (it) => {
     if (!tts || !it) return;
     let yomi = it.jp?.reading || it.jp?.orth || "";
@@ -295,14 +394,20 @@ R.useEffect(() => {
     if (yomi) speak(yomi, { lang: "ja-JP" });
   };
 
-  const startGame = async () => {
-    const lv = Number(localStorage.getItem("jpVocab.level") || "1");
+  // ★ ゲームの準備だけする（盤面・残り秒数・ライフの初期化）
+  const setupGame = async () => {
+    const lv    = Number(localStorage.getItem("jpVocab.level") || "1");
     const start = Math.max(1, lv - 4);
     const lang  = getLang?.() || "en";
+
     let all = [];
-    for (let L=start; L<=lv; L++){
-      for (const it of await loadLevel(L)){
-        all.push({ id: it.id, en: it.defs?.[lang] ?? it.defs?.en ?? "", jp: it.jp });
+    for (let L = start; L <= lv; L++) {
+      for (const it of await loadLevel(L)) {
+        all.push({
+          id:  it.id,
+          en:  it.defs?.[lang] ?? it.defs?.en ?? "",
+          jp:  it.jp,
+        });
       }
     }
     shuffle(all);
@@ -312,23 +417,28 @@ R.useEffect(() => {
     const R0 = all.slice(0, ROWS).map(x => ({ ...x }));
     shuffle(R0);
 
-    setLeft(L0); setRight(R0); setPool(all.slice(ROWS));
-    setRemain(all.length); setHearts(HEARTS);
+    setLeft(L0);
+    setRight(R0);
+    setPool(all.slice(ROWS));
+    setRemain(all.length);
+    setHearts(HEARTS);
     setSecs(all.length * readSecPerQuestion());
 
-    endedRef.current = false;
-    refillRef.current = { cleared:0, armed:false, justMissed: false };
-    
-    // ★★★ここが、新しいタイマーのロジックです！★★★
+    endedRef.current  = false;
+    refillRef.current = { cleared: 0, armed: false, justMissed: false };
+
+    setUI("playing");   // ← ここで画面「playing」にする
+  };
+
+  // ★ カウントダウンだけを担当するタイマー
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      // アプリが非表示の間は、何もせずに処理をスキップする
-      if (document.hidden) return;
-      // 表示されている時だけ、秒を減らす
+      if (document.hidden) return; // 裏にいる間は止める
       setSecs(s => s - 1);
     }, 1000);
-    
-    setUI("playing");
   };
+
 
   const refillRows = (triggeredRowIndex) => {
     const Ls = left.slice();
