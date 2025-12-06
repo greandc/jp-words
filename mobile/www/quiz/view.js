@@ -87,6 +87,7 @@ function ensureStyle() {
 }
 
 // ===== 小さな部品（コンポーネント）=====
+
 function JpLabel({ jp, showFuri }) {
   const reading = jp?.reading || "";
   return h("span", { className: "jp" },
@@ -149,17 +150,18 @@ function QuizScreen(props) {
 
   // --- 副作用（ライフサイクル管理） ---
   R.useEffect(() => {
-    setupGame();
-    showMainBanner();
+    setupGame(); // まずゲームの準備を開始
+    showMainBanner(); // バナーを表示
     const handleVisibilityChange = () => { if (document.hidden) stop(); };
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    // 後片付け
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       stop();
       if (timerRef.current) clearInterval(timerRef.current);
       destroyBanner();
     };
-  }, []);
+  }, []); // このuseEffectは、画面表示時に一度だけ実行
 
   R.useEffect(() => { localStorage.setItem("prefs.furi", furi ? "1" : "0"); }, [furi]);
   R.useEffect(() => { localStorage.setItem("prefs.tts", tts ? "1" : "0"); }, [tts]);
@@ -191,24 +193,28 @@ function QuizScreen(props) {
     }
     shuffle(all);
     if (all.length > MAX_Q) all = all.slice(0, MAX_Q);
+
     const L0 = all.slice(0, ROWS), R0 = all.slice(0, ROWS).map(x => ({ ...x }));
     shuffle(R0);
     setLeft(L0); setRight(R0); setPool(all.slice(ROWS));
     setRemain(all.length); setHearts(HEARTS);
     setSecs(all.length * readSecPerQuestion());
     endedRef.current = false;
-    setIsLoading(false);
+    setIsLoading(false); // 準備完了
+    
+    // 初回だけチュートリアルを表示
     const firstTime = !localStorage.getItem(TEST_TUTORIAL_KEY);
     if (firstTime) {
-      setShowTutorial(true);
+      setShowTutorial(true); // タイマーはまだ動かさない
     } else {
-      startTimer();
+      startTimer(); // 2回目以降は、すぐにタイマー開始
     }
   };
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      if (document.hidden || showTutorial) return;
+      // チュートリアル表示中か、アプリが裏にある間は、時間を進めない
+      if (showTutorial || document.hidden) return;
       setSecs(s => Math.max(0, s - 1));
     }, 1000);
   };
@@ -216,6 +222,8 @@ function QuizScreen(props) {
   const unlockNextLevel = () => { /* 変更なし */ };
 
   // --- レンダリング ---
+  
+  // ゲームのメインUI（常に描画するが、チュートリアル表示中はぼかす）
   const gameUI = h("div", { className: `screen-quiz ${overlay || showTutorial ? "overlay-on" : ""}` },
     h("div", { className: "topbar" },
       h("div", { className: "left" },
@@ -242,24 +250,25 @@ function QuizScreen(props) {
     h(QuizOverlay, { type: overlay?.type, goto: props.goto, onClear: unlockNextLevel, clearedLevel: savedLevel }),
   );
 
-  return h(R.Fragment, null,
-    gameUI,
-    showTutorial && h("div", { className: "quiz-overlay" },
-      h("div", { className: "panel" },
-        h("div", { className: "ttl" }, t("tutorial.testTitle")),
-        h("div", { className: "desc" }, t("tutorial.testBody")),
-        h("div", { style: { display: "flex", justifyContent: "flex-end" } },
-          h("button", {
-            className: "btn",
-            onClick: () => {
-              try { localStorage.setItem(TEST_TUTORIAL_KEY, "1"); } catch {}
-              props.goto("testTitle");
-            },
-          }, t("tutorial.ok")),
-        )
+  // チュートリアル用のUI
+  const tutorialUI = showTutorial && h("div", { className: "quiz-overlay" },
+    h("div", { className: "panel" },
+      h("div", { className: "ttl" }, t("tutorial.testTitle")),
+      h("div", { className: "desc" }, t("tutorial.testBody")),
+      h("div", { style: { display: "flex", justifyContent: "flex-end" } },
+        h("button", {
+          className: "btn",
+          onClick: () => {
+            try { localStorage.setItem(TEST_TUTORIAL_KEY, "1"); } catch {}
+            props.goto("testTitle");
+          },
+        }, t("tutorial.ok")),
       )
     )
   );
+
+  // 最終的に、ゲームUIとチュートリアルUIを合体させて表示する
+  return h(R.Fragment, null, gameUI, tutorialUI);
 }
 
 // ===== 外から呼ばれる render =====
