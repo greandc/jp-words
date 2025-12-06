@@ -93,12 +93,13 @@ function ensureStyle() {
       z-index:100;
     }
     .quiz-overlay .panel{
-      width:min(640px,94vw);
-      background:#fff;
+      background:#0f172a; /* ← 紺色を追加 */
+      color:#fff;         /* ← 文字色白 */
       border-radius:16px;
       padding:20px;
       box-shadow:0 10px 30px rgba(0,0,0,.25);
     }
+
     .quiz-overlay .ttl{
       font-size:22px;
       font-weight:700;
