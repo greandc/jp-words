@@ -382,9 +382,10 @@ function cardHTML(curKana){
         &nbsp;
       </div>
       <button id="compose-clear" class="btn"
-              style="padding:.32rem .8rem;font-size:.9rem;">
-        Clear
-      </button>
+        style="padding:.32rem .8rem;font-size:.9rem;">
+  ${t("common.clear")}
+</button>
+
     </div>`;
 }
 

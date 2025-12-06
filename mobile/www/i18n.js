@@ -60,6 +60,11 @@ export const MESSAGES = {
   "removeAds.purchaseBtn": "Remove Ads (One-time purchase)",
   "removeAds.restore": "Restore Purchase",
   "removeAds.note": "Your purchase can be restored even after reinstalling.",
+  "tutorial.practiceTitle": "About Practice Mode",
+  "tutorial.practiceBody": "Check the 10 new words for this level.\nTap the 🔊 icon to hear the Japanese reading.\nUse Prev / Next to move between cards.\nThere is no time limit.",
+  "tutorial.testTitle": "How to Play the Test",
+  "tutorial.testBody":"Match the left side and right side cards.\nFirst tap a card on the left, then choose the correct Japanese on the right.\nYou lose a heart for each mistake.\nThe timer starts after closing this guide.",
+  "common.clear": "Clear",
   "locked": "Locked"
 },
 
