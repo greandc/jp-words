@@ -82,11 +82,41 @@ function ensureStyle() {
     .screen-quiz .backbtn{ grid-column: 1 / -1; height: clamp(44px, 6vh, 56px); border:2px solid #66a3ff; border-radius:14px; background:#fff; font-size:18px; }
     .screen-quiz .qbtn.active{ background: #eaf2ff; border-color: #3b82f6; box-shadow: inset 0 0 0 3px rgba(59,130,246,.25); }
     .screen-quiz .qbtn:focus-visible{ outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.35); }
-    .screen-quiz .quiz-overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); z-index:50; }
-    .screen-quiz .quiz-overlay .panel{ width:min(640px,94vw); background:#fff; border-radius:16px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,.25); }
-    .screen-quiz .quiz-overlay .ttl{ font-size:22px; font-weight:700; margin:0 0 8px; }
-    .screen-quiz .quiz-overlay .desc{ color:#475569; margin:0 0 16px; white-space: pre-line; }
-    .screen-quiz .quiz-overlay .btn{ width:100%; height:48px; border:2px solid #66a3ff; border-radius:12px; background:#eef6ff; }
+        /* ★ テスト用チュートリアル／結果ダイアログ共通オーバーレイ ★ */
+    .quiz-overlay{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.35);
+      z-index:100;
+    }
+    .quiz-overlay .panel{
+      width:min(640px,94vw);
+      background:#fff;
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    .quiz-overlay .ttl{
+      font-size:22px;
+      font-weight:700;
+      margin:0 0 8px;
+    }
+    .quiz-overlay .desc{
+      color:#475569;
+      margin:0 0 16px;
+      white-space: pre-line;
+    }
+    .quiz-overlay .btn{
+      width:100%;
+      height:48px;
+      border:2px solid #66a3ff;
+      border-radius:12px;
+      background:#eef6ff;
+    }
+
     .screen-quiz.overlay-on .board, .screen-quiz.overlay-on .backbtn, .screen-quiz.overlay-on .topbar, .screen-quiz.overlay-on .status { pointer-events:none; filter:blur(2px); }
   `;
   document.head.appendChild(st);
