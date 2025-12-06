@@ -3,7 +3,7 @@
 /* global React, ReactDOM */
 const R = window.React;
 const RD = window.ReactDOM;
-if (!R ||!RD) throw new Error("React/ReactDOM が読み込まれていません");
+if (!R || !RD) throw new Error("React/ReactDOM が読み込まれていません");
 const h = R.createElement;
 
 // ===== 依存 =====
@@ -51,8 +51,10 @@ function shuffle(arr) {
   return arr;
 }
 
-function boardEmpty(L, R) {
-  return Array.isArray(L) && Array.isArray(R) && L.every(v => v == null) && R.every(v => v == null);
+function boardEmpty(L, R){
+  return Array.isArray(L) && Array.isArray(R)
+      && L.every(v => v == null)
+      && R.every(v => v == null);
 }
 
 // ===== スタイル定義 =====
@@ -91,6 +93,7 @@ function ensureStyle() {
 }
 
 // ===== 小さな部品（コンポーネント）=====
+
 function JpLabel({ jp, showFuri }) {
   const reading = jp?.reading || "";
   return h("span", { className: "jp" },
@@ -188,7 +191,7 @@ function QuizScreen(props) {
     if (it.jp?.orth === "飲む" && yomi === "のむ") yomi = it.jp.orth;
     if (yomi) speak(yomi, { lang: "ja-JP" });
   };
-
+  
   const setupGame = async () => {
     setIsLoading(true);
     const lv = Number(localStorage.getItem("jpVocab.level") || "1");
@@ -208,24 +211,24 @@ function QuizScreen(props) {
     setRemain(all.length); setHearts(HEARTS);
     setSecs(all.length * readSecPerQuestion());
     endedRef.current = false;
-    setIsLoading(false); // 準備完了
+    setIsLoading(false);
     
-    // 初回だけチュートリアルを表示
     const firstTime = !localStorage.getItem(TEST_TUTORIAL_KEY);
     if (firstTime) {
-      setShowTutorial(true); // タイマーはまだ動かさない
+      setShowTutorial(true);
     } else {
-      startTimer(); // 2回目以降は、すぐにタイマー開始
+      startTimer();
     }
   };
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      // チュートリアル表示中か、アプリが裏にある間は、時間を進めない
       if (showTutorial || document.hidden) return;
       setSecs(s => Math.max(0, s - 1));
     }, 1000);
   };
+  
+  const refillRef = R.useRef({ cleared: 0, armed: false, justMissed: false });
   const pick = (side, rowIndex) => {
     if (refillRef.current.armed && side === "L") return refillRows(rowIndex);
     if (side === "R" && selL === null) return;
@@ -264,16 +267,20 @@ function QuizScreen(props) {
     const Ls = left.slice();
     const holes = [];
     for (let i = 0; i < ROWS; i++) if (!Ls[i]) holes.push(i);
-    if (holes.length === 0) return;
+    if (holes.length === 0) {
+      refillRef.current.armed = false; // 空きがない場合は補充トリガーを解除
+      return;
+    }
     const take = Math.min(holes.length, pool.length);
-    const add  = pool.slice(0, take);
+    const add = pool.slice(0, take);
     const rest = pool.slice(take);
     for (let k = 0; k < take; k++) Ls[holes[k]] = add[k];
     const Rs = Ls.map(x => (x ? { ...x } : null));
     shuffle(Rs);
     setLeft(Ls); setRight(Rs); setPool(rest);
-    refillRef.current = { cleared:0, armed:false, justMissed: false };
-    setSelL(triggeredRowIndex); setSelR(null);
+    refillRef.current = { cleared: 0, armed: false, justMissed: false };
+    setSelL(triggeredRowIndex);
+    setSelR(null);
   };
   const unlockNextLevel = () => {
     try {
@@ -336,6 +343,7 @@ function QuizScreen(props) {
   // 最終的に、ゲームUIとチュートリアルUIを合体させて表示する
   return h(R.Fragment, null, gameUI, tutorialUI);
 }
+
 
 // ===== 外から呼ばれる render =====
 export async function render(el, deps = {}) {
