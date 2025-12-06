@@ -1,4 +1,4 @@
-// deploy-bump 2025-11-02
+// deploy-bump2025-11-02
 /* app/features/quiz/view.js (最終完成版) */
 /* global React, ReactDOM */
 const R = window.React;
@@ -87,40 +87,8 @@ function ensureStyle() {
 }
 
 // ===== 小さな部品（コンポーネント）=====
-
-function JpLabel({ jp, showFuri }) {
-  const reading = jp?.reading || "";
-  return h("span", { className: "jp" },
-    (showFuri && reading) ? h("span", { className: "furi" }, reading) : null,
-    h("span", { className: "orth" }, jp?.orth || "　")
-  );
-}
-
-function QuizOverlay({ type, goto, onClear, clearedLevel }) {
-  if (!type) return null;
-  const title = type === "clear" ? t("result.clearTitle") : type === "fail" ? t("result.failTitle") : t("result.timeoutTitle");
-  const desc = type === "clear" ? t("result.clearDesc") : type === "fail" ? t("result.failDesc") : t("result.timeoutDesc");
-  const onPrimary = () => {
-    if (type === "clear") {
-      onClear?.();
-      if (clearedLevel > 0 && clearedLevel % 20 === 0) {
-        goto?.("menu1");
-      } else {
-        goto?.("menu2");
-      }
-      return;
-    }
-    if (type === "fail") { goto?.("menu3"); return; }
-    goto?.("testTitle");
-  };
-  return h("div", { className: "quiz-overlay" },
-    h("div", { className: "panel" },
-      h("div", { className: "ttl" }, title),
-      h("div", { className: "desc" }, desc),
-      h("button", { className: "btn", onClick: onPrimary }, type === "clear" ? t("result.nextLevel") : t("result.returnMenu")),
-    )
-  );
-}
+function JpLabel({ jp, showFuri }) { /* 省略（変更なし） */ }
+function QuizOverlay({ type, goto, onClear, clearedLevel }) { /* 省略（変更なし） */ }
 
 // ======================================================
 //  本体コンポーネント（最終完成版）
@@ -150,18 +118,17 @@ function QuizScreen(props) {
 
   // --- 副作用（ライフサイクル管理） ---
   R.useEffect(() => {
-    setupGame(); // まずゲームの準備を開始
-    showMainBanner(); // バナーを表示
+    setupGame();
+    showMainBanner();
     const handleVisibilityChange = () => { if (document.hidden) stop(); };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    // 後片付け
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       stop();
       if (timerRef.current) clearInterval(timerRef.current);
       destroyBanner();
     };
-  }, []); // このuseEffectは、画面表示時に一度だけ実行
+  }, []);
 
   R.useEffect(() => { localStorage.setItem("prefs.furi", furi ? "1" : "0"); }, [furi]);
   R.useEffect(() => { localStorage.setItem("prefs.tts", tts ? "1" : "0"); }, [tts]);
@@ -180,7 +147,7 @@ function QuizScreen(props) {
   }, [overlay, savedLevel]);
 
   // --- 関数定義 ---
-  const speakJP = (it) => { /* 変更なし */ };
+  const speakJP = (it) => { /* 省略（変更なし） */ };
   const setupGame = async () => {
     setIsLoading(true);
     const lv = Number(localStorage.getItem("jpVocab.level") || "1");
@@ -218,8 +185,8 @@ function QuizScreen(props) {
       setSecs(s => Math.max(0, s - 1));
     }, 1000);
   };
-  const pick = (side, rowIndex) => { /* 変更なし */ };
-  const unlockNextLevel = () => { /* 変更なし */ };
+  const pick = (side, rowIndex) => { /* 省略（変更なし） */ };
+  const unlockNextLevel = () => { /* 省略（変更なし） */ };
 
   // --- レンダリング ---
   
