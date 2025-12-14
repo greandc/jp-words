@@ -5,10 +5,8 @@ import { ROWS, EXTRA_HIRA_EXAMPLES } from "./data.hira.js";
 import { transformKana } from "./transformKana.js";
 import { showMainBanner, destroyBanner } from "../ads.js"; // ←★ この一行を追加
 
-
 // ==== ひらがなチュートリアル（初回だけふきだし表示） ====
 const HIRA_TUTORIAL_KEY = "jpVocab.tutorial.hiraHintShown";
-
 
 // ひらがなチュートリアル（初回だけ・中央ポップアップ）
 function showHiraTutorialBubble() {
@@ -140,7 +138,6 @@ function applyKanaTransform(k, flags){
   return out;
 }
 
-
 // 例語検索用：表示文字を清音へ戻す
 function normalizeKana(k){
   if (UNSMALL_MAP[k]) k = UNSMALL_MAP[k];
@@ -161,7 +158,56 @@ function hiraToKata(str) {
     String.fromCharCode(ch.charCodeAt(0) + 0x60)
   );
 }
+// === ここから かな用 mp3 再生ヘルパー =====================
 
+// ひらがな1文字？
+function isHiraganaChar(ch) {
+  return /^[\u3041-\u3096]$/.test(ch);
+}
+
+// カタカナ1文字？
+function isKatakanaChar(ch) {
+  return /^[\u30A1-\u30FA\u30FD-\u30FF]$/.test(ch);
+}
+
+// 文字からフォルダを決める（ひら or カタ）
+function kanaFolderFor(ch) {
+  if (isKatakanaChar(ch)) return "kata";
+  return "hira";
+}
+
+// 1文字だけ mp3 を再生して、終わったら resolve する
+function playKanaMp3Char(ch) {
+  return new Promise((resolve) => {
+    if (!ch) {
+      resolve();
+      return;
+    }
+
+    const folder = kanaFolderFor(ch);
+    const audio = new Audio(`assets/kana/${folder}/${ch}.mp3`);
+
+    audio.onended = () => resolve();
+    audio.onerror = () => {
+      // ファイルが無い・再生できない場合でも止まらないようにする
+      resolve();
+    };
+
+    audio.play().catch(() => resolve());
+  });
+}
+
+// 文字列を「1文字ずつ」順番に mp3 で再生
+async function playKanaMp3String(str) {
+  if (!str) return;
+
+  const chars = Array.from(str);
+  for (const ch of chars) {
+    // かな以外は飛ばす（スペースなど）
+    if (!isHiraganaChar(ch) && !isKatakanaChar(ch)) continue;
+    await playKanaMp3Char(ch);
+  }
+}
 
 // ========== 例語ルックアップ（仮名→{kanji,yomi}） ==========
 const KANA_MAP = new Map();
@@ -176,7 +222,6 @@ for (const { k, ex } of EXTRA_HIRA_EXAMPLES) {
   KANA_MAP.set(k, ex);   // 小さい文字用の例語を上書き追加
 }
 
-
 function ensureStyle() {
   if (document.getElementById("hira-style-v2")) return;
   const st = document.createElement("style");
@@ -190,7 +235,6 @@ function ensureStyle() {
   margin:0 auto;
   padding-bottom:72px;   /* ← 下にバナーぶんの余白を確保 */
 }
-
 
     /* 例語ボタン（押せる感） */
     .hira-exbtn {
@@ -289,12 +333,10 @@ export async function render(el, deps = {}) {
     el.textContent = composeChars.length ? composeChars.join(" ") : "";
   }
 
-
   const root = document.createElement("div");
   root.className = "screen screen-sub hira-tight";
 
   el.appendChild(root);
-
 
   const wrap = document.createElement("div");
   wrap.className = "hira-wrap";
@@ -388,7 +430,6 @@ function cardHTML(curKana){
 
     </div>`;
 }
-
 
 // 追加：描画後にi18nラベルを確定させる
 function applyI18nLabels() {
@@ -536,17 +577,20 @@ function wireEvents(){
       
       // --- 読み上げロジック（async/awaitを使った新しい方法）---
       const runSpeakSequence = async () => {
-        // まず、今押した文字を読み上げる
-        await speak(k);
+  // まず、今押した1文字を mp3 で再生
+  await playKanaMp3String(k);
 
-        // もし、これで2文字以上になったら…
-        if (composeChars.length > 1) {
-          // 少しだけ間を置いてから（0.1秒）、出来上がった単語全体を読む
-          const full = composeChars.join("");
-          setTimeout(() => speak(full), 100);
-        }
-      };
-      runSpeakSequence(); // 作成した読み上げ処理を実行
+  // もし、これで2文字以上たまっていたら、
+  // 少し時間をおいてから「全文字」を1文字ずつ mp3 で読み上げ
+  if (composeChars.length > 1) {
+    const full = composeChars.join("");
+    setTimeout(() => {
+      playKanaMp3String(full);
+    }, 100);
+  }
+};
+
+runSpeakSequence();
 
     };
   });
@@ -571,16 +615,16 @@ function wireEvents(){
 
       if (!kanaList.length) return;
 
-      const seq = kanaList.map((k) => hiraToKata(k)); // 「あ→ア」
+    const seq = kanaList.map((k) => hiraToKata(k)); // カタカナ列（「ア」「イ」…）
 
-      let i = 0;
-      const playNext = () => {
-        if (i >= seq.length) return;
-        speak(seq[i++]);          // 1文字だけ読み上げ
-        setTimeout(playNext, 450); // 0.45秒ごとに次へ（好みで調整OK）
-      };
+    // 1文字ずつ mp3 で順番に再生
+    const playRow = async () => {
+      const text = seq.join("");         // "アイウエオ"
+      await playKanaMp3String(text);     // 1文字ずつ mp3 で再生
+    };
 
-      playNext();
+    playRow();
+
     };
   });
 
@@ -599,7 +643,6 @@ function wireCardEvents(){
     updateComposeText();
   };
 }
-
 
    // 初期描画
   mountGrid();
