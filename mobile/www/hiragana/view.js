@@ -558,6 +558,10 @@ function bindHeaderAndToggles(){
   bindHeaderAndToggles();
 }
 
+let speakToken = 0;
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const WORD_TTS_GAP_MS = 80; // MP3→TTSの間（好みで調整）
+
 function wireEvents(){
     // 50音ボタン
   wrap.querySelectorAll("button[data-k]").forEach((b) => {
@@ -574,19 +578,31 @@ function wireEvents(){
       composeChars.push(k);
       updateComposeText();
 
-      
-      // --- 読み上げロジック（async/awaitを使った新しい方法）---
-      const runSpeakSequence = async () => {
+// --- 読み上げロジック（MP3→TTS、TTSは途中で止められる） ---
+const runSpeakSequence = async () => {
+  const myToken = ++speakToken;
+
+  // TTSが鳴ってたら止める（押した音を最優先）
+  stop();
+
   // まず、今押した1文字を mp3 で再生
   await playKanaMp3String(k);
 
-  // もし、これで2文字以上たまっていたら、
-  // 少し時間をおいてから「全文字」を1文字ずつ mp3 で読み上げ
+  // 2文字目以降は、溜まった文字をTTSで読む
   if (composeChars.length > 1) {
     const full = composeChars.join("");
-    setTimeout(() => {
-      playKanaMp3String(full);
-    }, 100);
+
+    // MP3の直後にTTSだと慌ただしいので少し間を置く
+    await sleep(WORD_TTS_GAP_MS);
+
+    // 途中で次が押されたらキャンセル
+    if (myToken !== speakToken) return;
+
+    try {
+      await speak(full);
+    } catch (e) {
+      console.error("[tts] speak error", e);
+    }
   }
 };
 

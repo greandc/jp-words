@@ -1,0 +1,12 @@
+/* Androidだけ：バナーに近づける（被りは避ける） */
+.hira-wrap{
+  padding-bottom: 34px !important; /* ← 72px を詰める */
+}
+
+/* 画面の下に余白が余りすぎるなら、composeエリアも少し詰める */
+#compose-area{
+  margin-top: 8px !important;
+}
+.screen.hira-tight{
+  padding-top: 52px !important;
+}

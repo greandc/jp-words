@@ -23,6 +23,36 @@
 
   <!-- 3) 最後にアプリ起動（キャッシュ回避のクエリはそのまま） -->
   <script type="module" src="./boot.js?v=20251109a"></script>
+  <script>
+  (function(){
+    const isAndroid = !!window.Capacitor?.getPlatform && window.Capacitor.getPlatform() === "android";
+    if (!isAndroid) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "./kana/kana.android.css";
+    document.head.appendChild(link);
+  })();
+</script>
+<script>
+  (function(){
+    const plat = window.Capacitor?.getPlatform?.();
+
+    if (plat === "android") {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "./kana/kana.android.css";
+      document.head.appendChild(link);
+    }
+
+    if (plat === "ios") {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "./kana/kana.ios.css";
+      document.head.appendChild(link);
+    }
+  })();
+</script>
+
 </head>
 
 <body>

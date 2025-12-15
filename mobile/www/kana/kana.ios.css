@@ -1,0 +1,9 @@
+/* iPhoneは上を少し詰める */
+.screen.hira-tight{
+  padding-top: 40px !important;
+}
+
+/* 下の余白も機種に合わせて */
+.hira-wrap{
+  padding-bottom: 48px !important;
+}
