@@ -1,0 +1,7 @@
+.practice-screen{
+  padding-top: 200px;   /* まずは今までと同じ */
+  padding-bottom: 0;
+}
+.practice-screen{
+  padding-bottom: 72px; /* バナー分 */
+}

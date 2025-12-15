@@ -1,0 +1,29 @@
+/* iOS: Safe Area を確保（下のホームバー対策） */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 全体の土台に下余白を足す（広告やホームバーの干渉を避ける） */
+body{
+   padding-bottom: calc(12px + var(--safe-bottom));
+}
+
+/* あなたの画面コンテナが .screen 系なら、ここで共通調整 */
+.screen{
+  padding-top: calc(12px + var(--safe-top)) !important;
+  padding-bottom: calc(12px + var(--safe-bottom)) !important;
+}
+/* iOSでだけ、サブ画面を少し下げる（上に詰まりすぎる対策） */
+.screen.screen-sub{
+  padding-top: 52px !important;  /* 数字は実機で微調整 */
+}
+.practice-screen{
+  padding-top: 140px;   /* iPhoneは少し控えめから開始 */
+  padding-bottom: 0;
+}
+:root{ --safe-bottom: env(safe-area-inset-bottom, 0px); }
+
+.practice-screen{
+  padding-bottom: calc(72px + var(--safe-bottom));
+}

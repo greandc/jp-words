@@ -52,6 +52,16 @@
     }
   })();
 </script>
+<script>
+  (function(){
+    const plat = window.Capacitor?.getPlatform?.();
+    if (plat !== "ios") return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "./ios.css";
+    document.head.appendChild(link);
+  })();
+</script>
 
 </head>
 
