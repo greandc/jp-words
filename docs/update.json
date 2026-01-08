@@ -1,6 +1,6 @@
 {
   "android": {
-    "latest": "2.0",
+    "latest": "2.1",
     "minSupported": "1.9",
     "playUrl": "https://play.google.com/store/apps/details?id=com.greandc.tangoloop"
   }
